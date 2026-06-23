@@ -142,6 +142,7 @@
   .schedule th{background:#f7f9fd;font-size:12px;white-space:nowrap;color:var(--ink)}
   .schedule td.td-time,.schedule .th-time{white-space:nowrap;font-weight:750;font-variant-numeric:tabular-nums;background:#fbfdff;position:sticky;left:0;z-index:1;width:132px;min-width:132px;max-width:132px}
   .schedule select{min-width:145px;padding:7px 8px;border-radius:9px}
+  .schedule td.assigned{background:var(--accent-soft)}.schedule td.assigned select{border-color:var(--accent);font-weight:700;color:var(--ink);background:#fff}
   .weekblock{margin-bottom:18px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}.weekblock .schedule{border:0;border-radius:0}
   .weekblock .weekhead{font-weight:800;font-size:13px;color:#21335c;background:linear-gradient(180deg,#f5f8ff,#eef4ff);border-bottom:1px solid var(--line);padding:9px 12px}
   .acct{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--ok-soft);border:1px solid #bfe6cf;border-radius:14px}
@@ -222,7 +223,7 @@
   .mailhead .check{margin:0}
   .mailitem.done .mailhead{background:#fbfefc}
   .mailitem.unselected{opacity:.5}.mailitem.unselected .mailhead{background:#fbfcfe}
-  .mail-select-bar{display:flex;align-items:center;gap:14px;padding:4px 2px 12px;flex-wrap:wrap}.mail-select-bar .check{margin:0;cursor:pointer}.mail-select-bar #selectCount{font-size:12.5px}
+  .mail-select-bar{display:flex;align-items:center;gap:14px;padding:4px 2px 12px 35px;flex-wrap:wrap}.mail-select-bar .check{margin:0;cursor:pointer}.mail-select-bar #selectCount{font-size:12.5px}
   .mail-avatar{display:none}
   .mail-main{min-width:0;display:grid;grid-template-columns:135px 95px minmax(0,1fr);align-items:center;column-gap:10px;overflow:hidden}.mailhead .who{display:block;font-weight:850;font-size:14.5px;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}.mailhead .parent-label{display:block;color:var(--muted);font-size:12.5px;font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mailhead .recipient-line{display:block;color:var(--muted);font-size:12.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:0}.mailhead .dot{display:none}
   .mailhead .toggle{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:12.5px;font-weight:800;user-select:none;padding:6px 10px;border-radius:999px;background:var(--accent-soft);white-space:nowrap;border:1px solid #d7e3ff}
@@ -270,7 +271,7 @@
 <body>
 <header>
   <h1>ElternTermine · Microsoft 365</h1>
-  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R6</span></p>
+  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R7</span></p>
 </header>
 
 <nav class="tabs">
@@ -383,7 +384,7 @@
         <div id="tplBodyEditor" class="rich-editor mail-editor template-mail-editor" contenteditable="true" spellcheck="true"></div>
       </div>
       <div class="mail-reset" id="resetTplBodyRow" style="display:none"><a href="#" id="resetTplBody">↺ Text auf Standard zurücksetzen</a><a href="#" id="saveTplBody" class="save-default" title="Den aktuellen Text + Betreff als deinen persönlichen Standard festlegen">✓ als meinen Standard speichern</a></div>
-      <p class="hint">Der Text ist sofort bearbeitbar. Platzhalter bleiben im Text stehen: <code class="k">{DATE}</code> Datum (frz.), <code class="k">{TIME}</code> Uhrzeit, <code class="k">{ENFANT}</code> Schülername.</p>
+      <p class="hint">Die Platzhalter <code class="k">{DATE}</code>, <code class="k">{TIME}</code> und <code class="k">{ENFANT}</code> werden beim Versand automatisch durch Datum (frz.), Uhrzeit und Schülername ersetzt – einfach im Text stehen lassen.</p>
       <div id="sigMissing" style="margin-top:12px"></div>
       <div id="inlineSignatureControls" class="inline-sig-controls">
         <div class="signature-options-row">
@@ -406,7 +407,7 @@
       <div class="preview-head">
         <div>
           <h2>Vorschau &amp; Versand</h2>
-          <p class="hint">Öffne nur die E-Mail, die du kontrollieren oder anpassen möchtest. Änderungen werden automatisch gespeichert.</p>
+          <p class="hint" id="previewHint">Öffne nur die E-Mail, die du kontrollieren oder anpassen möchtest. Änderungen werden automatisch gespeichert.</p>
         </div>
         <div class="toolbar mail-actionbar">
           <button id="resetSent" class="ghost sm" style="display:none">Versand-Status zurücksetzen</button>
@@ -820,7 +821,7 @@ let calView=(function(){ const t=new Date(); return {y:t.getFullYear(), m:t.getM
 const MINICAL_CSS='<style>.minical{max-width:430px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}</style>';
 function renderDateList(){ const host=document.getElementById("miniCal"); if(!host) return; const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate(); const todayStr=new Date().toISOString().slice(0,10); const title=first.toLocaleDateString("de-DE",{month:"long",year:"numeric"}); const wd=["Mo","Di","Mi","Do","Fr","Sa","So"]; let cells=""; for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>'; for(let d=1;d<=dim;d++){ const wd=new Date(y,m,d).getDay(); const weekend=(wd===0||wd===6); const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"]; if(weekend) cls.push("wknd"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today"); cells += weekend ? ('<div class="'+cls.join(" ")+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>'); } host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Tag anklicken = aus-/abwählen · gewählt: '+state.config.dates.length+'</div></div>'; host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; }); host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; }); updateCalResetVisibility(); }
 function updateCalResetVisibility(){ const row=document.getElementById("resetCalRow"); if(row) row.style.display = (state.config.dates && state.config.dates.length>0) ? "" : "none"; }
-function renderCalendar(){ initCfgInputs(); renderDateList(); const grid=document.getElementById("calendarGrid"), sl=slots(); if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Wähle oben mindestens einen Tag im Kalender aus.</p>'; updateAssignSummary(); return; } if(sl.length===0){ grid.innerHTML='<p class="muted">Kein gültiges Zeitraster (prüfe Beginn/Ende/Dauer).</p>'; updateAssignSummary(); return; } const opts=['<option value="">— frei —</option>'].concat(state.students.map(s=>`<option value="${s.id}" title="${esc(s.name||"(ohne Name)")}">${esc(displayStudentName(s.name))}</option>`)).join(""); const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }; const groups={}; state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); }); const weekKeys=Object.keys(groups).sort(); grid.innerHTML=weekKeys.map(wk=>{ const days=groups[wk]; const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"}); const head='<tr><th class="th-time">Zeit</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>'; const bodyRows=sl.map((s,i)=>{ const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td><select data-key="'+key+'">'+opts.replace('value="'+sel+'"','value="'+sel+'" selected')+'</select></td>'; }).join(""); return '<tr><td class="td-time">'+s.start+'–'+s.end+'</td>'+cells+'</tr>'; }).join(""); return '<div class="weekblock"><div class="weekhead">Woche ab '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>'; }).join(""); grid.querySelectorAll("select[data-key]").forEach(sel=>{ sel.onchange=()=>{ const k=sel.dataset.key; if(sel.value) state.assignments[k]=sel.value; else delete state.assignments[k]; saveState(); updateAssignSummary(); }; }); updateAssignSummary(); }
+function renderCalendar(){ initCfgInputs(); renderDateList(); const grid=document.getElementById("calendarGrid"), sl=slots(); if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Wähle oben mindestens einen Tag im Kalender aus.</p>'; updateAssignSummary(); return; } if(sl.length===0){ grid.innerHTML='<p class="muted">Kein gültiges Zeitraster (prüfe Beginn/Ende/Dauer).</p>'; updateAssignSummary(); return; } const opts=['<option value="">— frei —</option>'].concat(state.students.map(s=>`<option value="${s.id}" title="${esc(s.name||"(ohne Name)")}">${esc(displayStudentName(s.name))}</option>`)).join(""); const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }; const groups={}; state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); }); const weekKeys=Object.keys(groups).sort(); grid.innerHTML=weekKeys.map(wk=>{ const days=groups[wk]; const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"}); const head='<tr><th class="th-time">Zeit</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>'; const bodyRows=sl.map((s,i)=>{ const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td'+(sel?' class="assigned"':'')+'><select data-key="'+key+'">'+opts.replace('value="'+sel+'"','value="'+sel+'" selected')+'</select></td>'; }).join(""); return '<tr><td class="td-time">'+s.start+'–'+s.end+'</td>'+cells+'</tr>'; }).join(""); return '<div class="weekblock"><div class="weekhead">Woche ab '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>'; }).join(""); grid.querySelectorAll("select[data-key]").forEach(sel=>{ sel.onchange=()=>{ const k=sel.dataset.key; const td=sel.closest("td"); if(sel.value){ state.assignments[k]=sel.value; if(td) td.classList.add("assigned"); } else { delete state.assignments[k]; if(td) td.classList.remove("assigned"); } saveState(); updateAssignSummary(); }; }); updateAssignSummary(); }
 function updateAssignSummary(){ const used=Object.values(state.assignments).filter(Boolean), counts={}; used.forEach(id=>counts[id]=(counts[id]||0)+1); const dupes=Object.keys(counts).filter(id=>counts[id]>1).map(id=>(state.students.find(s=>s.id===id)||{}).name).filter(Boolean); let txt=used.length+" Termin(e) vergeben."; if(dupes.length) txt += " ⚠︎ Mehrfach eingeplant: "+dupes.map(n=>displayStudentName(n)).join(", "); document.getElementById("assignSummary").textContent=txt; }
 
 /* Rich editor */
@@ -1509,7 +1510,7 @@ function renderAuth(){
   } else {
     box.innerHTML='<div class="banner warn">Noch nicht angemeldet. Der Sende-Button wird erst nach der Microsoft-Anmeldung aktiv.</div>';
     inBtn.style.display="inline-block"; outBtn.style.display="none";
-    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Bitte mit Microsoft anmelden, bevor du sendest.";
+    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Bitte zuerst mit deinem Microsoft-Konto anmelden.";
   }
   renderTemplatePreview();
 }
@@ -1576,6 +1577,8 @@ function renderMails(openId){
 
   const mailBanner=document.getElementById("mailBanner");
   if(mailBanner) mailBanner.innerHTML=b;
+  const previewHint=document.getElementById("previewHint");
+  if(previewHint) previewHint.style.display = currentMsgs.length>0 ? "" : "none";
 
   const sendBtn=document.getElementById("sendAll"), resetBtn=document.getElementById("resetSent");
   if(sendBtn){
