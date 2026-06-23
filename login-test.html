@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ElternTermine · Login-Test</title>
+<style>
+  :root{--accent:#2f5fd7;--ink:#172033;--line:#dbe3ef;--muted:#667085;--ok:#0b8f3a;--err:#c0231e}
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f5f7fb;color:var(--ink);padding:24px;line-height:1.5}
+  .card{max-width:680px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:0 14px 40px rgba(20,30,60,.07)}
+  h1{margin:0 0 6px;font-size:22px}
+  h3{margin:22px 0 8px;font-size:15px}
+  p{margin:6px 0}
+  .hint{color:var(--muted);font-size:13.5px}
+  label{display:block;font-weight:700;font-size:13px;margin:14px 0 4px}
+  input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+  button{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 16px;font-size:14px;font-weight:700;cursor:pointer}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  code{background:#eef2fb;border-radius:6px;padding:2px 6px;font-size:13px;word-break:break-all}
+  .redirect{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}
+  .redirect code{background:#fff}
+  pre{background:#0f1729;color:#d7e3ff;border-radius:12px;padding:14px;font-size:12.5px;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow:auto;margin:0}
+  .banner{border-radius:12px;padding:12px 14px;font-size:13.5px;margin:12px 0}
+  .banner.warn{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+  .banner.ok{background:#ecfdf3;border:1px solid #abefc6;color:#067647}
+  .banner.err{background:#fef3f2;border:1px solid #fecdca;color:#b42318}
+  .step{font-size:13.5px;color:var(--muted);margin:2px 0 0}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Microsoft-Login-Test</h1>
+  <p class="hint">Prüft, ob die Anmeldung im Browser (MSAL) und <code>Mail.Send</code> mit deiner Azure-App funktionieren – <b>bevor</b> wir die ganze App umbauen. Wenn am Ende eine Test-Mail in deinem Postfach landet, ist alles startklar.</p>
+
+  <div id="protoWarn"></div>
+
+  <label for="clientId">1 · Client-ID (Anwendungs-/Application-ID)</label>
+  <input id="clientId" placeholder="00000000-0000-0000-0000-000000000000" autocomplete="off" spellcheck="false">
+
+  <label for="tenant">2 · Tenant</label>
+  <input id="tenant" placeholder="organizations" autocomplete="off" spellcheck="false">
+  <p class="hint">Bei einer App nur für eure Schule: die <b>Verzeichnis-(Tenant-)ID</b> eintragen. Für „funktioniert mit jedem Arbeitskonto": <code>organizations</code>.</p>
+
+  <label>3 · Diese Redirect-URL in der Azure-App eintragen (Plattform <b>Single-page application</b>)</label>
+  <div class="redirect"><code id="redirectUri"></code><button id="copyRedirect" class="ghost" type="button">Kopieren</button></div>
+
+  <div class="row">
+    <button id="signIn" type="button">Anmelden</button>
+    <button id="signOut" class="ghost" type="button" disabled>Abmelden</button>
+  </div>
+
+  <div id="account"></div>
+
+  <div class="row">
+    <button id="sendTest" type="button" disabled>Test-Mail an mich selbst senden</button>
+  </div>
+
+  <h3>Protokoll</h3>
+  <pre id="log">Bereit. Trage Client-ID + Tenant ein und klicke „Anmelden".</pre>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3/lib/msal-browser.min.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const logEl = $('log');
+  function log(msg){ logEl.textContent += "\n" + (typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2)); logEl.scrollTop = logEl.scrollHeight; }
+
+  // Redirect-URL = genau diese Seite (ohne ? oder #)
+  const redirectUri = location.href.split('#')[0].split('?')[0];
+  $('redirectUri').textContent = redirectUri;
+  $('copyRedirect').onclick = () => { navigator.clipboard.writeText(redirectUri).then(()=>{ $('copyRedirect').textContent='Kopiert ✓'; setTimeout(()=>$('copyRedirect').textContent='Kopieren',1500); }); };
+
+  if (location.protocol === 'file:') {
+    $('protoWarn').innerHTML = '<div class="banner warn"><b>Diese Datei wurde über <code>file://</code> geöffnet.</b> So funktioniert die Microsoft-Anmeldung nicht. Bitte über einen Server öffnen – z. B. lokal: im Ordner <code>python3 -m http.server 8011</code> ausführen und dann <code>http://localhost:8011/login-test.html</code> öffnen.</div>';
+  }
+
+  // gespeicherte Eingaben wiederherstellen
+  $('clientId').value = localStorage.getItem('msaltest_clientId') || '';
+  $('tenant').value   = localStorage.getItem('msaltest_tenant')   || 'organizations';
+
+  const scopes = ['User.Read', 'Mail.Send'];
+  let msalInstance = null;
+
+  async function ensureInit() {
+    const clientId = $('clientId').value.trim();
+    const tenant = ($('tenant').value.trim() || 'organizations');
+    if (!clientId) { alert('Bitte zuerst die Client-ID eintragen.'); return null; }
+    localStorage.setItem('msaltest_clientId', clientId);
+    localStorage.setItem('msaltest_tenant', tenant);
+    if (!msalInstance) {
+      msalInstance = new msal.PublicClientApplication({
+        auth: { clientId, authority: 'https://login.microsoftonline.com/' + tenant, redirectUri },
+        cache: { cacheLocation: 'sessionStorage' }
+      });
+      await msalInstance.initialize();
+    }
+    return msalInstance;
+  }
+
+  function showAccount(acc) {
+    $('account').innerHTML = acc
+      ? '<div class="banner ok">Angemeldet als <b>' + (acc.name || '') + '</b> (' + acc.username + ')</div>'
+      : '';
+    $('sendTest').disabled = !acc;
+    $('signOut').disabled = !acc;
+  }
+
+  $('signIn').onclick = async () => {
+    try {
+      const m = await ensureInit(); if (!m) return;
+      log('→ Öffne Microsoft-Anmeldung (Popup) …');
+      const res = await m.loginPopup({ scopes, prompt: 'select_account' });
+      m.setActiveAccount(res.account);
+      showAccount(res.account);
+      log('✅ Anmeldung erfolgreich. Berechtigungen zugestimmt: ' + (res.scopes || []).join(', '));
+    } catch (e) {
+      log('❌ Login fehlgeschlagen:');
+      log('   ' + (e.errorCode || '') + '  ' + (e.errorMessage || e.message || e));
+      if (/redirect_uri|AADSTS50011/i.test((e.errorMessage||'')+(e.message||''))) log('   → Redirect-URL stimmt nicht. Trage in der Azure-App unter „Single-page application" exakt diese URL ein:\n     ' + redirectUri);
+      if (/AADSTS650051|AADSTS65001|consent/i.test((e.errorMessage||'')+(e.message||''))) log('   → Zustimmung fehlt. Evtl. muss euer IT-Admin „Mail.Send" freigeben (Admin consent).');
+    }
+  };
+
+  $('signOut').onclick = async () => {
+    const m = await ensureInit(); if (!m) return;
+    try { await m.logoutPopup(); } catch (e) {}
+    showAccount(null);
+    log('Abgemeldet.');
+  };
+
+  async function getToken() {
+    const m = await ensureInit();
+    const acc = m.getActiveAccount() || m.getAllAccounts()[0];
+    try {
+      const r = await m.acquireTokenSilent({ scopes, account: acc });
+      return r.accessToken;
+    } catch (e) {
+      const r = await m.acquireTokenPopup({ scopes });
+      return r.accessToken;
+    }
+  }
+
+  $('sendTest').onclick = async () => {
+    try {
+      const m = await ensureInit(); if (!m) return;
+      log('→ Hole Zugriffstoken für Mail.Send …');
+      const token = await getToken();
+      const acc = m.getActiveAccount() || m.getAllAccounts()[0];
+      const me = acc.username;
+      const payload = {
+        message: {
+          subject: 'ElternTermine – Test ✔',
+          body: { contentType: 'HTML', content: '<p>Das ist eine Testmail aus dem Login-Test.</p><p>Wenn du sie bekommst, funktioniert <b>Mail.Send</b> direkt aus dem Browser. 🎉</p>' },
+          toRecipients: [{ emailAddress: { address: me } }]
+        },
+        saveToSentItems: true
+      };
+      log('→ Sende Test-Mail an ' + me + ' …');
+      const resp = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (resp.status === 202) {
+        log('✅ ERFOLG! Test-Mail wurde gesendet. Schau in dein Postfach (und in „Gesendet").');
+        $('account').innerHTML += '<div class="banner ok">Alles funktioniert – die Web-Version ist machbar. 🎉</div>';
+      } else {
+        const t = await resp.text();
+        log('❌ Senden fehlgeschlagen: HTTP ' + resp.status);
+        log('   ' + t.slice(0, 500));
+      }
+    } catch (e) {
+      log('❌ Fehler beim Senden: ' + (e.message || e));
+    }
+  };
+</script>
+</body>
+</html>
