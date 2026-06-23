@@ -271,7 +271,7 @@
 <body>
 <header>
   <h1>ElternTermine · Microsoft 365</h1>
-  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R7</span></p>
+  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R8</span></p>
 </header>
 
 <nav class="tabs">
@@ -328,7 +328,6 @@
         <button id="signOut" class="ghost sm" style="display:none">Abmelden</button>
       </div>
       <p class="hint" id="authHint">Beim ersten Mal meldest du dich einmal bei Microsoft an (Code eingeben + zustimmen). Danach läuft der Versand automatisch — ohne erneutes Anmelden.</p>
-      <label class="check"><input type="checkbox" id="combine"> Alle Kontakte in einer Mail zusammenfassen — reduziert die Anzahl der E-Mails</label>
     </div>
 
     <div class="card template-card" id="templateCard">
@@ -396,7 +395,7 @@
           </div>
           <input type="file" id="logoFile" accept="image/*" style="display:none">
         </div>
-        <p class="hint">Text und Signatur sind im gleichen Feld bearbeitbar. Mit den Logo-Schaltern wählst du: UNESCO-Logo, eigenes Logo oder kein Logo.</p>
+        <p class="hint">Text und Signatur sind im gleichen Feld bearbeitbar.</p>
         <div id="sigStatus" class="hint"></div>
       </div>
       <div class="mail-reset" id="resetSigRow" style="display:none"><a href="#" id="defaultSigBtn">↺ Signatur zurücksetzen</a><a href="#" id="saveSig" class="save-default" title="Die aktuelle Signatur (und Logo-Auswahl) als deinen persönlichen Standard festlegen">✓ als meinen Standard speichern</a></div>
@@ -415,6 +414,7 @@
         </div>
       </div>
       <div id="mailBanner"></div>
+      <label class="check" id="combineRow" style="display:none"><input type="checkbox" id="combine"> Alle Kontakte eines Schülers in einer E-Mail zusammenfassen — reduziert die Anzahl der E-Mails</label>
       <div id="mailSelectBar" class="mail-select-bar" style="display:none">
         <label class="check"><input type="checkbox" id="selectAllMails"> <b>Alle auswählen</b></label>
         <span id="selectCount" class="hint"></span>
@@ -1215,7 +1215,7 @@ async function loadUnescoLogo(force){
   try{
     const res=await fetch("schullogo.png"); if(!res.ok) throw new Error("nicht gefunden");
     const blob=await res.blob(); const r=new FileReader();
-    r.onload=()=>{ setLogoFromDataUrl(String(r.result), blob.type||"image/png", true, "unesco"); const st=document.getElementById("sigStatus"); if(st) st.textContent="UNESCO-Logo ist aktiv."; };
+    r.onload=()=>{ setLogoFromDataUrl(String(r.result), blob.type||"image/png", true, "unesco"); const st=document.getElementById("sigStatus"); if(st) st.textContent=""; };
     r.readAsDataURL(blob);
   }catch(e){ const st=document.getElementById("sigStatus"); if(st) st.textContent="UNESCO-Logo nicht gefunden. Liegt schullogo.png im App-Ordner?"; }
 }
@@ -1234,9 +1234,9 @@ function renderLogoPreview(){
   }
   const st=document.getElementById("sigStatus");
   if(st){
-    if(state.options.logoMode==="none") st.textContent="Kein Logo in der Signatur.";
-    else if(state.options.logoMode==="custom") st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "Eigenes Logo ist aktiv." : "Bitte eigenes Logo auswählen.";
-    else st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "UNESCO-Logo ist aktiv." : "UNESCO-Logo wird geladen.";
+    if(state.options.logoMode==="none") st.textContent="";
+    else if(state.options.logoMode==="custom") st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "Bitte eigenes Logo auswählen.";
+    else st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "UNESCO-Logo wird geladen.";
   }
 }
 let mailRenderRaf = null;
@@ -1579,6 +1579,8 @@ function renderMails(openId){
   if(mailBanner) mailBanner.innerHTML=b;
   const previewHint=document.getElementById("previewHint");
   if(previewHint) previewHint.style.display = currentMsgs.length>0 ? "" : "none";
+  const combineRow=document.getElementById("combineRow");
+  if(combineRow) combineRow.style.display = currentMsgs.length>0 ? "flex" : "none";
 
   const sendBtn=document.getElementById("sendAll"), resetBtn=document.getElementById("resetSent");
   if(sendBtn){
