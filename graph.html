@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ElternTermine · Microsoft 365</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --surface:#ffffff;
+    --surface-soft:#f8fafc;
+    --ink:#172033;
+    --muted:#667085;
+    --muted-2:#8b96a8;
+    --line:#dbe3ef;
+    --line-strong:#cbd5e1;
+    --accent:#2f5fd7;
+    --accent-d:#244bb0;
+    --accent-soft:#eef4ff;
+    --ok:#157347;
+    --ok-soft:#e8f7ef;
+    --warn:#a76508;
+    --warn-soft:#fff3dc;
+    --err:#b42318;
+    --err-soft:#fff0ee;
+    --shadow:0 14px 40px rgba(20,30,60,.08);
+    --shadow-sm:0 2px 10px rgba(20,30,60,.05);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{
+    margin:0;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(circle at top left,rgba(47,95,215,.13),transparent 34rem),
+      linear-gradient(180deg,#fbfcff 0,#f5f7fb 320px,var(--bg) 100%);
+    color:var(--ink);
+    font-size:15px;
+    line-height:1.5;
+  }
+  header{
+    position:relative;
+    overflow:hidden;
+    background:rgba(255,255,255,.92);
+    color:var(--ink);
+    padding:24px max(22px,calc((100vw - 1180px)/2 + 22px));
+    border-bottom:1px solid rgba(219,227,239,.9);
+    box-shadow:0 8px 26px rgba(20,30,60,.05);
+  }
+  header:after{
+    content:"";
+    position:absolute;
+    width:360px;height:360px;right:-150px;top:-210px;
+    border-radius:50%;background:rgba(47,95,215,.10);
+  }
+  header h1{position:relative;margin:0;font-size:25px;font-weight:820;letter-spacing:-.03em}
+  header p{position:relative;margin:5px 0 0;color:var(--muted);font-size:14px;max-width:760px}
+  .tabs{
+    display:flex;gap:8px;
+    padding:12px max(16px,calc((100vw - 1180px)/2 + 16px));
+    background:rgba(246,248,252,.86);
+    backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid rgba(203,213,225,.75);
+    position:sticky;top:0;z-index:5;overflow-x:auto;
+    box-shadow:0 6px 20px rgba(20,30,60,.04);
+  }
+  .tab{
+    padding:10px 16px;
+    cursor:pointer;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:#fff;
+    color:var(--muted);
+    font-weight:760;
+    font-size:14px;
+    white-space:nowrap;
+    transition:.16s ease;
+  }
+  .tab:hover{background:#fff;color:var(--ink);border-color:var(--line-strong);box-shadow:0 5px 14px rgba(20,30,60,.05)}
+  .tab.active{color:#fff;background:var(--accent);border-color:var(--accent);box-shadow:0 8px 20px rgba(47,95,215,.22)}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 90px}
+  .panel{display:none}.panel.active{display:block}
+  .card{
+    background:rgba(255,255,255,.96);
+    border:1px solid rgba(219,227,239,.95);
+    border-radius:var(--radius);
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow-sm);
+  }
+  .card:hover{box-shadow:0 10px 28px rgba(20,30,60,.06)}
+  h2{font-size:18px;margin:0 0 12px;font-weight:760;letter-spacing:-.01em}
+  h3{font-size:12px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px;font-weight:700}
+  input,select,textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--ink);
+    transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
+  }
+  input:hover,select:hover,textarea:hover{border-color:var(--line-strong)}
+  input:focus,select:focus,textarea:focus,.rich-editor:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+  textarea{resize:vertical;min-height:150px;line-height:1.5}
+  button{
+    font-family:inherit;font-size:14px;font-weight:750;border:none;border-radius:11px;
+    padding:10px 16px;cursor:pointer;background:var(--accent);color:#fff;
+    box-shadow:0 8px 18px rgba(47,95,215,.20);
+    transition:background .12s ease,box-shadow .12s ease,border-color .12s ease;
+  }
+  button:hover{background:var(--accent-d);box-shadow:0 8px 18px rgba(47,95,215,.20)}
+  button:active{box-shadow:0 6px 14px rgba(47,95,215,.18)}
+  button:disabled{opacity:1;cursor:not-allowed;background:#eef2f6;color:#98a2b3;border:1px solid var(--line);transform:none;box-shadow:none}
+  button.ghost{background:#fff;color:var(--accent);border:1px solid var(--line);box-shadow:none}
+  button.ghost:hover{background:var(--accent-soft);border-color:#c8d8ff;box-shadow:none}
+  button.danger{background:#fff;color:var(--err);border:1px solid #ffd0ca;box-shadow:none}
+  button.danger:hover{background:var(--err-soft);border-color:#ffb8af}
+  button.sm{padding:7px 11px;font-size:13px;border-radius:10px}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.spacer{flex:1}
+  table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:14px;border:1px solid var(--line);background:#fff}
+  th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;background:var(--surface-soft);font-weight:800}
+  .muted{color:var(--muted)} .hint{font-size:13px;color:var(--muted);margin-top:7px}
+  .pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+  .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.err{background:var(--err-soft);color:var(--err)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+  .banner{padding:11px 13px;border-radius:12px;font-size:13.5px;margin-bottom:12px;border:1px solid transparent}
+  .banner-group{display:grid;gap:8px;margin-bottom:12px}.banner-group .banner{margin-bottom:0}
+  .truncated-inline{display:inline-block;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+  .banner.warn{background:var(--warn-soft);color:#7a4800;border-color:#ffe0a3}
+  .banner.err{background:var(--err-soft);color:#8a1d14;border-color:#ffc9c1}
+  .banner.ok{background:var(--ok-soft);color:#0f5e38;border-color:#bde8ce}
+  .banner.info{background:var(--accent-soft);color:#253e7c;border-color:#d7e3ff}
+  code.k{background:var(--accent-soft);padding:2px 7px;border-radius:7px;font-size:12px;word-break:break-all;color:#27437f}
+  .check{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:650;margin:12px 0 0;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}.check input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;flex:0 0 16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;box-shadow:none!important;outline:none!important;display:inline-grid;place-content:center;transition:background .12s ease,border-color .12s ease}.check input[type="checkbox"]:hover{border-color:var(--accent)}.check input[type="checkbox"]:focus,.check input[type="checkbox"]:focus-visible{outline:none!important;box-shadow:none!important}.check input[type="checkbox"]:checked{background:var(--accent);border-color:var(--accent)}.check input[type="checkbox"]:checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}.check select{width:auto}
+  .daycard{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:var(--surface-soft)}.daycard h4{margin:0 0 8px;font-size:14px}
+  .slotrow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}.slotrow:last-child{border-bottom:none}
+  .slottime{font-variant-numeric:tabular-nums;min-width:110px;font-weight:750;font-size:13.5px}.slotrow select{flex:1}
+  .schedule{border-collapse:separate;border-spacing:0;font-size:13px;border-radius:0 0 14px 14px;table-layout:fixed}
+  .schedule th,.schedule td{border-right:1px solid var(--line);padding:6px 7px;text-align:left;vertical-align:middle}
+  .schedule th:last-child,.schedule td:last-child{border-right:none}
+  .schedule th{background:#f7f9fd;font-size:12px;white-space:nowrap;color:var(--ink)}
+  .schedule td.td-time,.schedule .th-time{white-space:nowrap;font-weight:750;font-variant-numeric:tabular-nums;background:#fbfdff;position:sticky;left:0;z-index:1;width:132px;min-width:132px;max-width:132px}
+  .schedule select{min-width:145px;padding:7px 8px;border-radius:9px}
+  .weekblock{margin-bottom:18px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}.weekblock .schedule{border:0;border-radius:0}
+  .weekblock .weekhead{font-weight:800;font-size:13px;color:#21335c;background:linear-gradient(180deg,#f5f8ff,#eef4ff);border-bottom:1px solid var(--line);padding:9px 12px}
+  .acct{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--ok-soft);border:1px solid #bfe6cf;border-radius:14px}
+  #mailTemplatePreview{display:none}
+  .template-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
+  .editor-panel{border:1px solid var(--line);border-radius:14px;background:var(--surface-soft);padding:12px;margin-top:10px}.editor-panel.open{display:block}
+
+  /* Outlook-ähnlicher Mail-Editor */
+  .mail-template-head{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+   .mail-template-head h2{margin:0}.mail-template-head .signature-toggle{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--ink);font-weight:750;font-size:14px;cursor:pointer;background:var(--surface-soft);border:1px solid var(--line);border-radius:999px;padding:8px 12px;user-select:none;-webkit-tap-highlight-color:transparent}.mail-template-head .signature-toggle:hover{border-color:var(--line-strong);background:#fff}.mail-template-head .signature-toggle input{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;flex:0 0 16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;box-shadow:none;outline:none;display:inline-grid;place-content:center;transition:background .12s ease,border-color .12s ease}.mail-template-head .signature-toggle input:focus,.mail-template-head .signature-toggle input:focus-visible{outline:none;box-shadow:none}.mail-template-head .signature-toggle input:checked{background:var(--accent);border-color:var(--accent)}.mail-template-head .signature-toggle input:checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}
+  .compose-shell{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:visible;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+  .compose-subject-row{display:flex;align-items:center;gap:14px;padding:14px 20px 10px;border-bottom:1px solid var(--line);background:#fff;border-radius:18px 18px 0 0}
+  .compose-subject-row label{margin:0;flex:0 0 auto;font-size:15px;font-weight:800;color:var(--muted)}
+  .compose-subject-row input{border:0;border-radius:0;padding:8px 0;font-size:16px;background:#fff;box-shadow:none}
+  .compose-subject-row input:focus{outline:none;border-color:transparent;box-shadow:none}
+  .rich-toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px;margin-bottom:8px;position:relative}
+  .rich-toolbar button{padding:5px 9px;font-size:13px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:none}
+  .rich-toolbar button:hover{background:var(--accent-soft);box-shadow:none}.rich-toolbar button:disabled,.rich-toolbar button.is-disabled{opacity:.38;color:#98a2b3;background:#fff!important;border-color:var(--line)!important;cursor:not-allowed;box-shadow:none!important}.rich-toolbar button:disabled:hover,.rich-toolbar button.is-disabled:hover{background:#fff!important}.rich-toolbar button.active{background:var(--accent);color:#fff;border-color:var(--accent)}.rich-toolbar select{width:auto;min-width:105px;padding:6px 8px;border-radius:8px;font-size:13px}
+  .rich-toolbar .ot-ic,.rich-toolbar .ot-let{width:33px;height:33px;padding:0;display:inline-flex;align-items:center;justify-content:center;color:#344054}
+  .rich-toolbar .ot-let{font-size:15px;font-weight:700}
+  .rich-toolbar .ot-ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .rich-toolbar .ot-sep{width:1px;height:22px;background:var(--line);margin:0 2px;padding:0;flex:0 0 auto}
+  .rich-toolbar .color-picker{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
+  .rich-toolbar .ot-clr{position:relative;width:42px;height:33px;border:1px solid var(--line);border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;gap:2px;font-weight:800;font-size:15px;color:#344054;cursor:pointer;padding:0 4px;box-shadow:none}
+  .rich-toolbar .ot-clr:hover,.rich-toolbar .color-picker.open .ot-clr{background:var(--accent-soft);border-color:#c8d8ff}
+  .rich-toolbar .ot-clr .color-letter{line-height:1;border-bottom:4px solid var(--current-color,#c00000);padding:0 1px}
+  .rich-toolbar .ot-clr .hilite-ico{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px}
+  .rich-toolbar .ot-clr .hilite-ico svg{width:20px;height:20px;fill:none;stroke:#344054;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+  .rich-toolbar .ot-clr .hilite-ico .hi-pen{fill:var(--current-color,#fff176)}
+  .rich-toolbar .ot-clr .hilite-ico .hi-strip{stroke:var(--current-color,#fff176);stroke-width:3.2}
+  .rich-toolbar .ot-clr .color-caret{font-size:10px;color:#667085;margin-left:1px}
+  .color-popover{display:none;position:absolute;left:0;top:39px;z-index:80;width:218px;background:#fff;border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 16px 45px rgba(16,24,40,.18);padding:10px}
+  .color-picker.open .color-popover{display:block}
+  .color-popover .palette-title{font-size:12px;font-weight:850;color:var(--muted);margin:2px 4px 8px}
+  .palette-grid{display:grid;grid-template-columns:repeat(6,26px);gap:8px;align-items:center}
+  .palette-swatch{width:26px!important;height:26px!important;min-width:26px!important;padding:0!important;border-radius:50%!important;border:1px solid rgba(16,24,40,.16)!important;background:var(--swatch)!important;box-shadow:none!important}
+  .palette-swatch:hover{outline:3px solid var(--accent-soft);outline-offset:1px}
+  .palette-swatch.no-color{background:#fff!important;position:relative}.palette-swatch.no-color:before{content:"";position:absolute;left:3px;right:3px;top:12px;border-top:2px solid #c0c7d2;transform:rotate(-45deg)}
+  .palette-more{margin-top:10px;width:100%;height:32px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:#667085;font-size:12px;font-weight:750;display:flex;align-items:center;justify-content:center;cursor:default}
+  .rich-toolbar select[data-cmd="fontName"]{min-width:130px} .rich-toolbar select[data-cmd="fontSize"]{min-width:62px}
+  .outlook-toolbar{border:0;border-bottom:1px solid #eef2f7;border-radius:0;margin:0;padding:12px 18px;min-height:66px;gap:8px;box-shadow:0 1px 0 rgba(0,0,0,.02);flex-wrap:nowrap;overflow-x:auto;background:#fbfcff}
+  .outlook-toolbar button{height:38px;min-width:38px;padding:0 9px;border:0;border-radius:10px;background:#fff;color:#475467;font-size:21px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+  .outlook-toolbar button:hover{background:var(--accent-soft)}
+  .outlook-toolbar button:active{background:#e9eefb}
+  .outlook-toolbar .ot-faded{color:#8a8a8a;font-weight:400}
+  .outlook-toolbar select{height:40px;border:1px solid var(--line);background:#fff;border-radius:12px;color:#344054;font-weight:700;font-size:15px;padding:0 12px;box-shadow:none}
+  .outlook-toolbar select:focus{outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .outlook-toolbar .ot-font{min-width:210px;max-width:250px}.outlook-toolbar .ot-size{min-width:64px;text-align:center}
+  .ot-sep{width:1px;height:30px;background:var(--line);margin:0 5px;flex:0 0 auto}
+  .ot-color{height:38px;min-width:38px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:0 6px;cursor:pointer;position:relative;color:#344054;font-weight:800;font-size:19px;flex:0 0 auto}
+  .ot-color:hover{background:var(--accent-soft)}.ot-color input[type="color"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+  .ot-color .underline{border-bottom:4px solid currentColor;line-height:1}.ot-color .mark{background:#fff176;border-bottom:4px solid #c9b800;padding:0 2px}
+  .ot-dd{font-size:20px;min-width:28px!important;padding:0!important;color:#666!important}.ot-icon-small{font-size:18px!important}.ot-more{display:none;position:absolute;right:14px;top:58px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px;z-index:30;gap:6px;max-width:360px}.ot-more.open{display:flex;flex-wrap:wrap}
+  .ot-more button{font-size:13px;min-width:auto;height:34px;border:1px solid var(--line);padding:0 10px}
+  .rich-editor{min-height:170px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;font-family:Calibri,Helvetica,Arial,sans-serif;font-size:11pt;line-height:1.45;overflow:auto}
+  .outlook-editor{border:0;border-radius:0 0 18px 18px;min-height:310px;padding:22px 26px;font-size:12pt;line-height:1.5;box-shadow:none}
+  .outlook-editor:focus{outline:none;box-shadow:inset 0 0 0 2px #dbeafe;border-color:transparent}
+  .inline-signature{margin-top:18px;border-radius:8px;padding:2px 4px;margin-left:-4px;display:inline-block;max-width:100%}.inline-signature:focus,.inline-signature:focus-within{outline:2px solid #dbeafe;background:#f8fbff}.signature-logo-separator{margin-top:12px;margin-bottom:6px;border-top:1px solid #000;width:245px;max-width:100%;height:0;line-height:0;font-size:0}.inline-logo{margin-top:0;border-radius:8px;display:block;width:max-content;max-width:100%;padding:0 4px}.inline-logo img{max-height:90px;border:0;display:block}.inline-sig-controls{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fbfcff,#f8fbff);padding:14px;margin-top:14px}.signature-options-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.signature-options-label{font-size:13px;font-weight:800;color:var(--ink);margin-right:2px}.logo-mode-buttons{display:flex;gap:8px;flex-wrap:wrap}.logo-mode-btn{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:800}.logo-mode-btn:hover{background:var(--accent-soft);border-color:#c8d8ff;box-shadow:none}.logo-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 7px 16px rgba(47,95,215,.18)}.reset-sig-btn{margin-left:auto}.inline-sig-controls .toolbar{margin-bottom:0}.sig-editor{min-height:250px}.sig-logo-block{margin-top:12px}.sig-editor-logo{margin-top:7px}.sig-editor-logo img{max-height:90px;border:0;display:block}
+
+  .signature-toggle input[type="checkbox"]:focus,.signature-toggle input[type="checkbox"]:focus-visible{outline:none!important;box-shadow:none!important}
+  .signature-toggle input[type="checkbox"]{transform:none!important}
+
+  .template-card{position:relative}.mail-template-head{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}.template-toggle-zone{display:flex;align-items:center;gap:10px;min-width:0;flex:1;cursor:pointer;border-radius:12px;padding:2px 4px;margin:-2px -4px}.template-toggle-zone:hover{background:transparent}.template-chevron{width:30px;height:30px;min-width:30px;padding:0;border-radius:8px;background:transparent;color:var(--accent);border:1px solid transparent;box-shadow:none;font-size:18px;display:inline-flex;align-items:center;justify-content:center;line-height:1}.template-chevron:hover,.template-toggle-zone:hover .template-chevron{background:var(--accent-soft);border-color:#d7e3ff;box-shadow:none}.mail-template-head .template-title{display:flex;flex-direction:column;gap:2px;min-width:0}.mail-template-head .template-title h2{margin:0}.mail-template-head .template-title .hint{margin:0}.template-editor-area{display:block}.template-card.template-collapsed .template-editor-area{display:none}.mail-template-head .signature-toggle{margin-left:0}.template-card.template-collapsed{padding-bottom:18px}.template-card.template-collapsed .mail-template-head{border-bottom:0;margin-bottom:0;padding-bottom:0}
+
+  .preview-card{padding:0;overflow:hidden}
+  .preview-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;padding:22px 22px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfcff)}
+  .preview-head h2{margin:0 0 3px}
+  .preview-head .hint{margin:0}
+  .mail-actionbar{margin:0;justify-content:flex-end;align-items:center}
+  .mail-actionbar #sendAll{min-width:160px}
+  #mailBanner{padding:14px 22px 0}
+  #mailList{display:flex;flex-direction:column;gap:6px;padding:10px 22px 22px}
+  .mailitem{border:1px solid var(--line);border-radius:13px;margin:0;overflow:hidden;background:#fff;box-shadow:none;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+  .mailitem:hover{border-color:var(--line-strong);box-shadow:0 6px 18px rgba(20,30,60,.05)}
+  .mailitem.done{border-color:#c9ead7;background:#fbfefc}
+  .mailitem.open{border-color:#b9cdfc;box-shadow:0 14px 34px rgba(47,95,215,.10);transform:translateY(-1px)}
+  .mailhead{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:6px 14px;background:#fff;cursor:default;min-height:44px}
+  .mailitem.done .mailhead{background:#fbfefc}
+  .mail-avatar{display:none}
+  .mail-main{min-width:0;display:grid;grid-template-columns:135px 95px minmax(0,1fr);align-items:center;column-gap:10px;overflow:hidden}.mailhead .who{display:block;font-weight:850;font-size:14.5px;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}.mailhead .parent-label{display:block;color:var(--muted);font-size:12.5px;font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mailhead .recipient-line{display:block;color:var(--muted);font-size:12.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:0}.mailhead .dot{display:none}
+  .mailhead .toggle{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:12.5px;font-weight:800;user-select:none;padding:6px 10px;border-radius:999px;background:var(--accent-soft);white-space:nowrap;border:1px solid #d7e3ff}
+  .mailhead .toggle:hover{background:#e3ecff}
+  .mailitem.open .toggle{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .status{display:flex;gap:8px;align-items:center;justify-content:flex-end;min-width:max-content}
+  .mailbody{display:none;padding:0 14px 14px;border-top:1px solid var(--line);font-size:13.5px;background:#fbfcff}
+  .mailitem.open .mailbody{display:block}
+  .mailbody .rich-toolbar{margin:14px 0 0!important}
+  .mail-compose-shell{margin-top:10px;border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+  .mail-compose-shell:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .mailbody-head{display:flex;gap:12px;align-items:center;padding:13px 16px 12px;color:var(--ink);border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap}
+  .mail-subject-label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:850;flex:0 0 auto}
+  .mail-subject-input{flex:1 1 320px;min-width:220px;border:0;background:transparent;box-shadow:none;padding:5px 0;font-size:15px;font-weight:800;color:var(--ink)}
+  .mail-subject-input:hover{background:#fff}
+  .mail-subject-input:focus{outline:none;box-shadow:none;background:#fff}
+  .mail-compose-shell .mail-editor{min-height:360px;margin:0;font-size:11pt;background:#fff;border:0;border-radius:0;padding:18px 18px 22px;box-shadow:none}
+  .mail-compose-shell .mail-editor:focus{outline:none;border-color:transparent;box-shadow:none}
+  .template-editor-area .rich-toolbar{margin:0 0 10px!important}
+  .template-compose-shell{margin-top:0}
+  .template-compose-shell .mail-editor{min-height:0;transition:none;overflow:visible}
+  .template-card.signature-off .template-compose-shell .mail-editor{min-height:0}
+  .template-compose-shell .mailbody-head{border-radius:16px 16px 0 0}
+  .mail-reset{margin-top:8px}.mail-reset a{font-size:12px;color:var(--err);text-decoration:none;font-weight:700}.mail-reset a:hover{text-decoration:underline}.mail-reset a.save-default{color:var(--accent);margin-left:16px}
+  #appToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(16,24,40,.28);z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none}
+
+  .sig-modal{position:fixed;inset:0;background:rgba(20,30,60,.48);display:none;align-items:center;justify-content:center;z-index:70;padding:18px}
+  .sig-modal.open{display:flex}
+  .sig-window{background:#fff;border-radius:18px;width:min(940px,96vw);max-height:92vh;overflow:auto;box-shadow:0 18px 60px rgba(20,30,60,.28);border:1px solid var(--line)}
+  .sig-window-head{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:14px 18px;display:flex;align-items:center;gap:12px;z-index:2}
+  .sig-window-head h2{margin:0}.sig-window-body{padding:16px 18px 20px}.sig-window-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+  .todo{background:#fff2ac;padding:0 3px;border-radius:4px}
+  #studentTable table{table-layout:fixed}
+  #studentTable th,#studentTable td{padding:7px 10px}
+  #studentTable input{padding:9px 12px;border-radius:11px}
+  @media (max-width:760px){
+    header{padding:22px 18px}.wrap{padding:18px 10px 70px}.tabs{padding:10px}
+    .card{padding:18px;border-radius:16px}.preview-head{flex-direction:column;padding:18px}.mail-actionbar{width:100%}.mail-actionbar #sendAll{width:100%}
+    .mailhead{grid-template-columns:1fr;align-items:flex-start}.mail-main{display:grid;grid-template-columns:1fr;row-gap:2px}.mailhead .recipient-line{white-space:normal}.status{grid-column:1;justify-content:flex-start;min-width:0;flex-wrap:wrap}
+    .slotrow{align-items:flex-start;flex-direction:column}.slottime{min-width:0}.compose-subject-row{align-items:flex-start;flex-direction:column;gap:2px}.outlook-editor{padding:18px;min-height:260px}
+    .mail-template-head{align-items:flex-start;flex-wrap:wrap}.template-toggle-zone{flex:1 1 100%}.mail-template-head .signature-toggle{margin-left:0}.logo-mode-buttons{width:100%}.logo-mode-btn{flex:1 1 auto}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>ElternTermine · Microsoft 365</h1>
+  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R5</span></p>
+</header>
+
+<nav class="tabs">
+  <div class="tab active" data-tab="students">1 · Schüler</div>
+  <div class="tab" data-tab="calendar">2 · Kalender</div>
+  <div class="tab" data-tab="mails">3 · E-Mails &amp; Versand</div>
+</nav>
+
+<div class="wrap">
+  <section class="panel active" id="panel-students">
+    <div class="card">
+      <h2>Schülerliste</h2>
+      <p class="hint">Trage jeden Schüler einmal mit den Kontakt-Mail-Adressen ein. Leere Felder werden beim Versand übersprungen.</p>
+      <div id="studentTable"></div>
+      <div class="toolbar" style="margin-top:14px">
+        <button id="addStudent">+ Schüler hinzufügen</button>
+        <div class="spacer"></div>
+        <button class="ghost sm" id="importCsvBtn">CSV importieren</button>
+        <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none">
+      </div>
+      <p class="hint">CSV-Format (mit oder ohne Kopfzeile): <code class="k">Name,Kontakt-Mail 1,Kontakt-Mail 2</code></p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-calendar">
+    <div class="card">
+      <h2>Zeitraster</h2>
+      <div class="row">
+        <div><label>Beginn</label><input type="time" id="cfgStart"></div>
+        <div><label>Ende</label><input type="time" id="cfgEnd"></div>
+        <div><label>Dauer pro Termin (Min.)</label><input type="number" id="cfgDur" min="5" max="120" step="5"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 style="margin:0 0 4px">Gesprächstage</h2>
+      <p class="hint" style="margin:0 0 12px">Klick die Tage an, an denen Gespräche stattfinden (Wochenende ist nicht wählbar).</p>
+      <div id="miniCal"></div>
+      <div style="max-width:430px;margin:0 auto"><div class="mail-reset" id="resetCalRow" style="display:none"><a href="#" id="resetCal" title="Alle gewählten Tage und zugewiesenen Termine löschen">↺ Kalender &amp; Termine zurücksetzen</a></div></div>
+    </div>
+    <div class="card">
+      <h2>Termine zuweisen</h2>
+      <p class="hint" id="assignSummary"></p>
+      <div id="calendarGrid"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-mails">
+    <div class="card">
+      <h2>Microsoft-Konto</h2>
+      <div id="authBox"></div>
+      <div id="loginBox" style="display:none"></div>
+      <div class="toolbar" style="margin-top:10px">
+        <button id="signIn">Mit Microsoft anmelden</button>
+        <button id="signOut" class="ghost sm" style="display:none">Abmelden</button>
+      </div>
+      <p class="hint" id="authHint">Beim ersten Mal meldest du dich einmal bei Microsoft an (Code eingeben + zustimmen). Danach läuft der Versand automatisch — ohne erneutes Anmelden.</p>
+      <label class="check"><input type="checkbox" id="combine"> Alle Kontakte in einer Mail zusammenfassen — reduziert die Anzahl der E-Mails</label>
+    </div>
+
+    <div class="card template-card" id="templateCard">
+      <div class="mail-template-head">
+        <div id="templateToggleZone" class="template-toggle-zone" role="button" tabindex="0" aria-label="Vorgefertigte E-Mail-Fassung ein- oder ausklappen">
+          <button id="toggleTemplate" class="template-chevron" type="button" aria-expanded="true" aria-label="Vorgefertigte E-Mail-Fassung ein- oder ausklappen">▾</button>
+          <div class="template-title">
+            <h2>Vorgefertigte E-Mail-Fassung</h2>
+            <p class="hint">Vorlage, Signatur und Logo für alle E-Mails.</p>
+          </div>
+        </div>
+        <label class="signature-toggle"><input type="checkbox" id="useSigTop"> Signature</label>
+      </div>
+      <div id="templateEditorArea" class="template-editor-area">
+      <div id="mailTemplatePreview"></div>
+      <div class="rich-toolbar" data-for="tplBodyEditor" aria-label="Formatierungsleiste">
+          <button class="ot-ic editor-undo" data-cmd="undo" title="Rückgängig" disabled><svg viewBox="0 0 20 20"><path d="M8 6H4v-4"/><path d="M4 6c2.3-2.6 6.3-3.2 9.1-1.3 3.3 2.2 3.9 6.9 1.2 9.8-2.1 2.2-5.4 2.8-8.1 1.5"/></svg></button>
+          <button class="ot-ic editor-redo" data-cmd="redo" title="Wiederholen" disabled><svg viewBox="0 0 20 20"><path d="M12 6h4v-4"/><path d="M16 6c-2.3-2.6-6.3-3.2-9.1-1.3-3.3 2.2-3.9 6.9-1.2 9.8 2.1 2.2 5.4 2.8 8.1 1.5"/></svg></button>
+          <span class="ot-sep"></span>
+          <select data-cmd="fontName" title="Schriftart">
+            <option value="Aptos">Aptos</option><option value="Calibri" selected>Calibri</option><option value="Arial">Arial</option><option value="Times New Roman">Times New Roman</option><option value="Tahoma">Tahoma</option><option value="Cambria">Cambria</option><option value="Georgia">Georgia</option><option value="Verdana">Verdana</option><option value="Courier New">Courier New</option><option value="Comic Sans MS">Comic Sans MS</option><option value="Century Gothic">Century Gothic</option>
+          </select>
+          <select data-cmd="fontSize" title="Schriftgröße"><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12" selected>12</option><option value="14">14</option><option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option><option value="28">28</option><option value="36">36</option><option value="48">48</option><option value="72">72</option></select>
+          <span class="ot-sep"></span>
+          <button class="ot-let" data-cmd="bold" title="Fett"><b>B</b></button>
+          <button class="ot-let" data-cmd="italic" title="Kursiv"><i>I</i></button>
+          <button class="ot-let" data-cmd="underline" title="Unterstrichen"><u>U</u></button>
+          <button class="ot-let" data-cmd="strikeThrough" title="Durchgestrichen"><s>S</s></button>
+          <span class="color-picker" data-kind="hilite">
+            <button type="button" class="ot-clr color-palette-button" data-action="palette" data-cmd="hiliteColor" title="Text markieren / hervorheben" aria-label="Text markieren / hervorheben" style="--current-color:#fff176"><span class="hilite-ico" aria-hidden="true"><svg viewBox="0 0 20 20"><path class="hi-pen" d="M12.8 3.6 16.4 7.2 9.9 13.7 5.4 14.6 6.3 10.1 Z"/><path class="hi-cap" d="M10.9 5.5 14.5 9.1"/><path class="hi-strip" d="M4 17.2H12"/></svg></span><span class="color-caret">▾</span></button>
+            <div class="color-popover" role="menu"><div class="palette-title">Hintergrund / Markierung</div><div class="palette-grid"><button type="button" class="palette-swatch no-color" data-palette-cmd="hiliteColor" data-palette-value="transparent" title="Keine Hervorhebung"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#4aa3f0" style="--swatch:#4aa3f0" title="#4aa3f0"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#6cc04a" style="--swatch:#6cc04a" title="#6cc04a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#ffd32a" style="--swatch:#ffd32a" title="#ffd32a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#ff8c1a" style="--swatch:#ff8c1a" title="#ff8c1a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#f15b55" style="--swatch:#f15b55" title="#f15b55"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#a95adf" style="--swatch:#a95adf" title="#a95adf"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b66c3" style="--swatch:#0b66c3" title="#0b66c3"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b8f3a" style="--swatch:#0b8f3a" title="#0b8f3a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#e5c51a" style="--swatch:#e5c51a" title="#e5c51a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#df6410" style="--swatch:#df6410" title="#df6410"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#d71e0f" style="--swatch:#d71e0f" title="#d71e0f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#7a3ea1" style="--swatch:#7a3ea1" title="#7a3ea1"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#1f4e79" style="--swatch:#1f4e79" title="#1f4e79"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b5d20" style="--swatch:#0b5d20" title="#0b5d20"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#c99612" style="--swatch:#c99612" title="#c99612"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#b8540f" style="--swatch:#b8540f" title="#b8540f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#8f1008" style="--swatch:#8f1008" title="#8f1008"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#5b2b7a" style="--swatch:#5b2b7a" title="#5b2b7a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#003366" style="--swatch:#003366" title="#003366"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#004b16" style="--swatch:#004b16" title="#004b16"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#a87512" style="--swatch:#a87512" title="#a87512"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#8d3f0a" style="--swatch:#8d3f0a" title="#8d3f0a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#5f0705" style="--swatch:#5f0705" title="#5f0705"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#3d214f" style="--swatch:#3d214f" title="#3d214f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#d0d0d0" style="--swatch:#d0d0d0" title="#d0d0d0"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#999999" style="--swatch:#999999" title="#999999"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#666666" style="--swatch:#666666" title="#666666"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#333333" style="--swatch:#333333" title="#333333"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#000000" style="--swatch:#000000" title="#000000"></button></div></div>
+          </span>
+          <span class="color-picker" data-kind="fore">
+            <button type="button" class="ot-clr color-palette-button" data-action="palette" data-cmd="foreColor" title="Schriftfarbe" aria-label="Schriftfarbe" style="--current-color:#c00000"><span class="color-letter">A</span><span class="color-caret">▾</span></button>
+            <div class="color-popover" role="menu"><div class="palette-title">Schriftfarbe</div><div class="palette-grid"><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#4aa3f0" style="--swatch:#4aa3f0" title="#4aa3f0"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#6cc04a" style="--swatch:#6cc04a" title="#6cc04a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#ffd32a" style="--swatch:#ffd32a" title="#ffd32a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#ff8c1a" style="--swatch:#ff8c1a" title="#ff8c1a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#f15b55" style="--swatch:#f15b55" title="#f15b55"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#a95adf" style="--swatch:#a95adf" title="#a95adf"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b66c3" style="--swatch:#0b66c3" title="#0b66c3"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b8f3a" style="--swatch:#0b8f3a" title="#0b8f3a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#e5c51a" style="--swatch:#e5c51a" title="#e5c51a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#df6410" style="--swatch:#df6410" title="#df6410"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#d71e0f" style="--swatch:#d71e0f" title="#d71e0f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#7a3ea1" style="--swatch:#7a3ea1" title="#7a3ea1"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#1f4e79" style="--swatch:#1f4e79" title="#1f4e79"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b5d20" style="--swatch:#0b5d20" title="#0b5d20"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#c99612" style="--swatch:#c99612" title="#c99612"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#b8540f" style="--swatch:#b8540f" title="#b8540f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#8f1008" style="--swatch:#8f1008" title="#8f1008"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#5b2b7a" style="--swatch:#5b2b7a" title="#5b2b7a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#003366" style="--swatch:#003366" title="#003366"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#004b16" style="--swatch:#004b16" title="#004b16"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#a87512" style="--swatch:#a87512" title="#a87512"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#8d3f0a" style="--swatch:#8d3f0a" title="#8d3f0a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#5f0705" style="--swatch:#5f0705" title="#5f0705"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#3d214f" style="--swatch:#3d214f" title="#3d214f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#d0d0d0" style="--swatch:#d0d0d0" title="#d0d0d0"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#999999" style="--swatch:#999999" title="#999999"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#666666" style="--swatch:#666666" title="#666666"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#333333" style="--swatch:#333333" title="#333333"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#000000" style="--swatch:#000000" title="#000000"></button></div></div>
+          </span>
+          <button class="ot-ic" data-cmd="removeFormat" title="Formatierung löschen"><svg viewBox="0 0 20 20"><path d="M6.2 16.5 2.8 13.1a1.6 1.6 0 0 1 0-2.3l7.7-7.7a1.6 1.6 0 0 1 2.3 0l4.4 4.4a1.6 1.6 0 0 1 0 2.3l-6.4 6.4z"/><path d="M17.5 16.5H9"/><path d="m4.7 9 6 6"/></svg></button>
+          <span class="ot-sep"></span>
+          <button class="ot-ic" data-cmd="insertUnorderedList" title="Aufzählung"><svg viewBox="0 0 20 20"><circle cx="4" cy="5.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="4" cy="10" r="1.3" fill="currentColor" stroke="none"/><circle cx="4" cy="14.5" r="1.3" fill="currentColor" stroke="none"/><path d="M8 5.5h9M8 10h9M8 14.5h9"/></svg></button>
+          <button class="ot-ic" data-cmd="insertOrderedList" title="Nummerierung"><svg viewBox="0 0 20 20"><path d="M8 5.5h9M8 10h9M8 14.5h9"/><text x="1.5" y="7.5" font-size="6.5" fill="currentColor" stroke="none">1</text><text x="1.5" y="12" font-size="6.5" fill="currentColor" stroke="none">2</text><text x="1.5" y="16.5" font-size="6.5" fill="currentColor" stroke="none">3</text></svg></button>
+          <button class="ot-ic" data-cmd="outdent" title="Einzug verkleinern"><svg viewBox="0 0 20 20"><path d="M4 4h12M9 8h7M9 12h7M4 16h12"/><path d="M6 8 3.5 10 6 12"/></svg></button>
+          <button class="ot-ic" data-cmd="indent" title="Einzug vergrößern"><svg viewBox="0 0 20 20"><path d="M4 4h12M9 8h7M9 12h7M4 16h12"/><path d="M4 8 6.5 10 4 12"/></svg></button>
+          <span class="ot-sep"></span>
+          <button class="ot-ic" data-cmd="justifyLeft" title="Linksbündig"><svg viewBox="0 0 20 20"><path d="M4 4h12M4 8h8M4 12h12M4 16h8"/></svg></button>
+          <button class="ot-ic" data-cmd="justifyCenter" title="Zentriert"><svg viewBox="0 0 20 20"><path d="M4 4h12M6 8h8M4 12h12M6 16h8"/></svg></button>
+          <button class="ot-ic" data-cmd="justifyRight" title="Rechtsbündig"><svg viewBox="0 0 20 20"><path d="M4 4h12M8 8h8M4 12h12M8 16h8"/></svg></button>
+      </div>
+      <div class="mail-compose-shell template-compose-shell">
+        <div class="mailbody-head">
+          <label class="mail-subject-label" for="tplSubject">Betreff</label>
+          <input id="tplSubject" class="mail-subject-input" title="Betreff bearbeiten">
+        </div>
+        <div id="tplBodyEditor" class="rich-editor mail-editor template-mail-editor" contenteditable="true" spellcheck="true"></div>
+      </div>
+      <div class="mail-reset" id="resetTplBodyRow" style="display:none"><a href="#" id="resetTplBody">↺ Text auf Standard zurücksetzen</a><a href="#" id="saveTplBody" class="save-default" title="Den aktuellen Text + Betreff als deinen persönlichen Standard festlegen">✓ als meinen Standard speichern</a></div>
+      <p class="hint">Der Text ist sofort bearbeitbar. Platzhalter bleiben im Text stehen: <code class="k">{DATE}</code> Datum (frz.), <code class="k">{TIME}</code> Uhrzeit, <code class="k">{ENFANT}</code> Schülername.</p>
+      <div id="sigMissing" style="margin-top:12px"></div>
+      <div id="inlineSignatureControls" class="inline-sig-controls">
+        <div class="signature-options-row">
+          <span class="signature-options-label">Logo in Signatur:</span>
+          <div id="logoModeButtons" class="logo-mode-buttons" role="group" aria-label="Logo in Signatur auswählen">
+            <button type="button" class="logo-mode-btn" data-logo-mode="unesco">UNESCO-Logo</button>
+            <button type="button" class="logo-mode-btn" data-logo-mode="custom">Eigenes Logo hochladen</button>
+            <button type="button" class="logo-mode-btn" data-logo-mode="none">Kein Logo</button>
+          </div>
+          <input type="file" id="logoFile" accept="image/*" style="display:none">
+        </div>
+        <p class="hint">Text und Signatur sind im gleichen Feld bearbeitbar. Mit den Logo-Schaltern wählst du: UNESCO-Logo, eigenes Logo oder kein Logo.</p>
+        <div id="sigStatus" class="hint"></div>
+      </div>
+      <div class="mail-reset" id="resetSigRow" style="display:none"><a href="#" id="defaultSigBtn">↺ Signatur zurücksetzen</a><a href="#" id="saveSig" class="save-default" title="Die aktuelle Signatur (und Logo-Auswahl) als deinen persönlichen Standard festlegen">✓ als meinen Standard speichern</a></div>
+      </div>
+    </div>
+
+    <div class="card preview-card">
+      <div class="preview-head">
+        <div>
+          <h2>Vorschau &amp; Versand</h2>
+          <p class="hint">Öffne nur die E-Mail, die du kontrollieren oder anpassen möchtest. Änderungen werden automatisch gespeichert.</p>
+        </div>
+        <div class="toolbar mail-actionbar">
+          <button id="resetSent" class="ghost sm" style="display:none">Versand-Status zurücksetzen</button>
+          <button id="sendAll">Alle senden …</button>
+        </div>
+      </div>
+      <div id="mailBanner"></div>
+      <div id="mailList"></div>
+    </div>
+  </section>
+</div>
+
+<div id="confirmOverlay" style="position:fixed;inset:0;background:rgba(20,30,60,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px">
+  <div style="background:#fff;border-radius:14px;max-width:440px;width:100%;padding:22px">
+    <h3 style="font-size:17px;margin:0 0 8px">Wirklich senden?</h3>
+    <p id="confirmText"></p>
+    <p class="hint" id="confirmDetail"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px">
+      <button class="ghost" id="confirmCancel">Abbrechen</button>
+      <button id="confirmGo">Ja, jetzt senden</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const LS_KEY = "elterntermine_graph_v1";
+const APP_VERSION = 47;
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function escHtml(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+const STUDENT_NAME_DISPLAY_LIMIT = 38;
+function displayStudentName(name, limit=STUDENT_NAME_DISPLAY_LIMIT){
+  const raw = String(name || "").trim() || "(ohne Name)";
+  if(raw.length <= limit) return raw;
+  const cut = raw.slice(0, Math.max(1, limit - 1));
+  const lastSpace = cut.lastIndexOf(" ");
+  const base = lastSpace >= Math.floor(limit * 0.55) ? cut.slice(0, lastSpace) : cut;
+  return base.replace(/[\s,.;:–—-]+$/g, "") + "…";
+}
+function stripBold(text){ return (text||"").replace(/\*\*(.+?)\*\*/g,"$1"); }
+function htmlFromPlain(s){ return escHtml(s||"").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>"); }
+function defaultBodyText(){ return "Chers parents,\n\n"+
+"Je vous confirme notre rendez-vous individuel au sujet du troisième trimestre et du bilan intermédiaire de votre enfant {ENFANT}, fixé au {DATE} à {TIME}.\n"+
+"L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.\n\n"+
+"Je vous remercie d’avance pour votre présence."; }
+function defaultBodyHtml(){
+  return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.45;color:#000">'+
+    'Chers parents,<br><br>'+ 
+    'Je vous confirme notre rendez-vous individuel au sujet du troisième trimestre et du bilan intermédiaire de votre enfant {ENFANT}, fixé au {DATE} à {TIME}.<br>'+ 
+    'L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.<br><br>'+ 
+    'Je vous remercie d’avance pour votre présence.'+
+  '</div>';
+}
+function plainDefaultSignature(){ return "Bien cordialement,\nJoël Schartz\n\nInstituteur école fondamentale de Strassen\nBâtiment Hueflach – Salle HP13\n11, Rue du Cimetière\nL-8018 Strassen\njoel.schartz@education.lu\nTél: 31 02 62 508"; }
+function defaultSignatureTemplate(){ return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#000">'+
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.2;color:#000">Bien cordialement,</div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.2;color:#000">Joël Schartz</div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:7pt;line-height:1.15">&nbsp;</div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#1f4e79;font-style:italic;font-size:9pt;line-height:1.15">Instituteur école fondamentale de Strassen</div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#1f4e79;font-size:8pt;line-height:1.15">Bâtiment Hueflach – Salle HP13</div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#1f4e79;font-size:8pt;line-height:1.15">11, Rue du Cimetière</div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#1f4e79;font-size:8pt;line-height:1.15">L-8018 Strassen</div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:8pt;line-height:1.15"><a href="mailto:joel.schartz@education.lu" style="color:#0563c1;text-decoration:underline">joel.schartz@education.lu</a></div>'+ 
+'<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#1f4e79;font-size:8pt;line-height:1.15">Tél: 31 02 62 508</div>'+ 
+'</div>'; }
+function defaultState(){
+  return {
+    appVersion: APP_VERSION,
+    students: [],
+    config: { dates: [], start:"14:00", end:"16:00", durationMin:20 },
+    assignments: {}, sent: [], subjectOverrides: {},
+    options: { combine:false, useSig:true, includeLogo:true, logoMode:"unesco", templateCollapsed:false },
+    graph: { clientId:"", tenant:"organizations" },
+    account: { name:"", email:"" },
+    // Vom Nutzer selbst festgelegter Standard (überschreibt den Werks-Standard beim Zurücksetzen).
+    // null = noch keiner gespeichert -> Werks-Standard gilt.
+    userDefaults: null,
+    template: {
+      v: 16,
+      subject: "Rendez-vous individuel — bilan du 3e trimestre",
+      body: defaultBodyText(), bodyHtml: defaultBodyHtml(),
+      signature: plainDefaultSignature(),
+      signatureHtml: defaultSignatureTemplate(), logo: null
+    }
+  };
+}
+let state = loadState();
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY); const d = defaultState();
+    if(!raw) return d;
+    const s = JSON.parse(raw);
+    const oldVersion = (s.template && Number(s.template.v)) || 1;
+    const tpl = Object.assign({}, d.template, s.template||{});
+    if(!tpl.bodyHtml) tpl.bodyHtml = htmlFromPlain(tpl.body || d.template.body);
+    const needsSignatureWindowMigration = oldVersion < 4 || !tpl.signatureHtml || /\{SIG_/i.test(tpl.signatureHtml||"");
+    if(needsSignatureWindowMigration){
+      tpl.signatureHtml = defaultSignatureTemplate();
+      tpl.signature = plainDefaultSignature();
+    }
+    const sigTextForMigration = (tpl.signature || "") + " " + (tpl.signatureHtml || "");
+    if((s.appVersion||0) < 16 && /compléter|Nom à compléter|Fonction à compléter|salle à compléter|Téléphone à compléter/i.test(sigTextForMigration)){
+      tpl.signatureHtml = defaultSignatureTemplate();
+      tpl.signature = plainDefaultSignature();
+    }
+    tpl.signatureHtml = stripSignatureSeparators(tpl.signatureHtml || "");
+    const signatureText = textFromHtml(tpl.signatureHtml || "") || (tpl.signature || "");
+    const looksLikeJoelStandard = /Jo[eë]l Schartz/i.test(signatureText) && /Instituteur école fondamentale de Strassen/i.test(signatureText) && /Bâtiment Hueflach/i.test(signatureText) && /Tél:\s*31 02 62 508/i.test(signatureText);
+    if((s.appVersion||0) < 23 && looksLikeJoelStandard){
+      tpl.signatureHtml = defaultSignatureTemplate();
+      tpl.signature = plainDefaultSignature();
+    }
+    const bodyTextForMigration = textFromHtml(tpl.bodyHtml || "") || (tpl.body || "");
+    const looksLikeStandardBody = /Chers parents/i.test(bodyTextForMigration) && /rendez-vous individuel au sujet du troisi[eè]me trimestre/i.test(bodyTextForMigration) && /bilan interm[eé]diaire/i.test(bodyTextForMigration) && /Je vous remercie d[’']avance pour votre pr[eé]sence/i.test(bodyTextForMigration);
+    if((s.appVersion||0) < 41 && looksLikeStandardBody){
+      tpl.bodyHtml = defaultBodyHtml();
+      tpl.body = defaultBodyText();
+    }
+    delete tpl.sigFields;
+    tpl.v = 16;
+    const options = Object.assign({}, d.options, s.options||{});
+    if(!options.logoMode){ options.logoMode = (options.includeLogo===false ? "none" : "unesco"); }
+    if(needsSignatureWindowMigration){ options.useSig = true; options.includeLogo = true; options.logoMode = "unesco"; }
+    // v13: Signatur-Logo als feste Auswahl: UNESCO / Eigenes Logo / Kein Logo.
+    if((s.appVersion||0) < 13 && options.logoMode !== "custom"){ options.includeLogo = true; options.logoMode = "unesco"; }
+    return {
+      appVersion: APP_VERSION,
+      students: Array.isArray(s.students)? s.students : [],
+      config: Object.assign(d.config, s.config||{}),
+      assignments: s.assignments||{},
+      overrides: s.overrides||{},
+      subjectOverrides: s.subjectOverrides||{},
+      sent: Array.isArray(s.sent)? s.sent : [],
+      options,
+      graph: Object.assign(d.graph, s.graph||{}),
+      account: Object.assign(d.account, s.account||{}),
+      userDefaults: s.userDefaults || null,
+      template: tpl
+    };
+  }catch(e){ return defaultState(); }
+}
+function saveState(){ state.appVersion = APP_VERSION; try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+
+function timeToMin(t){ const [h,m]=t.split(":").map(Number); return h*60+m; }
+function minToTime(x){ return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0"); }
+function slots(){ const a=timeToMin(state.config.start), b=timeToMin(state.config.end), d=Number(state.config.durationMin)||0; const out=[]; if(d>0){ for(let t=a;t+d<=b;t+=d) out.push({start:minToTime(t), end:minToTime(t+d)}); } return out; }
+function formatFrenchDate(iso){ const d=new Date(iso+"T00:00:00"); let s=new Intl.DateTimeFormat("fr-FR",{weekday:"long",day:"numeric",month:"long"}).format(d); if(d.getDate()===1) s=s.replace(/\b1\b/,"1er"); return s; }
+function formatFrenchTime(hhmm){ const [h,m]=hhmm.split(":"); return parseInt(h,10)+"h"+m.padStart(2,"0"); }
+function fillPlain(tpl,map){ return Object.keys(map).reduce((s,k)=>s.split("{"+k+"}").join(map[k]), tpl||""); }
+function fillHtml(tpl,map){ const safe={}; Object.keys(map).forEach(k=>safe[k]=escHtml(map[k])); return fillPlain(tpl||"", safe); }
+function sanitizeHtml(html){
+  const doc = new DOMParser().parseFromString("<div>"+(html||"")+"</div>", "text/html");
+  doc.querySelectorAll("script,style,meta,link,head,title,iframe,object,embed").forEach(n=>n.remove());
+  doc.querySelectorAll("*").forEach(n=>{
+    [...n.attributes].forEach(a=>{
+      const name=a.name.toLowerCase(), val=a.value||"";
+      if(name.startsWith("on")) n.removeAttribute(a.name);
+      if(name==="href" && !/^(https?:|mailto:|#)/i.test(val)) n.removeAttribute(a.name);
+      if(name==="src" && !/^(data:image\/|cid:|https?:)/i.test(val)) n.removeAttribute(a.name);
+    });
+  });
+  return doc.body.firstChild.innerHTML;
+}
+function textFromHtml(html){ const d=document.createElement("div"); d.innerHTML=html||""; return d.innerText||""; }
+function stripSignatureSeparators(html){
+  const d=document.createElement("div"); d.innerHTML=html||"";
+  d.querySelectorAll('[data-signature-separator="true"]').forEach(n=>n.remove());
+  d.querySelectorAll("div,span,p").forEach(n=>{
+    const st=(n.getAttribute("style")||"").toLowerCase().replace(/\s+/g,"");
+    const txt=(n.textContent||"").trim();
+    if(!txt && (st.includes("border-top") || st.includes("border-bottom")) && (st.includes("height:0") || st.includes("line-height:0") || (st.includes("width:520") || st.includes("width:490") || st.includes("width:500") || st.includes("width:245") || st.includes("width:122") || st.includes("width:210")))){ n.remove(); }
+  });
+  return sanitizeHtml(d.innerHTML);
+}
+function signatureSeparatorHtml(){
+  return '<div style="margin-top:12px;margin-bottom:6px;border-top:1px solid #000;width:245px;max-width:100%;height:0;line-height:0;font-size:0"></div>';
+}
+function logoIsVisible(){ return state.options.useSig!==false && state.options.logoMode!=="none" && state.options.includeLogo!==false; }
+function composeLogoHtml(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl){ return '<div class="signature-logo-separator" data-signature-separator="true" contenteditable="false" aria-hidden="true"></div><div class="inline-logo" data-logo-inline="true" contenteditable="false" title="Logo"><img src="'+lg.dataUrl+'" alt=""></div>'; } return ''; }
+function composeEditorHtml(){
+  let html = sanitizeHtml(state.template.bodyHtml || defaultBodyHtml());
+  if(state.options.useSig!==false){
+    const sig = stripSignatureSeparators(state.template.signatureHtml || defaultSignatureTemplate());
+    html += '<div class="editor-signature-spacer" data-signature-spacer="true"><br></div>';
+    html += '<div class="inline-signature" data-signature-inline="true" title="Signatur">'+sig+'</div>';
+    html += composeLogoHtml();
+  }
+  return html;
+}
+function refreshComposeEditor(force=false){ const body=document.getElementById("tplBodyEditor"); if(!body) return; if(!force && document.activeElement===body) return; body.innerHTML=composeEditorHtml(); resetEditorHistory(body); scheduleToolbarStateUpdate(body); }
+function splitComposeEditorHtml(html){
+  const d=document.createElement("div"); d.innerHTML=html||"";
+  const sig=d.querySelector('[data-signature-inline="true"]');
+  d.querySelectorAll('[data-logo-inline="true"],[data-signature-separator="true"]').forEach(n=>n.remove());
+  let sigHtml=null;
+  if(sig){
+    // Nur der Inhalt der Signatur wird gespeichert. Styles, die versehentlich am
+    // äußeren Signatur-Container oder an einem umgebenden Span hängen, werden
+    // bewusst nicht als Signatur-Standard übernommen.
+    sigHtml=stripSignatureSeparators(sig.innerHTML);
+    const spacer=d.querySelector('[data-signature-spacer="true"]'); if(spacer) spacer.remove();
+    let removeTarget=sig;
+    // Wenn die Signatur durch eine Farbmarkierung in einen äußeren Span gewickelt wurde,
+    // diesen leeren Wrapper beim Herauslösen ebenfalls entfernen.
+    const parent=sig.parentElement;
+    if(parent && parent!==d && parent.children.length===1 && normalizeTextForCompare(parent.textContent)===normalizeTextForCompare(sig.textContent)){
+      removeTarget=parent;
+    }
+    removeTarget.remove();
+  }
+  return {bodyHtml:cleanBodyHtmlAfterSignatureRemoval(d.innerHTML), signatureHtml:sigHtml};
+}
+function removeSignatureTailFromBodyHtml(html){
+  const root=document.createElement("div"); root.innerHTML=html||"";
+  let found=null;
+  const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  while(walker.nextNode()){
+    const n=walker.currentNode;
+    if(/Bien cordialement/i.test(n.nodeValue||"")){ found=n; break; }
+  }
+  if(!found) return sanitizeHtml(root.innerHTML);
+  let node=found;
+  if(node.nodeType===3){
+    const idx=(node.nodeValue||"").search(/Bien cordialement/i);
+    if(idx>0) node.nodeValue=node.nodeValue.slice(0,idx).replace(/[\s\u00a0]+$/g,"");
+    else node=node.parentNode;
+  }
+  while(node && node!==root){
+    let cur=node;
+    const parent=cur.parentNode;
+    if(!parent) break;
+    while(cur.nextSibling) parent.removeChild(cur.nextSibling);
+    if(cur.nodeType!==3 || !(cur.nodeValue||"").trim()) parent.removeChild(cur);
+    node=parent;
+  }
+  return sanitizeHtml(root.innerHTML);
+}
+function normalizeTextForCompare(s){ return String(s||"").replace(/ /g," ").replace(/\s+/g," ").trim(); }
+function resetBodyFormattingIfStillDefault(){
+  const txt=normalizeTextForCompare(textFromHtml(state.template.bodyHtml||""));
+  if(txt && txt===normalizeTextForCompare(defaultBodyText())){
+    state.template.bodyHtml=defaultBodyHtml();
+    state.template.body=defaultBodyText();
+  }
+}
+// Liest den aktuellen Text/Signatur-Stand bevorzugt direkt aus dem Editor (Live-DOM),
+// damit die Reset-Links sofort bei jeder Änderung reagieren – unabhängig davon,
+// ob der Commit-/Speichervorgang schon durchgelaufen ist.
+function liveTemplateParts(){
+  const ed=document.getElementById("tplBodyEditor");
+  if(ed){ try{ return splitComposeEditorHtml(ed.innerHTML); }catch(e){} }
+  return { bodyHtml: state.template.bodyHtml||"", signatureHtml: state.template.signatureHtml||"" };
+}
+function normHtmlForCompare(s){ return String(s||"").replace(/\s+/g," ").replace(/>\s+</g,"><").trim().toLowerCase(); }
+// Vergleicht zwei HTML-Schnipsel inhaltlich: beide werden vom Browser gleich
+// normalisiert (Attribut-Reihenfolge/Anführungszeichen), leere Formatierungs-Hüllen
+// (z. B. nach Fett aus/an) werden entfernt, damit "wieder im Original" zuverlässig erkannt wird.
+function htmlEqualsNormalized(a,b){
+  const prep=(html)=>{
+    const d=document.createElement("div"); d.innerHTML=html||"";
+    let prev;
+    do{ prev=d.innerHTML;
+      // leere Formatierungs-Hüllen entfernen
+      d.querySelectorAll("b,i,u,s,strong,em,span,font").forEach(n=>{ if(!n.textContent.trim() && !n.querySelector("img")) n.remove(); });
+      // span/font ohne echte Formatierung auflösen (Artefakte z. B. nach "Hervorhebung entfernen")
+      d.querySelectorAll("span,font").forEach(n=>{
+        const style=(n.getAttribute("style")||"").replace(/[\s;]/g,"");
+        const cls=(n.getAttribute("class")||"").trim();
+        const attrs=n.getAttribute("color")||n.getAttribute("face")||n.getAttribute("size");
+        if(!style && !cls && !attrs){ while(n.firstChild) n.parentNode.insertBefore(n.firstChild, n); n.remove(); }
+      });
+    } while(d.innerHTML!==prev);
+    return normHtmlForCompare(d.innerHTML);
+  };
+  return prep(a)===prep(b);
+}
+let mailDefaultPreviewByOvk={};
+// "Wirksamer Standard" = der vom Nutzer gespeicherte Standard, sonst der Werks-Standard.
+function effDefaultBodyHtml(){ return (state.userDefaults && state.userDefaults.bodyHtml) || defaultBodyHtml(); }
+function effDefaultBodyText(){ return (state.userDefaults && state.userDefaults.bodyHtml) ? textFromHtml(state.userDefaults.bodyHtml) : defaultBodyText(); }
+function effDefaultSubject(){ return (state.userDefaults && state.userDefaults.subject!=null) ? state.userDefaults.subject : defaultState().template.subject; }
+function effDefaultSignatureHtml(){ return (state.userDefaults && state.userDefaults.signatureHtml) || defaultSignatureTemplate(); }
+function effDefaultSignatureText(){ return (state.userDefaults && state.userDefaults.signatureHtml) ? textFromHtml(state.userDefaults.signatureHtml) : plainDefaultSignature(); }
+function effDefaultLogoMode(){ return (state.userDefaults && state.userDefaults.logoMode) || "unesco"; }
+function effDefaultIncludeLogo(){ return state.userDefaults ? (state.userDefaults.includeLogo!==false) : true; }
+function hasUserBodyDefault(){ return !!(state.userDefaults && state.userDefaults.bodyHtml); }
+function hasUserSignatureDefault(){ return !!(state.userDefaults && state.userDefaults.signatureHtml); }
+function templateBodyIsDefault(){
+  // Als "Standard" gilt nur, wenn Text/Betreff UND Formatierung exakt dem wirksamen
+  // Standard (eigener gespeicherter, sonst Werks-Standard) entsprechen.
+  const parts=liveTemplateParts();
+  const subjEl=document.getElementById("tplSubject");
+  const subj=subjEl ? subjEl.value : (state.template.subject||"");
+  const htmlMatch=htmlEqualsNormalized(parts.bodyHtml, effDefaultBodyHtml());
+  return htmlMatch && subj===effDefaultSubject();
+}
+function templateSignatureIsDefault(){
+  const parts=liveTemplateParts();
+  let sig=parts.signatureHtml;
+  if(sig===null || sig===undefined) sig=state.template.signatureHtml||"";
+  return htmlEqualsNormalized(sig, effDefaultSignatureHtml());
+}
+function updateTplResetVisibility(){
+  const row=document.getElementById("resetTplBodyRow");
+  if(row) row.style.display = templateBodyIsDefault() ? "none" : "";
+  const sigRow=document.getElementById("resetSigRow");
+  if(sigRow) sigRow.style.display = templateSignatureIsDefault() ? "none" : "";
+}
+function showToast(msg){
+  let t=document.getElementById("appToast");
+  if(!t){ t=document.createElement("div"); t.id="appToast"; document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity="1";
+  clearTimeout(t._hideTimer); t._hideTimer=setTimeout(()=>{ t.style.opacity="0"; },1900);
+}
+function unwrapNodeKeepChildren(node){
+  const parent=node && node.parentNode; if(!parent) return;
+  while(node.firstChild) parent.insertBefore(node.firstChild,node);
+  parent.removeChild(node);
+}
+function pruneEmptyInlineArtifacts(root){
+  if(!root || !root.querySelectorAll) return;
+  let changed=true;
+  while(changed){
+    changed=false;
+    Array.from(root.querySelectorAll('span,font,b,i,u,s,strong,em')).reverse().forEach(n=>{
+      const hasMedia=n.querySelector && n.querySelector('img,br');
+      const txt=(n.textContent||'').replace(/\u00a0/g,'').trim();
+      if(!hasMedia && !txt){ n.remove(); changed=true; return; }
+      if(n.hasAttribute('data-clean-style-temp')){ n.removeAttribute('data-clean-style-temp'); unwrapNodeKeepChildren(n); changed=true; }
+    });
+    Array.from(root.querySelectorAll('div,p')).reverse().forEach(n=>{
+      const hasMedia=n.querySelector && n.querySelector('img,br,[data-signature-inline],[data-logo-inline]');
+      const txt=(n.textContent||'').replace(/\u00a0/g,'').trim();
+      if(!hasMedia && !txt && !(n.getAttribute('style')||'').trim()){ n.remove(); changed=true; }
+    });
+  }
+}
+function cleanBodyHtmlAfterSignatureRemoval(html){
+  const d=document.createElement('div'); d.innerHTML=html||'';
+  d.querySelectorAll('[data-clean-style-temp]').forEach(unwrapNodeKeepChildren);
+  pruneEmptyInlineArtifacts(d);
+  return sanitizeHtml(d.innerHTML);
+}
+function forceTemplateEditorHtml(html){
+  const editor=document.getElementById('tplBodyEditor');
+  if(!editor) return;
+  editor.innerHTML=html;
+  activeEditor=null; savedRange=null; toolbarBusy=false;
+  try{ const sel=window.getSelection(); if(sel) sel.removeAllRanges(); }catch(_){}
+  scheduleToolbarStateUpdate(editor);
+}
+function sigMap(base){ return Object.assign({}, base||{}); }
+function buildHtml(map, forPreview){
+  const fullMap = sigMap(map);
+  let inner = sanitizeHtml(fillHtml(state.template.bodyHtml || htmlFromPlain(state.template.body), fullMap)).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+  if(state.options.useSig!==false){
+    let sigHtml = (state.template.signatureHtml||"").trim();
+    if(!sigHtml){ sigHtml = htmlFromPlain(state.template.signature||""); }
+    sigHtml = stripSignatureSeparators(sanitizeHtml(fillHtml(sigHtml, fullMap))).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+    if(sigHtml) inner += "<br><br>" + sigHtml;
+    const logo=state.template.logo;
+    if(logoIsVisible() && logo && logo.dataUrl){
+      const src = forPreview ? logo.dataUrl : "cid:siglogo";
+      inner += signatureSeparatorHtml();
+      inner += '<div style="margin-top:0"><img src="'+src+'" style="max-height:90px;border:0;display:block" alt=""></div>';
+    }
+  }
+  return '<div style="font-family:Calibri,Helvetica,Arial,sans-serif;font-size:11pt;color:#000">'+inner+'</div>';
+}
+
+/* Tabs */
+document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active")); t.classList.add("active"); document.getElementById("panel-"+t.dataset.tab).classList.add("active"); if(t.dataset.tab==="calendar") renderCalendar(); if(t.dataset.tab==="mails") renderMails(); }; });
+
+/* Students */
+function contactEmailKeys(){ return ["email1","email2"]; }
+function contactEmails(stu){ return contactEmailKeys().map(k=>(stu&&stu[k]||"").trim()).filter(Boolean).slice(0,2); }
+function renderStudents(){
+  const wrap=document.getElementById("studentTable");
+  if(state.students.length===0){ wrap.innerHTML='<p class="muted">Noch keine Schüler. Klick auf „+ Schüler hinzufügen".</p>'; return; }
+  let html='<table class="student-grid"><thead><tr><th style="width:32%">Schüler</th><th style="width:31%">Kontakt-Mail 1</th><th style="width:31%">Kontakt-Mail 2</th><th style="width:54px"></th></tr></thead><tbody>';
+  state.students.forEach(s=>{
+    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Name"></td><td><input class="st-e1" value="${esc(s.email1)}" placeholder="kontakt1@..."></td><td><input class="st-e2" value="${esc(s.email2)}" placeholder="kontakt2@..."></td><td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
+  });
+  html+='</tbody></table>'; wrap.innerHTML=html;
+  wrap.querySelectorAll("tr[data-id]").forEach(tr=>{
+    const id=tr.dataset.id; const st=state.students.find(x=>x.id===id);
+    tr.querySelector(".st-name").oninput=e=>{ st.name=e.target.value; saveState(); };
+    ["email1","email2"].forEach((key,idx)=>{
+      const inp=tr.querySelector(".st-e"+(idx+1));
+      if(inp) inp.oninput=e=>{ st[key]=e.target.value; saveState(); };
+    });
+    tr.querySelector(".st-del").onclick=()=>{ state.students=state.students.filter(x=>x.id!==id); Object.keys(state.assignments).forEach(k=>{ if(state.assignments[k]===id) delete state.assignments[k]; }); saveState(); renderStudents(); };
+  });
+}
+document.getElementById("addStudent").onclick=()=>{ state.students.push({id:uid(),name:"",email1:"",email2:""}); saveState(); renderStudents(); };
+document.getElementById("importCsvBtn").onclick=()=>document.getElementById("csvFile").click();
+document.getElementById("csvFile").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ String(r.result).split(/\r?\n/).filter(l=>l.trim()).forEach((line,i)=>{ const c=line.split(/[,;\t]/).map(x=>x.trim()); if(i===0 && /name|schüler|eleve|élève/i.test(c[0])) return; if(!c[0]) return; state.students.push({id:uid(),name:c[0],email1:c[1]||"",email2:c[2]||""}); }); saveState(); renderStudents(); }; r.readAsText(f); e.target.value=""; };
+
+/* Calendar */
+const $start=document.getElementById("cfgStart"), $end=document.getElementById("cfgEnd"), $dur=document.getElementById("cfgDur");
+function initCfgInputs(){ $start.value=state.config.start; $end.value=state.config.end; $dur.value=state.config.durationMin; }
+$start.onchange=()=>{ state.config.start=$start.value; saveState(); renderCalendar(); }; $end.onchange=()=>{ state.config.end=$end.value; saveState(); renderCalendar(); }; $dur.onchange=()=>{ state.config.durationMin=Number($dur.value)||20; saveState(); renderCalendar(); };
+document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Wirklich ALLE gewählten Tage und zugewiesenen Termine löschen?\n\n(Schüler, Vorlage und Signatur bleiben erhalten.)")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.sent=[]; try{ sentSet.clear(); }catch(e){} saveState(); renderCalendar(); renderMails(); };
+let calView=(function(){ const t=new Date(); return {y:t.getFullYear(), m:t.getMonth()}; })();
+const MINICAL_CSS='<style>.minical{max-width:430px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}</style>';
+function renderDateList(){ const host=document.getElementById("miniCal"); if(!host) return; const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate(); const todayStr=new Date().toISOString().slice(0,10); const title=first.toLocaleDateString("de-DE",{month:"long",year:"numeric"}); const wd=["Mo","Di","Mi","Do","Fr","Sa","So"]; let cells=""; for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>'; for(let d=1;d<=dim;d++){ const wd=new Date(y,m,d).getDay(); const weekend=(wd===0||wd===6); const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"]; if(weekend) cls.push("wknd"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today"); cells += weekend ? ('<div class="'+cls.join(" ")+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>'); } host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Tag anklicken = aus-/abwählen · gewählt: '+state.config.dates.length+'</div></div>'; host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; }); host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; }); updateCalResetVisibility(); }
+function updateCalResetVisibility(){ const row=document.getElementById("resetCalRow"); if(row) row.style.display = (state.config.dates && state.config.dates.length>0) ? "" : "none"; }
+function renderCalendar(){ initCfgInputs(); renderDateList(); const grid=document.getElementById("calendarGrid"), sl=slots(); if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Wähle oben mindestens einen Tag im Kalender aus.</p>'; updateAssignSummary(); return; } if(sl.length===0){ grid.innerHTML='<p class="muted">Kein gültiges Zeitraster (prüfe Beginn/Ende/Dauer).</p>'; updateAssignSummary(); return; } const opts=['<option value="">— frei —</option>'].concat(state.students.map(s=>`<option value="${s.id}" title="${esc(s.name||"(ohne Name)")}">${esc(displayStudentName(s.name))}</option>`)).join(""); const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }; const groups={}; state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); }); const weekKeys=Object.keys(groups).sort(); grid.innerHTML=weekKeys.map(wk=>{ const days=groups[wk]; const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"}); const head='<tr><th class="th-time">Zeit</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>'; const bodyRows=sl.map((s,i)=>{ const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td><select data-key="'+key+'">'+opts.replace('value="'+sel+'"','value="'+sel+'" selected')+'</select></td>'; }).join(""); return '<tr><td class="td-time">'+s.start+'–'+s.end+'</td>'+cells+'</tr>'; }).join(""); return '<div class="weekblock"><div class="weekhead">Woche ab '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>'; }).join(""); grid.querySelectorAll("select[data-key]").forEach(sel=>{ sel.onchange=()=>{ const k=sel.dataset.key; if(sel.value) state.assignments[k]=sel.value; else delete state.assignments[k]; saveState(); updateAssignSummary(); }; }); updateAssignSummary(); }
+function updateAssignSummary(){ const used=Object.values(state.assignments).filter(Boolean), counts={}; used.forEach(id=>counts[id]=(counts[id]||0)+1); const dupes=Object.keys(counts).filter(id=>counts[id]>1).map(id=>(state.students.find(s=>s.id===id)||{}).name).filter(Boolean); let txt=used.length+" Termin(e) vergeben."; if(dupes.length) txt += " ⚠︎ Mehrfach eingeplant: "+dupes.map(n=>displayStudentName(n)).join(", "); document.getElementById("assignSummary").textContent=txt; }
+
+/* Rich editor */
+let activeEditor=null, savedRange=null, toolbarBusy=false, toolbarStateTimer=null;
+let suppressTemplateCommit=false;
+function editorFromNode(node){
+  if(!node) return null;
+  const el=node.nodeType===1 ? node : node.parentElement;
+  return el && el.closest ? el.closest(".rich-editor") : null;
+}
+function rememberSelection(){
+  if(toolbarBusy) return;
+  const sel=window.getSelection(); if(!sel || sel.rangeCount===0) return;
+  const r=sel.getRangeAt(0);
+  const editor=editorFromNode(r.startContainer) || editorFromNode(sel.focusNode);
+  if(editor){ activeEditor=editor; savedRange=r.cloneRange(); scheduleToolbarStateUpdate(editor); }
+}
+document.addEventListener("selectionchange", rememberSelection);
+function restoreSelection(editor){ editor=editor||activeEditor; if(!editor) return; editor.focus(); if(savedRange){ const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange); } }
+function rangeElement(editor){
+  const sel=window.getSelection();
+  let node=null;
+  if(sel && sel.rangeCount){ node=sel.focusNode || sel.anchorNode || sel.getRangeAt(0).startContainer; }
+  if(!node && savedRange) node=savedRange.startContainer;
+  let el=node && node.nodeType===1 ? node : node && node.parentElement;
+  if(!el || (editor && !editor.contains(el))) el=editor;
+  if(el && el.classList && el.classList.contains("rich-editor")){
+    const r=(sel && sel.rangeCount) ? sel.getRangeAt(0) : savedRange;
+    const child=r && r.startContainer.nodeType===1 ? r.startContainer.childNodes[Math.max(0, Math.min(r.startOffset, r.startContainer.childNodes.length-1))] : null;
+    if(child) el=child.nodeType===1 ? child : child.parentElement;
+  }
+  return el || editor;
+}
+function closestStylableElement(editor){
+  if(!editor || !savedRange) return null;
+  let el=savedRange.startContainer.nodeType===1 ? savedRange.startContainer : savedRange.startContainer.parentElement;
+  if(!el || !editor.contains(el)) return null;
+  while(el && el!==editor){
+    if(/^(DIV|P|SPAN|A|B|I|U|STRONG|EM|LI)$/i.test(el.tagName)) return el;
+    el=el.parentElement;
+  }
+  return null;
+}
+function applyInlineStyle(editor, prop, val){
+  // Wendet ein Inline-Format direkt auf den gemerkten Bereich an (zuverlässiger als execCommand).
+  if(!savedRange) return false;
+  const anc=savedRange.commonAncestorContainer; const ancEl=anc.nodeType===1?anc:anc.parentElement;
+  if(!editor || !ancEl || !editor.contains(ancEl)) return false;
+  if(savedRange.collapsed){
+    const target=closestStylableElement(editor);
+    if(target){ target.style[prop]=val; editor.focus(); return true; }
+    return false;
+  }
+  const span=document.createElement("span"); span.style[prop]=val;
+  const r=savedRange.cloneRange();
+  try{ r.surroundContents(span); }
+  catch(e){ try{ const frag=r.extractContents(); span.appendChild(frag); r.insertNode(span); }catch(e2){ return false; } }
+  const sel=window.getSelection(); sel.removeAllRanges();
+  const nr=document.createRange(); nr.selectNodeContents(span); sel.addRange(nr); savedRange=nr.cloneRange();
+  editor.focus();
+  return true;
+}
+function cleanStyleProperty(root, prop){
+  if(!root) return;
+  const nodes=[];
+  if(root.nodeType===1) nodes.push(root);
+  if(root.querySelectorAll) root.querySelectorAll("*").forEach(n=>nodes.push(n));
+  nodes.forEach(n=>{
+    if(!n.style) return;
+    if(prop==="backgroundColor"){
+      n.style.background="";
+      n.style.backgroundColor="";
+      n.style.removeProperty("background-color");
+      n.style.removeProperty("background");
+      // Einige Browser/Editoren setzen Markierung auch als CSS-Text mit background:
+      const style=(n.getAttribute("style")||"").replace(/background(?:-color)?\s*:\s*[^;]+;?/gi, "").trim();
+      if(style) n.setAttribute("style", style); else n.removeAttribute("style");
+    } else {
+      n.style[prop]="";
+      n.style.removeProperty(prop.replace(/[A-Z]/g, m=>"-"+m.toLowerCase()));
+      if(n.getAttribute && !(n.getAttribute("style")||"").trim()) n.removeAttribute("style");
+    }
+  });
+}
+function cleanBackgroundAroundRange(editor, range){
+  if(!editor || !range) return false;
+  const touched=new Set();
+  const addAncestors=(node)=>{
+    let el=node && node.nodeType===1 ? node : node && node.parentElement;
+    while(el && el!==editor){ touched.add(el); el=el.parentElement; }
+  };
+  addAncestors(range.startContainer);
+  addAncestors(range.endContainer);
+  let root=range.commonAncestorContainer;
+  if(root.nodeType!==1) root=root.parentElement;
+  if(!root || !editor.contains(root)) root=editor;
+  if(root.nodeType===1) touched.add(root);
+  try{
+    const walker=document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, {
+      acceptNode(node){
+        if(!editor.contains(node)) return NodeFilter.FILTER_REJECT;
+        try{ return range.intersectsNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP; }
+        catch(_){ return NodeFilter.FILTER_SKIP; }
+      }
+    });
+    let n=walker.currentNode;
+    if(n && n.nodeType===1) touched.add(n);
+    while((n=walker.nextNode())) touched.add(n);
+  }catch(_){ }
+  touched.forEach(n=>cleanStyleProperty(n, "backgroundColor"));
+  return touched.size>0;
+}
+function clearInlineStyle(editor, prop){
+  // Entfernt ein Inline-Format aus dem markierten Bereich.
+  // Für „Keine Hervorhebung" werden zusätzlich die umgebenden Markierungs-Spans gereinigt,
+  // weil Browser die Markierung oft auf einem Eltern-Span speichern.
+  if(!savedRange) return false;
+  const anc=savedRange.commonAncestorContainer; const ancEl=anc.nodeType===1?anc:anc.parentElement;
+  if(!editor || !ancEl || !editor.contains(ancEl)) return false;
+  restoreSelection(editor);
+  if(prop==="backgroundColor"){
+    const ok=cleanBackgroundAroundRange(editor, savedRange.cloneRange());
+    editor.focus();
+    return ok;
+  }
+  if(savedRange.collapsed){
+    const target=closestStylableElement(editor);
+    if(target){ cleanStyleProperty(target, prop); editor.focus(); return true; }
+    return false;
+  }
+  const r=savedRange.cloneRange();
+  const holder=document.createElement("span");
+  holder.setAttribute("data-clean-style-temp", "true");
+  try{
+    const frag=r.extractContents();
+    cleanStyleProperty(frag, prop);
+    holder.appendChild(frag);
+    r.insertNode(holder);
+    unwrapNodeKeepChildren(holder);
+    const sel=window.getSelection(); sel.removeAllRanges();
+    const nr=document.createRange(); nr.selectNodeContents(editor); nr.collapse(false); sel.addRange(nr); savedRange=nr.cloneRange();
+    editor.focus();
+    return true;
+  }catch(e){
+    try{
+      restoreSelection(editor);
+      document.execCommand("removeFormat", false, null);
+      return true;
+    }catch(e2){ return false; }
+  }
+}
+function rgbToHex(v){
+  const m=String(v||"").match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i); if(!m) return null;
+  return "#"+[m[1],m[2],m[3]].map(x=>("0"+Math.max(0,Math.min(255,parseInt(x,10))).toString(16)).slice(-2)).join("");
+}
+function effectiveBackground(el, editor){
+  while(el && el!==editor){
+    const bg=getComputedStyle(el).backgroundColor;
+    if(bg && !/rgba\(0,\s*0,\s*0,\s*0\)|transparent/i.test(bg)) return bg;
+    el=el.parentElement;
+  }
+  return "";
+}
+function matchSelectOption(sel, wanted){
+  const w=String(wanted||"").replace(/["']/g,"").toLowerCase();
+  let best="";
+  Array.from(sel.options).forEach(o=>{ const v=String(o.value||o.text||"").toLowerCase(); if(!best && (w.split(",").map(x=>x.trim()).includes(v) || w.includes(v))) best=o.value; });
+  return best;
+}
+function nearestSizeOption(sel, px){
+  const pt=parseFloat(px||"")*0.75; if(!isFinite(pt)) return "";
+  let best="", diff=Infinity;
+  Array.from(sel.options).forEach(o=>{ const n=parseFloat(o.value); const d=Math.abs(n-pt); if(d<diff){ diff=d; best=o.value; } });
+  return best;
+}
+const editorHistoryState = new WeakMap();
+function getEditorHistoryState(editor){
+  if(!editor) return {undo:0, redo:0};
+  let h=editorHistoryState.get(editor);
+  if(!h){ h={undo:0, redo:0}; editorHistoryState.set(editor,h); }
+  return h;
+}
+function markEditorChanged(editor){ const h=getEditorHistoryState(editor); h.undo=Math.max(1, h.undo+1); h.redo=0; }
+function markEditorUndo(editor){ const h=getEditorHistoryState(editor); if(h.undo>0){ h.undo--; h.redo++; } }
+function markEditorRedo(editor){ const h=getEditorHistoryState(editor); if(h.redo>0){ h.redo--; h.undo++; } }
+function resetEditorHistory(editor){ const h=getEditorHistoryState(editor); h.undo=0; h.redo=0; }
+function canQueryEditorCommand(editor, cmd){
+  if(!editor) return false;
+  const sel=window.getSelection();
+  const hasEditorSelection=sel && sel.rangeCount && editor.contains(sel.anchorNode);
+  try{ if(!hasEditorSelection && editor!==document.activeElement) return false; }catch(_){}
+  try{ return !!document.queryCommandEnabled(cmd); }catch(_){ return false; }
+}
+function updateToolbarState(editor){
+  if(toolbarBusy) return;
+  editor=editor || activeEditor; if(!editor) return;
+  const el=rangeElement(editor); if(!el) return;
+  const cs=getComputedStyle(el);
+  document.querySelectorAll(".rich-toolbar").forEach(tb=>{
+    if(tb.dataset.for!==editor.id) return;
+    const undoBtn=tb.querySelector('.editor-undo');
+    const redoBtn=tb.querySelector('.editor-redo');
+    const hist=getEditorHistoryState(editor);
+    if(undoBtn) undoBtn.disabled = !(hist.undo>0 || canQueryEditorCommand(editor, 'undo'));
+    if(redoBtn) redoBtn.disabled = !(hist.redo>0 || canQueryEditorCommand(editor, 'redo'));
+    const fontSel=tb.querySelector('select[data-cmd="fontName"]');
+    if(fontSel){ const v=matchSelectOption(fontSel, cs.fontFamily); if(v) fontSel.value=v; }
+    const sizeSel=tb.querySelector('select[data-cmd="fontSize"]');
+    if(sizeSel){ const v=nearestSizeOption(sizeSel, cs.fontSize); if(v) sizeSel.value=v; }
+    const weight=parseInt(cs.fontWeight,10)||0;
+    const states={
+      bold: weight>=600 || /bold/i.test(cs.fontWeight),
+      italic: /italic/i.test(cs.fontStyle),
+      underline: /underline/i.test(cs.textDecorationLine||cs.textDecoration||""),
+      strikeThrough: /line-through/i.test(cs.textDecorationLine||cs.textDecoration||"")
+    };
+    Object.keys(states).forEach(cmd=>{ const b=tb.querySelector('[data-cmd="'+cmd+'"]'); if(b) b.classList.toggle("active", !!states[cmd]); });
+    function setColorControlValue(ctrl, val){
+      if(!ctrl) return;
+      if(ctrl.tagName==="SELECT"){
+        const opt=Array.from(ctrl.options).find(o=>String(o.value).toLowerCase()===String(val||"").toLowerCase());
+        if(opt) ctrl.value=opt.value;
+      } else if(ctrl.type==="color" && val){ ctrl.value=val; }
+      else if(ctrl.classList && ctrl.classList.contains("color-palette-button")){
+        const cleanVal=(!val || val==="transparent") ? "transparent" : String(val).toLowerCase();
+        ctrl.dataset.currentValue=cleanVal;
+        ctrl.style.setProperty("--current-color", cleanVal==="transparent" ? "#ffffff" : cleanVal);
+      }
+    }
+    const fore=tb.querySelector('.color-palette-button[data-cmd="foreColor"], input[type="color"][data-cmd="foreColor"], select[data-cmd="foreColor"]'); const fc=rgbToHex(cs.color); setColorControlValue(fore, fc || "#000000");
+    const hi=tb.querySelector('.color-palette-button[data-cmd="hiliteColor"], input[type="color"][data-cmd="hiliteColor"], select[data-cmd="hiliteColor"]'); const bg=rgbToHex(effectiveBackground(el,editor)); setColorControlValue(hi, bg || "transparent");
+  });
+}
+function scheduleToolbarStateUpdate(editor){
+  if(toolbarStateTimer) cancelAnimationFrame(toolbarStateTimer);
+  toolbarStateTimer=requestAnimationFrame(()=>updateToolbarState(editor||activeEditor));
+}
+function splitSignatureEditorHtml(html){ return sanitizeHtml(html||""); }
+function syncSignatureLogoInEditor(){ refreshComposeEditor(true); }
+function commitEditor(editor){
+  if(!editor) return;
+  if(editor.id==="tplBodyEditor"){
+    if(suppressTemplateCommit) return;
+    sanitizePastedImages(editor);
+    const parts=splitComposeEditorHtml(editor.innerHTML);
+    state.template.bodyHtml=parts.bodyHtml; state.template.body=textFromHtml(parts.bodyHtml);
+    if(parts.signatureHtml!==null){ state.template.signatureHtml=parts.signatureHtml; state.template.signature=textFromHtml(parts.signatureHtml); }
+    renderTemplatePreview(); renderLogoPreview();
+    saveState(); renderMails(); updateTplResetVisibility();
+  } else if(editor.classList && editor.classList.contains("mail-editor")){
+    const ovk=editor.dataset.ovk;
+    if(ovk){
+      state.overrides=state.overrides||{};
+      const def=mailDefaultPreviewByOvk[ovk];
+      // Entspricht der Inhalt wieder exakt der Standard-Vorlage (z. B. nach Rückgängig/
+      // Fett-aus), wird die Bearbeitung verworfen, damit der Reset-Link wieder verschwindet.
+      if(def!=null && htmlEqualsNormalized(editor.innerHTML, def)){
+        delete state.overrides[ovk];
+      } else {
+        state.overrides[ovk]=editor.innerHTML;
+      }
+      saveState();
+      const item=editor.closest ? editor.closest(".mailitem") : null;
+      const msg=item ? currentMsgs.find(x=>x.id===item.dataset.id) : null;
+      setMailEditedVisual(item, mailEditedByKey(ovk, msg ? msg.defaultSubject : undefined));
+    }
+    // kein renderMails -> Cursor/Fokus im Mail-Editor bleibt erhalten
+  } else { saveState(); }
+}
+function sanitizePastedImages(editor){
+  editor.querySelectorAll("img").forEach(img=>{
+    if(img.closest('[data-logo-inline="true"]')) return;
+    img.remove();
+  });
+}
+function wireRichEditor(id){
+  const el=document.getElementById(id); if(!el || el.dataset.editorWired) return; el.dataset.editorWired="1";
+  const markActive=()=>{ toolbarBusy=false; activeEditor=el; scheduleToolbarStateUpdate(el); setTimeout(()=>updateToolbarState(el),0); };
+  el.addEventListener("focus",markActive);
+  el.addEventListener("mousedown",()=>{ toolbarBusy=false; });
+  el.addEventListener("mouseup",markActive);
+  el.addEventListener("click",markActive);
+  el.addEventListener("keyup",markActive);
+  el.addEventListener("touchend",markActive);
+  el.addEventListener("keydown",()=>{ toolbarBusy=false; });
+  el.addEventListener("beforeinput",e=>{
+    if(e.inputType==="historyUndo") markEditorUndo(el);
+    else if(e.inputType==="historyRedo") markEditorRedo(el);
+    else if(String(e.inputType||"").startsWith("insert") || String(e.inputType||"").startsWith("delete") || String(e.inputType||"").startsWith("format")) markEditorChanged(el);
+  });
+  el.addEventListener("input",()=>{ commitEditor(el); scheduleToolbarStateUpdate(el); setTimeout(()=>updateToolbarState(el),0); });
+  el.addEventListener("paste",e=>{ setTimeout(()=>{ commitEditor(el); scheduleToolbarStateUpdate(el); updateToolbarState(el); },0); });
+}
+function bindRichToolbars(){
+  document.querySelectorAll(".rich-toolbar").forEach(tb=>{
+    if(tb.dataset.wired) return; tb.dataset.wired="1";
+    tb.querySelectorAll("button,select,input[type=color]").forEach(ctrl=>{
+      const run=async e=>{
+        e.preventDefault();
+        if(ctrl.disabled) return;
+        if(ctrl.dataset.action==="toggleMore"){
+          const more=tb.querySelector(".ot-more");
+          if(more) more.classList.toggle("open");
+          return;
+        }
+        if(ctrl.dataset.action==="palette"){
+          const picker=ctrl.closest(".color-picker");
+          tb.querySelectorAll(".color-picker.open").forEach(p=>{ if(p!==picker) p.classList.remove("open"); });
+          if(picker) picker.classList.toggle("open");
+          return;
+        }
+        const editor=document.getElementById(tb.dataset.for);
+        activeEditor=editor;
+        if(ctrl.dataset.action==="pastePlain"){
+          restoreSelection(editor);
+          try{
+            const txt=await navigator.clipboard.readText();
+            if(txt) document.execCommand("insertText", false, txt);
+          }catch(_){
+            alert("Einfügen über diesen Button wurde vom Browser blockiert. Du kannst stattdessen ⌘V benutzen.");
+          }
+          toolbarBusy=false; commitEditor(editor); rememberSelection();
+          return;
+        }
+        const cmd=ctrl.dataset.cmd || ctrl.dataset.paletteCmd; if(!cmd) return;
+        let value=null;
+        if(ctrl.dataset.paletteValue) value=ctrl.dataset.paletteValue;
+        else if(ctrl.tagName==="SELECT" || ctrl.type==="color") value=ctrl.value;
+        if(cmd==="undo" || cmd==="redo"){
+          restoreSelection(editor);
+          try{ document.execCommand(cmd,false,null); }catch(_){}
+          if(cmd==="undo") markEditorUndo(editor); else markEditorRedo(editor);
+        } else if(cmd==="hiliteColor" && value==="transparent"){
+          clearInlineStyle(editor, "backgroundColor");
+          markEditorChanged(editor);
+        } else {
+          // Schrift/Größe/Farbe/Markierung: direkt am gemerkten Bereich (zuverlässig, ohne execCommand)
+          const styleMap={ fontName:["fontFamily",value], fontSize:["fontSize",value+"pt"], foreColor:["color",value], hiliteColor:["backgroundColor",value] };
+          if(styleMap[cmd]){
+            const ok=applyInlineStyle(editor, styleMap[cmd][0], styleMap[cmd][1]);
+            if(!ok && cmd!=="fontSize"){
+              restoreSelection(editor);
+              try{ document.execCommand("styleWithCSS", false, true); }catch(_){ }
+              document.execCommand(cmd,false,value);
+            }
+          } else {
+            restoreSelection(editor);
+            document.execCommand(cmd,false,value);
+          }
+          markEditorChanged(editor);
+        }
+        if(ctrl.dataset.paletteValue){
+          const picker=ctrl.closest(".color-picker");
+          if(picker){
+            const main=picker.querySelector(".color-palette-button");
+            if(main){ main.dataset.currentValue=(value==="transparent" ? "transparent" : String(value).toLowerCase()); main.style.setProperty("--current-color", value==="transparent" ? "#ffffff" : value); }
+            picker.classList.remove("open");
+          }
+        }
+        toolbarBusy=false; commitEditor(editor); rememberSelection(); updateToolbarState(editor); setTimeout(()=>updateToolbarState(editor), 0);
+      };
+      // Auswahl im Editor merken und während der Bedienung schützen
+      ctrl.addEventListener("mousedown", function(){ toolbarBusy=false; rememberSelection(); toolbarBusy=true; });
+      if(ctrl.tagName==="SELECT" || ctrl.type==="color") ctrl.addEventListener("change",run); else ctrl.addEventListener("click",run);
+    });
+  });
+  document.addEventListener("click", e=>{
+    document.querySelectorAll(".ot-more.open").forEach(m=>{
+      if(!m.closest(".rich-toolbar").contains(e.target)) m.classList.remove("open");
+    });
+    document.querySelectorAll(".color-picker.open").forEach(p=>{
+      if(!p.contains(e.target)) p.classList.remove("open");
+    });
+  });
+}
+
+/* Signature/logo/template binding */
+function renderTemplatePreview(){ const map=sigMap({DATE:formatFrenchDate(new Date().toISOString().slice(0,10)),TIME:"14h20",NAME:state.account.name||"",ENFANT:"Tim"}); document.getElementById("mailTemplatePreview").innerHTML=buildHtml(map,true); renderSigMissing(); }
+function renderSigMissing(){ const box=document.getElementById("sigMissing"); if(!box) return; const txt=textFromHtml(state.template.signatureHtml||""); const hasTodo=/\[[^\]]*(compléter|Nom|Fonction|salle|E-mail|Téléphone)[^\]]*\]/i.test(txt); if(state.options.useSig!==false && hasTodo){ box.innerHTML='<div class="banner warn">Bitte die gelb markierten Platzhalter in der Signatur ersetzen, bevor du die E-Mails versendest.</div>'; } else box.innerHTML=""; }
+function setLogoFromDataUrl(dataUrl, mime, rerender=true, mode=null){
+  const m=mime || ((String(dataUrl).match(/^data:([^;]+)/)||[])[1]) || "image/png";
+  const ext=(m.split("/")[1]||"png").replace("jpeg","jpg");
+  state.template.logo={name:(mode==="unesco"?"unesco-logo":"custom-logo")+"."+ext,mime:m,dataUrl:String(dataUrl)};
+  if(mode) state.options.logoMode = mode;
+  state.options.includeLogo = state.options.logoMode !== "none";
+  saveState();
+  if(rerender){ syncSignatureLogoInEditor(); renderLogoPreview(); renderTemplatePreview(); refreshComposeEditor(); renderMails(); }
+}
+async function loadUnescoLogo(force){
+  if(!force && state.template.logo && state.template.logo.dataUrl && state.options.logoMode==="unesco") return;
+  try{
+    const res=await fetch("schullogo.png"); if(!res.ok) throw new Error("nicht gefunden");
+    const blob=await res.blob(); const r=new FileReader();
+    r.onload=()=>{ setLogoFromDataUrl(String(r.result), blob.type||"image/png", true, "unesco"); const st=document.getElementById("sigStatus"); if(st) st.textContent="UNESCO-Logo ist aktiv."; };
+    r.readAsDataURL(blob);
+  }catch(e){ const st=document.getElementById("sigStatus"); if(st) st.textContent="UNESCO-Logo nicht gefunden. Liegt schullogo.png im App-Ordner?"; }
+}
+function normalizeLogoMode(){
+  if(!state.options.logoMode) state.options.logoMode = (state.options.includeLogo===false ? "none" : "unesco");
+  if(state.options.logoMode === "none") state.options.includeLogo = false;
+  else state.options.includeLogo = true;
+}
+function renderLogoPreview(){
+  renderSigMissing(); normalizeLogoMode();
+  const controls=document.getElementById("inlineSignatureControls");
+  if(controls) controls.style.display = state.options.useSig!==false ? "block" : "none";
+  const logoButtons=document.getElementById("logoModeButtons");
+  if(logoButtons){
+    logoButtons.querySelectorAll(".logo-mode-btn").forEach(btn=>btn.classList.toggle("active", btn.dataset.logoMode === (state.options.logoMode || "unesco")));
+  }
+  const st=document.getElementById("sigStatus");
+  if(st){
+    if(state.options.logoMode==="none") st.textContent="Kein Logo in der Signatur.";
+    else if(state.options.logoMode==="custom") st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "Eigenes Logo ist aktiv." : "Bitte eigenes Logo auswählen.";
+    else st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "UNESCO-Logo ist aktiv." : "UNESCO-Logo wird geladen.";
+  }
+}
+let mailRenderRaf = null;
+function scheduleRenderMails(openId){
+  if(mailRenderRaf) cancelAnimationFrame(mailRenderRaf);
+  mailRenderRaf = requestAnimationFrame(()=>{
+    mailRenderRaf = null;
+    renderMails(openId);
+  });
+}
+function updateTemplateSignatureView(body, renderTemplateCollapseState){
+  renderTemplateCollapseState();
+  refreshComposeEditor(true);
+  renderTemplatePreview();
+  renderLogoPreview();
+  scheduleRenderMails();
+}
+function bindSettings(){
+  const su=document.getElementById("tplSubject"), body=document.getElementById("tplBodyEditor");
+  su.value=state.template.subject; body.innerHTML=composeEditorHtml(); resetEditorHistory(body);
+  su.oninput=()=>{ state.template.subject=su.value; saveState(); renderMails(); updateTplResetVisibility(); };
+  // Robuste, direkte Reaktion auf jede Änderung im Editor (unabhängig vom Commit-Pfad):
+  body.addEventListener("input", updateTplResetVisibility);
+  body.addEventListener("keyup", updateTplResetVisibility);
+  body.addEventListener("blur", updateTplResetVisibility);
+  updateTplResetVisibility();
+  wireRichEditor("tplBodyEditor"); bindRichToolbars();
+
+  const templateCard=document.getElementById("templateCard");
+  const toggleTemplate=document.getElementById("toggleTemplate");
+  const templateToggleZone=document.getElementById("templateToggleZone");
+  function renderTemplateCollapseState(){
+    const collapsed=!!state.options.templateCollapsed;
+    if(templateCard){
+      templateCard.classList.toggle("template-collapsed", collapsed);
+      templateCard.classList.toggle("signature-off", state.options.useSig===false);
+    }
+    if(toggleTemplate){
+      toggleTemplate.textContent=collapsed ? "▸" : "▾";
+      toggleTemplate.title=collapsed ? "Bereich öffnen" : "Bereich schließen";
+      toggleTemplate.setAttribute("aria-expanded", String(!collapsed));
+    }
+    if(templateToggleZone){
+      templateToggleZone.setAttribute("aria-expanded", String(!collapsed));
+      templateToggleZone.title=collapsed ? "Bereich öffnen" : "Bereich schließen";
+    }
+  }
+  function toggleTemplateSection(){
+    commitEditor(body);
+    state.options.templateCollapsed=!state.options.templateCollapsed;
+    saveState();
+    renderTemplateCollapseState();
+  }
+  if(toggleTemplate){
+    toggleTemplate.onclick=(e)=>{ e.stopPropagation(); toggleTemplateSection(); };
+  }
+  if(templateToggleZone){
+    templateToggleZone.onclick=(e)=>{ if(e.target && e.target.closest && e.target.closest("#toggleTemplate")) return; toggleTemplateSection(); };
+    templateToggleZone.onkeydown=(e)=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); toggleTemplateSection(); } };
+  }
+  renderTemplateCollapseState();
+
+  function applyHardSignatureReset(){
+    // Harte Variante: Signatur und Logo werden aus dem gespeicherten Zustand neu aufgebaut,
+    // der sichtbare Editor wird anschließend aus diesem sauberen Zustand neu gezeichnet.
+    // So kann eine alte Markierung aus dem contenteditable-Feld nicht direkt wieder zurückgespeichert werden.
+    suppressTemplateCommit=true;
+    try{
+      document.querySelectorAll(".color-picker.open,.ot-more.open").forEach(n=>n.classList.remove("open"));
+      const editor=document.getElementById("tplBodyEditor");
+      const parts=splitComposeEditorHtml(editor ? editor.innerHTML : "");
+      const keptBody=cleanBodyHtmlAfterSignatureRemoval(removeSignatureTailFromBodyHtml(parts.bodyHtml || state.template.bodyHtml || defaultBodyHtml()));
+      state.template.bodyHtml=keptBody || defaultBodyHtml();
+      state.template.body=textFromHtml(state.template.bodyHtml);
+      resetBodyFormattingIfStillDefault();
+      state.template.signatureHtml=effDefaultSignatureHtml();
+      state.template.signature=effDefaultSignatureText();
+      state.options.useSig=true;
+      state.options.logoMode=effDefaultLogoMode();
+      state.options.includeLogo=effDefaultIncludeLogo();
+      const top=document.getElementById("useSigTop"); if(top) top.checked=true;
+      saveState();
+      renderTemplateCollapseState();
+      forceTemplateEditorHtml(composeEditorHtml());
+      renderTemplatePreview();
+      renderLogoPreview();
+      renderMails();
+      if(state.options.logoMode==="unesco") loadUnescoLogo(true);
+    } finally {
+      setTimeout(()=>{ suppressTemplateCommit=false; forceTemplateEditorHtml(composeEditorHtml()); renderTemplatePreview(); renderLogoPreview(); renderMails(); updateTplResetVisibility(); },80);
+    }
+  }
+  const defaultSigBtn=document.getElementById("defaultSigBtn");
+  if(defaultSigBtn){
+    defaultSigBtn.addEventListener("click", (e)=>{
+      if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
+      if(confirm("Signatur auf den Standard zurücksetzen? Die aktuelle Signatur (und das Logo) wird durch deinen gespeicherten Standard ersetzt – falls keiner gespeichert ist, durch den Werks-Standard.")){
+        applyHardSignatureReset();
+      }
+    }, true);
+  }
+  function applyTemplateBodyReset(){
+    // Setzt nur den E-Mail-Text (die Fassung) und den Betreff auf den wirksamen Standard
+    // zurück (eigener gespeicherter, sonst Werks-Standard). Signatur/Logo bleiben unverändert.
+    suppressTemplateCommit=true;
+    try{
+      document.querySelectorAll(".color-picker.open,.ot-more.open").forEach(n=>n.classList.remove("open"));
+      state.template.subject=effDefaultSubject();
+      state.template.bodyHtml=effDefaultBodyHtml();
+      state.template.body=effDefaultBodyText();
+      const su=document.getElementById("tplSubject"); if(su) su.value=state.template.subject;
+      saveState();
+      forceTemplateEditorHtml(composeEditorHtml());
+      renderTemplatePreview();
+      renderMails();
+      updateTplResetVisibility();
+    } finally {
+      setTimeout(()=>{ suppressTemplateCommit=false; forceTemplateEditorHtml(composeEditorHtml()); renderTemplatePreview(); renderMails(); updateTplResetVisibility(); },80);
+    }
+  }
+  const resetTplBody=document.getElementById("resetTplBody");
+  if(resetTplBody){
+    resetTplBody.addEventListener("click", (e)=>{
+      if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
+      if(confirm("E-Mail-Text auf deinen Standard zurücksetzen? Betreff und Text werden ersetzt. Die Signatur bleibt erhalten.")){
+        applyTemplateBodyReset();
+      }
+    }, true);
+  }
+  function saveTemplateBodyAsDefault(){
+    commitEditor(body);
+    const su=document.getElementById("tplSubject"); if(su) state.template.subject=su.value;
+    state.userDefaults=Object.assign({}, state.userDefaults, { subject: state.template.subject, bodyHtml: state.template.bodyHtml });
+    saveState();
+    updateTplResetVisibility();
+    showToast("Text als dein Standard gespeichert ✓");
+  }
+  function saveSignatureAsDefault(){
+    commitEditor(body);
+    state.userDefaults=Object.assign({}, state.userDefaults, { signatureHtml: state.template.signatureHtml, logoMode: state.options.logoMode, includeLogo: state.options.includeLogo!==false });
+    saveState();
+    updateTplResetVisibility();
+    showToast("Signatur als dein Standard gespeichert ✓");
+  }
+  const saveTplBody=document.getElementById("saveTplBody");
+  if(saveTplBody){
+    saveTplBody.addEventListener("click", (e)=>{
+      if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
+      if(confirm("Den aktuellen E-Mail-Text und Betreff als deinen persönlichen Standard festlegen? Zurücksetzen stellt künftig diese Fassung wieder her.")){
+        saveTemplateBodyAsDefault();
+      }
+    }, true);
+  }
+  const saveSig=document.getElementById("saveSig");
+  if(saveSig){
+    saveSig.addEventListener("click", (e)=>{
+      if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
+      if(confirm("Die aktuelle Signatur (und Logo-Auswahl) als deinen persönlichen Standard festlegen? Signatur zurücksetzen stellt künftig diese Signatur wieder her.")){
+        saveSignatureAsDefault();
+      }
+    }, true);
+  }
+  const useSigTop=document.getElementById("useSigTop");
+  useSigTop.checked=state.options.useSig!==false;
+  useSigTop.onchange=()=>{
+    commitEditor(body);
+    state.options.useSig=useSigTop.checked;
+    if(state.options.useSig && !state.options.logoMode) state.options.logoMode="unesco";
+    saveState();
+    updateTemplateSignatureView(body, renderTemplateCollapseState);
+  };
+  const logoFile=document.getElementById("logoFile");
+  const logoModeButtons=document.getElementById("logoModeButtons");
+  let logoModeBeforeUpload=state.options.logoMode || "unesco";
+  function applyLogoMode(mode){
+    commitEditor(body);
+    if(mode==="unesco"){
+      logoModeBeforeUpload="unesco";
+      state.options.logoMode="unesco";
+      state.options.includeLogo=true;
+      saveState(); loadUnescoLogo(true);
+      renderLogoPreview();
+      return;
+    }
+    if(mode==="none"){
+      logoModeBeforeUpload="none";
+      state.options.logoMode="none";
+      state.options.includeLogo=false;
+      saveState(); renderTemplatePreview(); refreshComposeEditor(true); renderLogoPreview(); renderMails();
+      return;
+    }
+    logoModeBeforeUpload=state.options.logoMode || "unesco";
+    if(logoFile) logoFile.click();
+  }
+  if(logoModeButtons){
+    logoModeButtons.querySelectorAll(".logo-mode-btn").forEach(btn=>{
+      btn.onclick=()=>applyLogoMode(btn.dataset.logoMode);
+    });
+  }
+  logoFile.onchange=e=>{
+    const f=e.target.files[0];
+    if(!f){
+      state.options.logoMode=logoModeBeforeUpload;
+      state.options.includeLogo=logoModeBeforeUpload!=="none";
+      renderLogoPreview();
+      return;
+    }
+    commitEditor(body);
+    logoModeBeforeUpload="custom";
+    state.options.logoMode="custom";
+    state.options.includeLogo=true;
+    const r=new FileReader();
+    r.onload=()=>setLogoFromDataUrl(String(r.result), f.type||"image/png", true, "custom");
+    r.readAsDataURL(f); e.target.value="";
+  };
+  renderTemplatePreview(); renderLogoPreview(); renderSigMissing(); if((state.options.logoMode||"unesco")==="unesco") loadUnescoLogo(false);
+  const combine=document.getElementById("combine"); combine.checked=!!state.options.combine; combine.onchange=()=>{ state.options.combine=combine.checked; saveState(); renderMails(); };
+}
+/* Build messages */
+function buildMessages(){
+  const sl=slots(), msgs=[];
+  mailDefaultPreviewByOvk={};
+  state.config.dates.forEach(d=>{
+    sl.forEach((s,i)=>{
+      const sid=state.assignments[d+"__"+i];
+      if(!sid) return;
+      const stu=state.students.find(x=>x.id===sid);
+      if(!stu) return;
+      const map={DATE:formatFrenchDate(d),TIME:formatFrenchTime(s.start),NAME:state.account.name||"",ENFANT:stu.name};
+      const defaultSubject=stripBold(fillPlain(state.template.subject,map));
+      const ovk=d+"__"+i;
+      const hasSubjectOverride=!!(state.subjectOverrides && Object.prototype.hasOwnProperty.call(state.subjectOverrides, ovk));
+      const subject=hasSubjectOverride ? state.subjectOverrides[ovk] : defaultSubject;
+      let html=buildHtml(map,false), previewHtml=buildHtml(map,true);
+      mailDefaultPreviewByOvk[ovk]=previewHtml;
+      if(state.overrides && state.overrides[ovk]){
+        previewHtml=state.overrides[ovk];
+        html=state.overrides[ovk];
+        if(state.template.logo && state.template.logo.dataUrl){ html=html.split(state.template.logo.dataUrl).join("cid:siglogo"); }
+      }
+      const emails=contactEmails(stu);
+      const fullStudent=stu.name||"(ohne Name)";
+      const add=(suf,label,to)=>{
+        if(to.length){ msgs.push({id:d+"__"+i+"__"+suf,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:label,to,subject,defaultSubject,html,previewHtml}); }
+      };
+      if(state.options.combine){
+        const label = emails.length>2 ? (emails.length+" Kontakte") : (emails.length===2 ? "beide Kontakte" : "Kontakt");
+        add("c", label, emails);
+      } else {
+        emails.forEach((email,idx)=>add(String(idx), "Kontakt "+(idx+1), [email]));
+      }
+    });
+  });
+  return msgs;
+}
+
+
+/* Microsoft Graph */
+let account=null, pollTimer=null;
+async function api(path, body){ const res=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):"{}"}); return res.json(); }
+async function checkAccount(){ try{ const res=await fetch("/api/graph/account"); const d=await res.json(); account=d.signedIn?d.account:null; }catch(e){ account=null; } renderAuth(); renderMails(); }
+function renderAuth(){
+  const box=document.getElementById("authBox"), inBtn=document.getElementById("signIn"), outBtn=document.getElementById("signOut");
+  if(account){
+    if(account.email) state.account.email=account.email;
+    if(!state.account.name && account.name) state.account.name=account.name;
+    saveState();
+    box.innerHTML=`<div class="acct"><span class="pill ok">angemeldet</span><span><b>${esc(account.name||"")}</b> · ${esc(account.email||"")}</span></div>`;
+    inBtn.style.display="none"; outBtn.style.display="inline-block";
+    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Angemeldet. Der Versand läuft automatisch über dieses Konto.";
+  } else {
+    box.innerHTML='<div class="banner warn">Noch nicht angemeldet. Der Sende-Button wird erst nach der Microsoft-Anmeldung aktiv.</div>';
+    inBtn.style.display="inline-block"; outBtn.style.display="none";
+    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Bitte mit Microsoft anmelden, bevor du sendest.";
+  }
+  renderTemplatePreview();
+}
+document.getElementById("signIn").onclick=async()=>{ const lb=document.getElementById("loginBox"), inBtn=document.getElementById("signIn"); inBtn.disabled=true; lb.style.display="block"; lb.innerHTML='<div class="banner info">Anmeldung wird vorbereitet …</div>'; let d; try{ d=await api("/api/graph/login-start"); }catch(e){ lb.innerHTML='<div class="banner err">Helfer nicht erreichbar. Läuft „Starten.command"?</div>'; inBtn.disabled=false; return; } if(!d.ok){ lb.innerHTML='<div class="banner err">'+esc(d.error||"Fehler")+'</div>'; inBtn.disabled=false; return; } const url=d.verification_uri||"https://login.microsoft.com/device"; lb.innerHTML=`<div class="banner info" style="line-height:1.7"><b>1.</b> Öffne <a href="${url}" target="_blank" rel="noopener"><b>${esc(url)}</b></a><br><b>2.</b> Gib diesen Code ein: <code class="k" style="font-size:17px">${esc(d.user_code)}</code><br><b>3.</b> Melde dich mit deinem Konto an und klicke <b>Zustimmen</b>.<br><span class="muted">Hier wird automatisch fortgefahren, sobald du fertig bist …</span></div>`; try{ window.open(url,"_blank","noopener"); }catch(e){} if(pollTimer) clearInterval(pollTimer); pollTimer=setInterval(async()=>{ let r; try{ r=await api("/api/graph/login-poll"); }catch(e){ return; } if(!r.ok){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">'+esc(r.error||"Fehler")+'</div>'; inBtn.disabled=false; return; } if(r.status==="ok"){ clearInterval(pollTimer); account=r.account; lb.style.display="none"; lb.innerHTML=""; inBtn.disabled=false; renderAuth(); renderMails(); } else if(r.status==="error"){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">Anmeldung nicht möglich: '+esc(r.error||"")+'</div>'; inBtn.disabled=false; } },4000); };
+document.getElementById("signOut").onclick=async()=>{ try{ await api("/api/graph/logout"); }catch(e){} account=null; renderAuth(); renderMails(); };
+function logoPayload(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl) return {name:lg.name||"logo.png",mime:lg.mime||"image/png",contentBytes:lg.dataUrl.split(",")[1]}; return null; }
+async function graphSend(messages){ return api("/api/graph/send", {messages:messages.map(m=>({id:m.id,subject:m.subject,html:m.html,to:m.to})), logo:logoPayload()}); }
+
+/* Render mails */
+let currentMsgs=[], sentSet=new Set(state.sent||[]), pendingSend=[];
+function persistSent(){ state.sent=[...sentSet]; saveState(); }
+function ovkOf(id){ return id.split("__").slice(0,2).join("__"); }
+function richToolbarHTML(forId){ const tpl=document.querySelector(".rich-toolbar"); return '<div class="rich-toolbar" data-for="'+forId+'" style="margin-top:10px">'+(tpl?tpl.innerHTML:"")+'</div>'; }
+function mailEditedByKey(ovk, defaultSubject){
+  const bodyEdited=!!(state.overrides && state.overrides[ovk]);
+  const subjectEdited=!!(state.subjectOverrides && Object.prototype.hasOwnProperty.call(state.subjectOverrides, ovk) && state.subjectOverrides[ovk]!==defaultSubject);
+  return bodyEdited || subjectEdited;
+}
+function setMailEditedVisual(item, edited){
+  if(!item) return;
+  const status = item.querySelector(".status");
+  const existing = status ? status.querySelector(".pill.warn") : null;
+  if(edited && status && !existing){
+    const pill = document.createElement("span");
+    pill.className = "pill warn";
+    pill.textContent = "bearbeitet";
+    const toggle = status.querySelector(".toggle");
+    status.insertBefore(pill, toggle || null);
+  } else if(!edited && existing){ existing.remove(); }
+  const reset = item.querySelector(".mail-reset");
+  if(reset) reset.style.display = edited ? "" : "none";
+}
+function markMailEditorEdited(editor){ const item = editor && editor.closest ? editor.closest(".mailitem") : null; setMailEditedVisual(item, true); }
+
+function renderMails(openId){
+  currentMsgs=buildMessages();
+  const assigned=Object.values(state.assignments).filter(Boolean).length;
+  const missing=[];
+  state.config.dates.forEach(d=>slots().forEach((s,i)=>{
+    const sid=state.assignments[d+"__"+i];
+    if(!sid) return;
+    const stu=state.students.find(x=>x.id===sid);
+    if(!stu) return;
+    if(contactEmails(stu).length===0) missing.push(stu.name||"(ohne Name)");
+  }));
+  const sentCount=currentMsgs.filter(m=>sentSet.has(m.id)).length;
+  const remaining=currentMsgs.length-sentCount;
+  const warnBanners=[];
+  if(!account) warnBanners.push('<div class="banner warn">Bitte oben mit deinem Microsoft-Konto anmelden, um zu senden.</div>');
+  if(currentMsgs.length===0) warnBanners.push('<div class="banner warn">Noch keine versendbaren E-Mails. Weise im Reiter „Kalender" Schüler zu und trage E-Mail-Adressen ein.</div>');
+  if(missing.length){
+    const missingHtml=[...new Set(missing)].map(n=>`<span class="truncated-inline" title="${esc(n)}">${esc(displayStudentName(n))}</span>`).join(", ");
+    warnBanners.push(`<div class="banner warn">Ohne E-Mail-Adresse (werden übersprungen): ${missingHtml}</div>`);
+  }
+  let b=warnBanners.length ? `<div class="banner-group">${warnBanners.join("")}</div>` : "";
+  if(currentMsgs.length>0){
+    if(remaining===0) b+=`<div class="banner ok">Alle ${currentMsgs.length} E-Mail(s) wurden gesendet. Zum erneuten Senden: „Versand-Status zurücksetzen".</div>`;
+    else b+=`<div class="banner info">${remaining} von ${currentMsgs.length} E-Mail(s) offen · ${assigned} Termin(e).${sentCount?" "+sentCount+" bereits gesendet.":""}</div>`;
+  }
+
+  const mailBanner=document.getElementById("mailBanner");
+  if(mailBanner) mailBanner.innerHTML=b;
+
+  const sendBtn=document.getElementById("sendAll"), resetBtn=document.getElementById("resetSent");
+  if(sendBtn){
+    sendBtn.style.display=remaining>0?"inline-block":"none";
+    sendBtn.disabled=!account;
+    sendBtn.title=!account ? "Bitte zuerst mit Microsoft anmelden" : "";
+    sendBtn.textContent=`Alle senden (${remaining}) …`;
+  }
+  if(resetBtn) resetBtn.style.display=sentSet.size>0?"inline-block":"none";
+
+  const list=document.getElementById("mailList");
+  if(!list) return;
+  list.innerHTML=currentMsgs.map(m=>{
+    const done=sentSet.has(m.id);
+    const ovk=ovkOf(m.id);
+    const edited=mailEditedByKey(ovk, m.defaultSubject);
+    return `<div class="mailitem ${done?'done':''} ${openId===m.id?'open':''}" data-id="${m.id}">
+      <div class="mailhead">
+        <div class="mail-main">
+          <span class="who" title="${esc(m.student)}">${esc(m.studentDisplay||displayStudentName(m.student))}</span>
+          <span class="parent-label">${esc(m.parentLabel)}</span>
+          <span class="recipient-line">An: ${esc(m.to.join(", "))}</span>
+        </div>
+        <span class="status">
+          ${edited?'<span class="pill warn">bearbeitet</span>':''}
+          ${done?'<span class="pill ok">gesendet</span>':''}
+          <span class="toggle">${openId===m.id?'Schließen ▴':'Bearbeiten ▾'}</span>
+        </span>
+      </div>
+      <div class="mailbody">
+        ${richToolbarHTML('me_'+m.id)}
+        <div class="mail-compose-shell">
+          <div class="mailbody-head"><label class="mail-subject-label" for="ms_${m.id}">Betreff</label><input id="ms_${m.id}" class="mail-subject-input" data-ovk="${ovk}" data-msgid="${m.id}" value="${esc(m.subject)}" title="Betreff bearbeiten"></div>
+          <div id="me_${m.id}" class="rich-editor mail-editor" contenteditable="true" data-ovk="${ovk}">${m.previewHtml}</div>
+        </div>
+        <div class="mail-reset" style="${edited?'':'display:none'}"><a href="#" class="reset-ov" data-ovk="${ovk}">↺ auf Standard-Vorlage zurücksetzen</a></div>
+      </div>
+    </div>`;
+  }).join("");
+
+  list.querySelectorAll(".toggle").forEach(t=>t.onclick=()=>{
+    const item=t.closest(".mailitem");
+    if(!item) return;
+    const shouldOpen=!item.classList.contains("open");
+    list.querySelectorAll(".mailitem.open").forEach(x=>{
+      x.classList.remove("open");
+      const oldToggle=x.querySelector(".toggle");
+      if(oldToggle) oldToggle.textContent="Bearbeiten ▾";
+    });
+    if(shouldOpen){
+      item.classList.add("open");
+      t.textContent="Schließen ▴";
+    }
+  });
+  list.querySelectorAll(".mail-editor").forEach(ed=>wireRichEditor(ed.id));
+  list.querySelectorAll(".mail-subject-input").forEach(inp=>inp.oninput=e=>{
+    const input=e.target;
+    const item=input.closest(".mailitem");
+    const msg=currentMsgs.find(x=>x.id===input.dataset.msgid);
+    if(!msg) return;
+    const k=input.dataset.ovk;
+    state.subjectOverrides=state.subjectOverrides||{};
+    if(input.value===msg.defaultSubject) delete state.subjectOverrides[k];
+    else state.subjectOverrides[k]=input.value;
+    saveState();
+    setMailEditedVisual(item, mailEditedByKey(k, msg.defaultSubject));
+  });
+  list.querySelectorAll(".reset-ov").forEach(a=>a.onclick=e=>{
+    e.preventDefault();
+    const item=a.closest(".mailitem");
+    const openId=item ? item.dataset.id : null;
+    const k=a.dataset.ovk;
+    if(state.overrides) delete state.overrides[k];
+    if(state.subjectOverrides) delete state.subjectOverrides[k];
+    saveState();
+    renderMails(openId);
+  });
+  bindRichToolbars();
+  renderSigMissing();
+}
+document.getElementById("resetSent").onclick=()=>{ if(sentSet.size===0){ alert("Es ist nichts als gesendet markiert."); return; } if(!confirm("Versand-Status zurücksetzen? Danach gelten alle Mails wieder als offen.")) return; sentSet.clear(); persistSent(); renderMails(); };
+
+/* Send all */
+const overlay=document.getElementById("confirmOverlay");
+document.getElementById("sendAll").onclick=()=>{ if(!account){ alert("Bitte zuerst mit Microsoft anmelden."); return; } currentMsgs=buildMessages(); if(currentMsgs.length===0){ alert("Keine E-Mails zum Senden."); return; } pendingSend=currentMsgs.filter(m=>!sentSet.has(m.id)); if(pendingSend.length===0){ alert("Alle E-Mails wurden bereits gesendet.\nZum erneuten Senden zuerst auf Versand-Status zurücksetzen klicken."); return; } const students=new Set(pendingSend.map(m=>m.student)).size; document.getElementById("confirmText").textContent=`Es werden ${pendingSend.length} E-Mail(s) an die Kontakte von ${students} Schüler(n) verschickt.`; document.getElementById("confirmDetail").textContent=`Versand über dein Konto (${state.account.email}). Bereits gesendete werden übersprungen. Nicht rückgängig machbar.`; overlay.style.display="flex"; };
+document.getElementById("confirmCancel").onclick=()=>overlay.style.display="none";
+document.getElementById("confirmGo").onclick=async()=>{ overlay.style.display="none"; if(!pendingSend.length) return; const btn=document.getElementById("sendAll"); btn.disabled=true; btn.textContent="Sende…"; let ok=0, fail=0, firstErr=""; try{ const r=await graphSend(pendingSend); if(!r.ok){ alert("Senden fehlgeschlagen: "+(r.error||"")); } else { const byId={}; r.results.forEach(x=>byId[x.id]=x); pendingSend.forEach(m=>{ const res=byId[m.id]; if(res&&res.ok){ ok++; sentSet.add(m.id); } else { fail++; if(!firstErr&&res) firstErr=res.error||""; } }); persistSent(); } }catch(e){ alert("Helfer nicht erreichbar?\n"+(e&&e.message?e.message:e)); } renderMails(); document.getElementById("mailBanner").innerHTML=`<div class="banner ${fail?'warn':'ok'}">${ok} gesendet${fail?(", "+fail+" fehlgeschlagen — "+esc(firstErr)):""}.</div>`+document.getElementById("mailBanner").innerHTML; pendingSend=[]; btn.disabled=false; };
+
+/* Init */
+renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount();
+</script>
+</body>
+</html>
