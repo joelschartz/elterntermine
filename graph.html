@@ -1,120 +1,108 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ElternTermine · Microsoft 365</title>
+<title>Rendez-vous parents · Microsoft 365</title>
 <style>
   :root{
-    --bg:#f5f7fb;
+    --bg:#f1f5f9;
     --surface:#ffffff;
     --surface-soft:#f8fafc;
-    --ink:#172033;
-    --muted:#667085;
-    --muted-2:#8b96a8;
-    --line:#dbe3ef;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --muted-2:#94a3b8;
+    --line:#e6eaf1;
     --line-strong:#cbd5e1;
-    --accent:#2f5fd7;
-    --accent-d:#244bb0;
+    --accent:#2563eb;
+    --accent-d:#1d4ed8;
     --accent-soft:#eef4ff;
-    --ok:#157347;
-    --ok-soft:#e8f7ef;
-    --warn:#a76508;
-    --warn-soft:#fff3dc;
+    --ok:#15803d;
+    --ok-soft:#ecfdf3;
+    --warn:#b45309;
+    --warn-soft:#fffaeb;
     --err:#b42318;
-    --err-soft:#fff0ee;
-    --shadow:0 14px 40px rgba(20,30,60,.08);
-    --shadow-sm:0 2px 10px rgba(20,30,60,.05);
-    --radius:18px;
+    --err-soft:#fef3f2;
+    --shadow:0 12px 32px rgba(15,23,42,.10);
+    --shadow-sm:0 1px 2px rgba(15,23,42,.05),0 1px 3px rgba(15,23,42,.05);
+    --radius:14px;
   }
   *{box-sizing:border-box}
   html{background:var(--bg)}
   body{
     margin:0;
     font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:
-      radial-gradient(circle at top left,rgba(47,95,215,.13),transparent 34rem),
-      linear-gradient(180deg,#fbfcff 0,#f5f7fb 320px,var(--bg) 100%);
+    background:var(--bg);
     color:var(--ink);
-    font-size:15px;
+    font-size:14.5px;
     line-height:1.5;
+    -webkit-font-smoothing:antialiased;
   }
   header{
-    position:relative;
-    overflow:hidden;
-    background:rgba(255,255,255,.92);
+    background:var(--surface);
     color:var(--ink);
-    padding:24px max(22px,calc((100vw - 1180px)/2 + 22px));
-    border-bottom:1px solid rgba(219,227,239,.9);
-    box-shadow:0 8px 26px rgba(20,30,60,.05);
+    padding:18px max(22px,calc((100vw - 1120px)/2 + 22px));
+    border-bottom:1px solid var(--line);
   }
-  header:after{
-    content:"";
-    position:absolute;
-    width:360px;height:360px;right:-150px;top:-210px;
-    border-radius:50%;background:rgba(47,95,215,.10);
-  }
-  header h1{position:relative;margin:0;font-size:25px;font-weight:820;letter-spacing:-.03em}
-  header p{position:relative;margin:5px 0 0;color:var(--muted);font-size:14px;max-width:760px}
+  header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em}
+  header p{margin:3px 0 0;color:var(--muted);font-size:13px;max-width:780px}
   .tabs{
-    display:flex;gap:8px;
-    padding:12px max(16px,calc((100vw - 1180px)/2 + 16px));
-    background:rgba(246,248,252,.86);
-    backdrop-filter:saturate(180%) blur(14px);
-    border-bottom:1px solid rgba(203,213,225,.75);
+    display:flex;gap:6px;
+    padding:9px max(16px,calc((100vw - 1120px)/2 + 16px));
+    background:rgba(255,255,255,.88);
+    backdrop-filter:saturate(160%) blur(10px);
+    border-bottom:1px solid var(--line);
     position:sticky;top:0;z-index:5;overflow-x:auto;
-    box-shadow:0 6px 20px rgba(20,30,60,.04);
   }
   .tab{
-    padding:10px 16px;
+    padding:8px 15px;
     cursor:pointer;
-    border:1px solid var(--line);
-    border-radius:999px;
-    background:#fff;
+    border:1px solid transparent;
+    border-radius:9px;
+    background:transparent;
     color:var(--muted);
-    font-weight:760;
-    font-size:14px;
+    font-weight:650;
+    font-size:13.5px;
     white-space:nowrap;
-    transition:.16s ease;
+    transition:.14s ease;
   }
-  .tab:hover{background:#fff;color:var(--ink);border-color:var(--line-strong);box-shadow:0 5px 14px rgba(20,30,60,.05)}
-  .tab.active{color:#fff;background:var(--accent);border-color:var(--accent);box-shadow:0 8px 20px rgba(47,95,215,.22)}
-  .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 90px}
+  .tab:hover{background:var(--surface-soft);color:var(--ink)}
+  .tab.active{color:#fff;background:var(--accent);border-color:var(--accent);box-shadow:0 3px 10px rgba(37,99,235,.28)}
+  .wrap{max-width:1120px;margin:0 auto;padding:22px 18px 80px}
   .panel{display:none}.panel.active{display:block}
   .card{
-    background:rgba(255,255,255,.96);
-    border:1px solid rgba(219,227,239,.95);
+    background:var(--surface);
+    border:1px solid var(--line);
     border-radius:var(--radius);
-    padding:22px;
-    margin-bottom:20px;
+    padding:20px;
+    margin-bottom:16px;
     box-shadow:var(--shadow-sm);
   }
-  .card:hover{box-shadow:0 10px 28px rgba(20,30,60,.06)}
-  h2{font-size:18px;margin:0 0 12px;font-weight:760;letter-spacing:-.01em}
-  h3{font-size:12px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800}
-  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px;font-weight:700}
+  h2{font-size:16.5px;margin:0 0 10px;font-weight:750;letter-spacing:-.01em}
+  h3{font-size:11.5px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:800}
+  label{display:block;font-size:12.5px;color:var(--muted);margin:10px 0 5px;font-weight:650}
   input,select,textarea{
-    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;
+    width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:10px;
     font-size:14px;font-family:inherit;background:#fff;color:var(--ink);
     transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
   }
-  input:hover,select:hover,textarea:hover{border-color:var(--line-strong)}
-  input:focus,select:focus,textarea:focus,.rich-editor:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+  input:hover,select:hover,textarea:hover{border-color:var(--muted-2)}
+  input:focus,select:focus,textarea:focus,.rich-editor:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
   textarea{resize:vertical;min-height:150px;line-height:1.5}
   button{
-    font-family:inherit;font-size:14px;font-weight:750;border:none;border-radius:11px;
-    padding:10px 16px;cursor:pointer;background:var(--accent);color:#fff;
-    box-shadow:0 8px 18px rgba(47,95,215,.20);
+    font-family:inherit;font-size:13.5px;font-weight:650;border:none;border-radius:10px;
+    padding:9px 15px;cursor:pointer;background:var(--accent);color:#fff;
+    box-shadow:0 1px 2px rgba(15,23,42,.10);
     transition:background .12s ease,box-shadow .12s ease,border-color .12s ease;
   }
-  button:hover{background:var(--accent-d);box-shadow:0 8px 18px rgba(47,95,215,.20)}
-  button:active{box-shadow:0 6px 14px rgba(47,95,215,.18)}
+  button:hover{background:var(--accent-d)}
+  button:active{transform:translateY(.5px)}
   button:disabled{opacity:1;cursor:not-allowed;background:#eef2f6;color:#98a2b3;border:1px solid var(--line);transform:none;box-shadow:none}
-  button.ghost{background:#fff;color:var(--accent);border:1px solid var(--line);box-shadow:none}
+  button.ghost{background:#fff;color:var(--accent);border:1px solid var(--line-strong);box-shadow:none}
   button.ghost:hover{background:var(--accent-soft);border-color:#c8d8ff;box-shadow:none}
   button.danger{background:#fff;color:var(--err);border:1px solid #ffd0ca;box-shadow:none}
   button.danger:hover{background:var(--err-soft);border-color:#ffb8af}
-  button.sm{padding:7px 11px;font-size:13px;border-radius:10px}
+  button.sm{padding:7px 11px;font-size:12.5px;border-radius:9px}
   .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.spacer{flex:1}
   table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:14px;border:1px solid var(--line);background:#fff}
@@ -271,49 +259,49 @@
 </head>
 <body>
 <header>
-  <h1>ElternTermine · Microsoft 365</h1>
-  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R10</span></p>
+  <h1>Rendez-vous parents · Microsoft 365</h1>
+  <p>Planifiez les rendez-vous et envoyez automatiquement les e-mails de confirmation depuis votre propre compte (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build v53</span></p>
 </header>
 
 <nav class="tabs">
-  <div class="tab active" data-tab="students">1 · Schüler</div>
-  <div class="tab" data-tab="calendar">2 · Kalender</div>
-  <div class="tab" data-tab="mails">3 · E-Mails &amp; Versand</div>
+  <div class="tab active" data-tab="students">1 · Élèves</div>
+  <div class="tab" data-tab="calendar">2 · Calendrier</div>
+  <div class="tab" data-tab="mails">3 · E-mails &amp; envoi</div>
 </nav>
 
 <div class="wrap">
   <section class="panel active" id="panel-students">
     <div class="card">
-      <h2>Schülerliste</h2>
-      <p class="hint">Trage jeden Schüler einmal mit den Kontakt-Mail-Adressen ein. Leere Felder werden beim Versand übersprungen.</p>
+      <h2>Liste des élèves</h2>
+      <p class="hint">Saisissez chaque élève une fois avec ses adresses e-mail de contact. Les champs vides sont ignorés à l’envoi.</p>
       <div id="studentTable"></div>
       <div class="toolbar" style="margin-top:14px">
-        <button id="addStudent">+ Schüler hinzufügen</button>
+        <button id="addStudent">+ Ajouter un élève</button>
         <div class="spacer"></div>
-        <button class="ghost sm" id="importCsvBtn">CSV importieren</button>
+        <button class="ghost sm" id="importCsvBtn">Importer un CSV</button>
         <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none">
       </div>
-      <p class="hint">CSV-Format (mit oder ohne Kopfzeile): <code class="k">Name,Kontakt-Mail 1,Kontakt-Mail 2</code></p>
+      <p class="hint">Format CSV (avec ou sans en-tête) : <code class="k">Nom,E-mail de contact 1,E-mail de contact 2</code></p>
     </div>
   </section>
 
   <section class="panel" id="panel-calendar">
     <div class="card">
-      <h2>Zeitraster</h2>
+      <h2>Plage horaire</h2>
       <div class="row">
-        <div><label>Beginn</label><input type="time" id="cfgStart"></div>
-        <div><label>Ende</label><input type="time" id="cfgEnd"></div>
-        <div><label>Dauer pro Termin (Min.)</label><input type="number" id="cfgDur" min="5" max="120" step="5"></div>
+        <div><label>Début</label><input type="time" id="cfgStart"></div>
+        <div><label>Fin</label><input type="time" id="cfgEnd"></div>
+        <div><label>Durée par rendez-vous (min.)</label><input type="number" id="cfgDur" min="5" max="120" step="5"></div>
       </div>
     </div>
     <div class="card">
-      <h2 style="margin:0 0 4px">Gesprächstage</h2>
-      <p class="hint" style="margin:0 0 12px">Klick die Tage an, an denen Gespräche stattfinden (Wochenende ist nicht wählbar).</p>
+      <h2 style="margin:0 0 4px">Jours d’entretien</h2>
+      <p class="hint" style="margin:0 0 12px">Cliquez sur les jours où ont lieu les entretiens (le week-end n’est pas sélectionnable).</p>
       <div id="miniCal"></div>
-      <div style="max-width:430px;margin:0 auto"><div class="mail-reset" id="resetCalRow" style="display:none"><a href="#" id="resetCal" title="Alle gewählten Tage und zugewiesenen Termine löschen">↺ Kalender &amp; Termine zurücksetzen</a></div></div>
+      <div style="max-width:430px;margin:0 auto"><div class="mail-reset" id="resetCalRow" style="display:none"><a href="#" id="resetCal" title="Supprimer tous les jours choisis et les rendez-vous attribués">↺ Réinitialiser le calendrier et les rendez-vous</a></div></div>
     </div>
     <div class="card">
-      <h2>Termine zuweisen</h2>
+      <h2>Attribuer les rendez-vous</h2>
       <p class="hint" id="assignSummary"></p>
       <div id="calendarGrid"></div>
     </div>
@@ -321,23 +309,23 @@
 
   <section class="panel" id="panel-mails">
     <div class="card">
-      <h2>Microsoft-Konto</h2>
+      <h2>Compte Microsoft</h2>
       <div id="authBox"></div>
       <div id="loginBox" style="display:none"></div>
       <div class="toolbar" style="margin-top:10px">
-        <button id="signIn">Mit Microsoft anmelden</button>
-        <button id="signOut" class="ghost sm" style="display:none">Abmelden</button>
+        <button id="signIn">Se connecter avec Microsoft</button>
+        <button id="signOut" class="ghost sm" style="display:none">Se déconnecter</button>
       </div>
-      <p class="hint" id="authHint">Beim ersten Mal meldest du dich einmal bei Microsoft an (Code eingeben + zustimmen). Danach läuft der Versand automatisch — ohne erneutes Anmelden.</p>
+      <p class="hint" id="authHint">La première fois, connectez-vous une fois à Microsoft (saisir le code + accepter). Ensuite, l’envoi se fait automatiquement, sans nouvelle connexion.</p>
     </div>
 
     <div class="card template-card" id="templateCard">
       <div class="mail-template-head">
-        <div id="templateToggleZone" class="template-toggle-zone" role="button" tabindex="0" aria-label="Vorgefertigte E-Mail-Fassung ein- oder ausklappen">
-          <button id="toggleTemplate" class="template-chevron" type="button" aria-expanded="true" aria-label="Vorgefertigte E-Mail-Fassung ein- oder ausklappen">▾</button>
+        <div id="templateToggleZone" class="template-toggle-zone" role="button" tabindex="0" aria-label="Afficher ou masquer le modèle d’e-mail">
+          <button id="toggleTemplate" class="template-chevron" type="button" aria-expanded="true" aria-label="Afficher ou masquer le modèle d’e-mail">▾</button>
           <div class="template-title">
-            <h2>Vorgefertigte E-Mail-Fassung</h2>
-            <p class="hint">Vorlage, Signatur und Logo für alle E-Mails.</p>
+            <h2>Modèle d’e-mail</h2>
+            <p class="hint">Texte, signature et logo pour tous les e-mails.</p>
           </div>
         </div>
         <label class="signature-toggle"><input type="checkbox" id="useSigTop"> Signature</label>
@@ -345,79 +333,79 @@
       <div id="templateEditorArea" class="template-editor-area">
       <div id="mailTemplatePreview"></div>
       <div class="rich-toolbar" data-for="tplBodyEditor" aria-label="Formatierungsleiste">
-          <button class="ot-ic editor-undo" data-cmd="undo" title="Rückgängig" disabled><svg viewBox="0 0 20 20"><path d="M8 6H4v-4"/><path d="M4 6c2.3-2.6 6.3-3.2 9.1-1.3 3.3 2.2 3.9 6.9 1.2 9.8-2.1 2.2-5.4 2.8-8.1 1.5"/></svg></button>
-          <button class="ot-ic editor-redo" data-cmd="redo" title="Wiederholen" disabled><svg viewBox="0 0 20 20"><path d="M12 6h4v-4"/><path d="M16 6c-2.3-2.6-6.3-3.2-9.1-1.3-3.3 2.2-3.9 6.9-1.2 9.8 2.1 2.2 5.4 2.8 8.1 1.5"/></svg></button>
+          <button class="ot-ic editor-undo" data-cmd="undo" title="Annuler" disabled><svg viewBox="0 0 20 20"><path d="M8 6H4v-4"/><path d="M4 6c2.3-2.6 6.3-3.2 9.1-1.3 3.3 2.2 3.9 6.9 1.2 9.8-2.1 2.2-5.4 2.8-8.1 1.5"/></svg></button>
+          <button class="ot-ic editor-redo" data-cmd="redo" title="Rétablir" disabled><svg viewBox="0 0 20 20"><path d="M12 6h4v-4"/><path d="M16 6c-2.3-2.6-6.3-3.2-9.1-1.3-3.3 2.2-3.9 6.9-1.2 9.8 2.1 2.2 5.4 2.8 8.1 1.5"/></svg></button>
           <span class="ot-sep"></span>
-          <select data-cmd="fontName" title="Schriftart">
+          <select data-cmd="fontName" title="Police">
             <option value="Aptos">Aptos</option><option value="Calibri" selected>Calibri</option><option value="Arial">Arial</option><option value="Times New Roman">Times New Roman</option><option value="Tahoma">Tahoma</option><option value="Cambria">Cambria</option><option value="Georgia">Georgia</option><option value="Verdana">Verdana</option><option value="Courier New">Courier New</option><option value="Comic Sans MS">Comic Sans MS</option><option value="Century Gothic">Century Gothic</option>
           </select>
-          <select data-cmd="fontSize" title="Schriftgröße"><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12" selected>12</option><option value="14">14</option><option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option><option value="28">28</option><option value="36">36</option><option value="48">48</option><option value="72">72</option></select>
+          <select data-cmd="fontSize" title="Taille"><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12" selected>12</option><option value="14">14</option><option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option><option value="28">28</option><option value="36">36</option><option value="48">48</option><option value="72">72</option></select>
           <span class="ot-sep"></span>
-          <button class="ot-let" data-cmd="bold" title="Fett"><b>B</b></button>
-          <button class="ot-let" data-cmd="italic" title="Kursiv"><i>I</i></button>
-          <button class="ot-let" data-cmd="underline" title="Unterstrichen"><u>U</u></button>
-          <button class="ot-let" data-cmd="strikeThrough" title="Durchgestrichen"><s>S</s></button>
+          <button class="ot-let" data-cmd="bold" title="Gras"><b>B</b></button>
+          <button class="ot-let" data-cmd="italic" title="Italique"><i>I</i></button>
+          <button class="ot-let" data-cmd="underline" title="Souligné"><u>U</u></button>
+          <button class="ot-let" data-cmd="strikeThrough" title="Barré"><s>S</s></button>
           <span class="color-picker" data-kind="hilite">
-            <button type="button" class="ot-clr color-palette-button" data-action="palette" data-cmd="hiliteColor" title="Text markieren / hervorheben" aria-label="Text markieren / hervorheben" style="--current-color:#fff176"><span class="hilite-ico" aria-hidden="true"><svg viewBox="0 0 20 20"><path class="hi-pen" d="M12.8 3.6 16.4 7.2 9.9 13.7 5.4 14.6 6.3 10.1 Z"/><path class="hi-cap" d="M10.9 5.5 14.5 9.1"/><path class="hi-strip" d="M4 17.2H12"/></svg></span><span class="color-caret">▾</span></button>
-            <div class="color-popover" role="menu"><div class="palette-title">Hintergrund / Markierung</div><div class="palette-grid"><button type="button" class="palette-swatch no-color" data-palette-cmd="hiliteColor" data-palette-value="transparent" title="Keine Hervorhebung"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#4aa3f0" style="--swatch:#4aa3f0" title="#4aa3f0"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#6cc04a" style="--swatch:#6cc04a" title="#6cc04a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#ffd32a" style="--swatch:#ffd32a" title="#ffd32a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#ff8c1a" style="--swatch:#ff8c1a" title="#ff8c1a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#f15b55" style="--swatch:#f15b55" title="#f15b55"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#a95adf" style="--swatch:#a95adf" title="#a95adf"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b66c3" style="--swatch:#0b66c3" title="#0b66c3"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b8f3a" style="--swatch:#0b8f3a" title="#0b8f3a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#e5c51a" style="--swatch:#e5c51a" title="#e5c51a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#df6410" style="--swatch:#df6410" title="#df6410"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#d71e0f" style="--swatch:#d71e0f" title="#d71e0f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#7a3ea1" style="--swatch:#7a3ea1" title="#7a3ea1"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#1f4e79" style="--swatch:#1f4e79" title="#1f4e79"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b5d20" style="--swatch:#0b5d20" title="#0b5d20"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#c99612" style="--swatch:#c99612" title="#c99612"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#b8540f" style="--swatch:#b8540f" title="#b8540f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#8f1008" style="--swatch:#8f1008" title="#8f1008"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#5b2b7a" style="--swatch:#5b2b7a" title="#5b2b7a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#003366" style="--swatch:#003366" title="#003366"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#004b16" style="--swatch:#004b16" title="#004b16"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#a87512" style="--swatch:#a87512" title="#a87512"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#8d3f0a" style="--swatch:#8d3f0a" title="#8d3f0a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#5f0705" style="--swatch:#5f0705" title="#5f0705"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#3d214f" style="--swatch:#3d214f" title="#3d214f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#d0d0d0" style="--swatch:#d0d0d0" title="#d0d0d0"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#999999" style="--swatch:#999999" title="#999999"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#666666" style="--swatch:#666666" title="#666666"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#333333" style="--swatch:#333333" title="#333333"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#000000" style="--swatch:#000000" title="#000000"></button></div></div>
+            <button type="button" class="ot-clr color-palette-button" data-action="palette" data-cmd="hiliteColor" title="Surligner le texte" aria-label="Surligner le texte" style="--current-color:#fff176"><span class="hilite-ico" aria-hidden="true"><svg viewBox="0 0 20 20"><path class="hi-pen" d="M12.8 3.6 16.4 7.2 9.9 13.7 5.4 14.6 6.3 10.1 Z"/><path class="hi-cap" d="M10.9 5.5 14.5 9.1"/><path class="hi-strip" d="M4 17.2H12"/></svg></span><span class="color-caret">▾</span></button>
+            <div class="color-popover" role="menu"><div class="palette-title">Arrière-plan / surlignage</div><div class="palette-grid"><button type="button" class="palette-swatch no-color" data-palette-cmd="hiliteColor" data-palette-value="transparent" title="Aucun surlignage"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#4aa3f0" style="--swatch:#4aa3f0" title="#4aa3f0"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#6cc04a" style="--swatch:#6cc04a" title="#6cc04a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#ffd32a" style="--swatch:#ffd32a" title="#ffd32a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#ff8c1a" style="--swatch:#ff8c1a" title="#ff8c1a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#f15b55" style="--swatch:#f15b55" title="#f15b55"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#a95adf" style="--swatch:#a95adf" title="#a95adf"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b66c3" style="--swatch:#0b66c3" title="#0b66c3"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b8f3a" style="--swatch:#0b8f3a" title="#0b8f3a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#e5c51a" style="--swatch:#e5c51a" title="#e5c51a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#df6410" style="--swatch:#df6410" title="#df6410"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#d71e0f" style="--swatch:#d71e0f" title="#d71e0f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#7a3ea1" style="--swatch:#7a3ea1" title="#7a3ea1"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#1f4e79" style="--swatch:#1f4e79" title="#1f4e79"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#0b5d20" style="--swatch:#0b5d20" title="#0b5d20"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#c99612" style="--swatch:#c99612" title="#c99612"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#b8540f" style="--swatch:#b8540f" title="#b8540f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#8f1008" style="--swatch:#8f1008" title="#8f1008"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#5b2b7a" style="--swatch:#5b2b7a" title="#5b2b7a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#003366" style="--swatch:#003366" title="#003366"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#004b16" style="--swatch:#004b16" title="#004b16"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#a87512" style="--swatch:#a87512" title="#a87512"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#8d3f0a" style="--swatch:#8d3f0a" title="#8d3f0a"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#5f0705" style="--swatch:#5f0705" title="#5f0705"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#3d214f" style="--swatch:#3d214f" title="#3d214f"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#d0d0d0" style="--swatch:#d0d0d0" title="#d0d0d0"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#999999" style="--swatch:#999999" title="#999999"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#666666" style="--swatch:#666666" title="#666666"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#333333" style="--swatch:#333333" title="#333333"></button><button type="button" class="palette-swatch" data-palette-cmd="hiliteColor" data-palette-value="#000000" style="--swatch:#000000" title="#000000"></button></div></div>
           </span>
           <span class="color-picker" data-kind="fore">
-            <button type="button" class="ot-clr color-palette-button" data-action="palette" data-cmd="foreColor" title="Schriftfarbe" aria-label="Schriftfarbe" style="--current-color:#c00000"><span class="color-letter">A</span><span class="color-caret">▾</span></button>
-            <div class="color-popover" role="menu"><div class="palette-title">Schriftfarbe</div><div class="palette-grid"><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#4aa3f0" style="--swatch:#4aa3f0" title="#4aa3f0"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#6cc04a" style="--swatch:#6cc04a" title="#6cc04a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#ffd32a" style="--swatch:#ffd32a" title="#ffd32a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#ff8c1a" style="--swatch:#ff8c1a" title="#ff8c1a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#f15b55" style="--swatch:#f15b55" title="#f15b55"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#a95adf" style="--swatch:#a95adf" title="#a95adf"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b66c3" style="--swatch:#0b66c3" title="#0b66c3"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b8f3a" style="--swatch:#0b8f3a" title="#0b8f3a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#e5c51a" style="--swatch:#e5c51a" title="#e5c51a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#df6410" style="--swatch:#df6410" title="#df6410"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#d71e0f" style="--swatch:#d71e0f" title="#d71e0f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#7a3ea1" style="--swatch:#7a3ea1" title="#7a3ea1"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#1f4e79" style="--swatch:#1f4e79" title="#1f4e79"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b5d20" style="--swatch:#0b5d20" title="#0b5d20"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#c99612" style="--swatch:#c99612" title="#c99612"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#b8540f" style="--swatch:#b8540f" title="#b8540f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#8f1008" style="--swatch:#8f1008" title="#8f1008"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#5b2b7a" style="--swatch:#5b2b7a" title="#5b2b7a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#003366" style="--swatch:#003366" title="#003366"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#004b16" style="--swatch:#004b16" title="#004b16"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#a87512" style="--swatch:#a87512" title="#a87512"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#8d3f0a" style="--swatch:#8d3f0a" title="#8d3f0a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#5f0705" style="--swatch:#5f0705" title="#5f0705"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#3d214f" style="--swatch:#3d214f" title="#3d214f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#d0d0d0" style="--swatch:#d0d0d0" title="#d0d0d0"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#999999" style="--swatch:#999999" title="#999999"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#666666" style="--swatch:#666666" title="#666666"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#333333" style="--swatch:#333333" title="#333333"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#000000" style="--swatch:#000000" title="#000000"></button></div></div>
+            <button type="button" class="ot-clr color-palette-button" data-action="palette" data-cmd="foreColor" title="Couleur du texte" aria-label="Couleur du texte" style="--current-color:#c00000"><span class="color-letter">A</span><span class="color-caret">▾</span></button>
+            <div class="color-popover" role="menu"><div class="palette-title">Couleur du texte</div><div class="palette-grid"><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#4aa3f0" style="--swatch:#4aa3f0" title="#4aa3f0"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#6cc04a" style="--swatch:#6cc04a" title="#6cc04a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#ffd32a" style="--swatch:#ffd32a" title="#ffd32a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#ff8c1a" style="--swatch:#ff8c1a" title="#ff8c1a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#f15b55" style="--swatch:#f15b55" title="#f15b55"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#a95adf" style="--swatch:#a95adf" title="#a95adf"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b66c3" style="--swatch:#0b66c3" title="#0b66c3"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b8f3a" style="--swatch:#0b8f3a" title="#0b8f3a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#e5c51a" style="--swatch:#e5c51a" title="#e5c51a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#df6410" style="--swatch:#df6410" title="#df6410"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#d71e0f" style="--swatch:#d71e0f" title="#d71e0f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#7a3ea1" style="--swatch:#7a3ea1" title="#7a3ea1"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#1f4e79" style="--swatch:#1f4e79" title="#1f4e79"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#0b5d20" style="--swatch:#0b5d20" title="#0b5d20"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#c99612" style="--swatch:#c99612" title="#c99612"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#b8540f" style="--swatch:#b8540f" title="#b8540f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#8f1008" style="--swatch:#8f1008" title="#8f1008"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#5b2b7a" style="--swatch:#5b2b7a" title="#5b2b7a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#003366" style="--swatch:#003366" title="#003366"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#004b16" style="--swatch:#004b16" title="#004b16"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#a87512" style="--swatch:#a87512" title="#a87512"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#8d3f0a" style="--swatch:#8d3f0a" title="#8d3f0a"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#5f0705" style="--swatch:#5f0705" title="#5f0705"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#3d214f" style="--swatch:#3d214f" title="#3d214f"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#d0d0d0" style="--swatch:#d0d0d0" title="#d0d0d0"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#999999" style="--swatch:#999999" title="#999999"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#666666" style="--swatch:#666666" title="#666666"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#333333" style="--swatch:#333333" title="#333333"></button><button type="button" class="palette-swatch" data-palette-cmd="foreColor" data-palette-value="#000000" style="--swatch:#000000" title="#000000"></button></div></div>
           </span>
-          <button class="ot-ic" data-cmd="removeFormat" title="Formatierung löschen"><svg viewBox="0 0 20 20"><path d="M6.2 16.5 2.8 13.1a1.6 1.6 0 0 1 0-2.3l7.7-7.7a1.6 1.6 0 0 1 2.3 0l4.4 4.4a1.6 1.6 0 0 1 0 2.3l-6.4 6.4z"/><path d="M17.5 16.5H9"/><path d="m4.7 9 6 6"/></svg></button>
+          <button class="ot-ic" data-cmd="removeFormat" title="Effacer la mise en forme"><svg viewBox="0 0 20 20"><path d="M6.2 16.5 2.8 13.1a1.6 1.6 0 0 1 0-2.3l7.7-7.7a1.6 1.6 0 0 1 2.3 0l4.4 4.4a1.6 1.6 0 0 1 0 2.3l-6.4 6.4z"/><path d="M17.5 16.5H9"/><path d="m4.7 9 6 6"/></svg></button>
           <span class="ot-sep"></span>
-          <button class="ot-ic" data-cmd="insertUnorderedList" title="Aufzählung"><svg viewBox="0 0 20 20"><circle cx="4" cy="5.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="4" cy="10" r="1.3" fill="currentColor" stroke="none"/><circle cx="4" cy="14.5" r="1.3" fill="currentColor" stroke="none"/><path d="M8 5.5h9M8 10h9M8 14.5h9"/></svg></button>
-          <button class="ot-ic" data-cmd="insertOrderedList" title="Nummerierung"><svg viewBox="0 0 20 20"><path d="M8 5.5h9M8 10h9M8 14.5h9"/><text x="1.5" y="7.5" font-size="6.5" fill="currentColor" stroke="none">1</text><text x="1.5" y="12" font-size="6.5" fill="currentColor" stroke="none">2</text><text x="1.5" y="16.5" font-size="6.5" fill="currentColor" stroke="none">3</text></svg></button>
-          <button class="ot-ic" data-cmd="outdent" title="Einzug verkleinern"><svg viewBox="0 0 20 20"><path d="M4 4h12M9 8h7M9 12h7M4 16h12"/><path d="M6 8 3.5 10 6 12"/></svg></button>
-          <button class="ot-ic" data-cmd="indent" title="Einzug vergrößern"><svg viewBox="0 0 20 20"><path d="M4 4h12M9 8h7M9 12h7M4 16h12"/><path d="M4 8 6.5 10 4 12"/></svg></button>
+          <button class="ot-ic" data-cmd="insertUnorderedList" title="Liste à puces"><svg viewBox="0 0 20 20"><circle cx="4" cy="5.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="4" cy="10" r="1.3" fill="currentColor" stroke="none"/><circle cx="4" cy="14.5" r="1.3" fill="currentColor" stroke="none"/><path d="M8 5.5h9M8 10h9M8 14.5h9"/></svg></button>
+          <button class="ot-ic" data-cmd="insertOrderedList" title="Liste numérotée"><svg viewBox="0 0 20 20"><path d="M8 5.5h9M8 10h9M8 14.5h9"/><text x="1.5" y="7.5" font-size="6.5" fill="currentColor" stroke="none">1</text><text x="1.5" y="12" font-size="6.5" fill="currentColor" stroke="none">2</text><text x="1.5" y="16.5" font-size="6.5" fill="currentColor" stroke="none">3</text></svg></button>
+          <button class="ot-ic" data-cmd="outdent" title="Diminuer le retrait"><svg viewBox="0 0 20 20"><path d="M4 4h12M9 8h7M9 12h7M4 16h12"/><path d="M6 8 3.5 10 6 12"/></svg></button>
+          <button class="ot-ic" data-cmd="indent" title="Augmenter le retrait"><svg viewBox="0 0 20 20"><path d="M4 4h12M9 8h7M9 12h7M4 16h12"/><path d="M4 8 6.5 10 4 12"/></svg></button>
           <span class="ot-sep"></span>
-          <button class="ot-ic" data-cmd="justifyLeft" title="Linksbündig"><svg viewBox="0 0 20 20"><path d="M4 4h12M4 8h8M4 12h12M4 16h8"/></svg></button>
-          <button class="ot-ic" data-cmd="justifyCenter" title="Zentriert"><svg viewBox="0 0 20 20"><path d="M4 4h12M6 8h8M4 12h12M6 16h8"/></svg></button>
-          <button class="ot-ic" data-cmd="justifyRight" title="Rechtsbündig"><svg viewBox="0 0 20 20"><path d="M4 4h12M8 8h8M4 12h12M8 16h8"/></svg></button>
+          <button class="ot-ic" data-cmd="justifyLeft" title="Aligner à gauche"><svg viewBox="0 0 20 20"><path d="M4 4h12M4 8h8M4 12h12M4 16h8"/></svg></button>
+          <button class="ot-ic" data-cmd="justifyCenter" title="Centrer"><svg viewBox="0 0 20 20"><path d="M4 4h12M6 8h8M4 12h12M6 16h8"/></svg></button>
+          <button class="ot-ic" data-cmd="justifyRight" title="Aligner à droite"><svg viewBox="0 0 20 20"><path d="M4 4h12M8 8h8M4 12h12M8 16h8"/></svg></button>
       </div>
       <div class="mail-compose-shell template-compose-shell">
         <div class="mailbody-head">
-          <label class="mail-subject-label" for="tplSubject">Betreff</label>
-          <input id="tplSubject" class="mail-subject-input" title="Betreff bearbeiten">
+          <label class="mail-subject-label" for="tplSubject">Objet</label>
+          <input id="tplSubject" class="mail-subject-input" title="Modifier l’objet">
         </div>
         <div id="tplBodyEditor" class="rich-editor mail-editor template-mail-editor" contenteditable="true" spellcheck="true"></div>
       </div>
-      <div class="mail-reset" id="resetTplBodyRow" style="display:none"><a href="#" id="resetTplBody">↺ Text auf Standard zurücksetzen</a><a href="#" id="saveTplBody" class="save-default" title="Den aktuellen Text + Betreff als deinen persönlichen Standard festlegen">✓ als meinen Standard speichern</a></div>
-      <p class="hint">Die Platzhalter <code class="k">{DATE}</code>, <code class="k">{TIME}</code> und <code class="k">{ENFANT}</code> werden beim Versand automatisch durch Datum (frz.), Uhrzeit und Schülername ersetzt – einfach im Text stehen lassen.</p>
+      <div class="mail-reset" id="resetTplBodyRow" style="display:none"><a href="#" id="resetTplBody">↺ Rétablir le texte par défaut</a><a href="#" id="saveTplBody" class="save-default" title="Définir le texte et l’objet actuels comme modèle par défaut">✓ enregistrer comme valeur par défaut</a></div>
+      <p class="hint">Les balises <code class="k">{DATE}</code>, <code class="k">{TIME}</code> et <code class="k">{ENFANT}</code> sont remplacées automatiquement à l’envoi par la date, l’heure et le nom de l’élève — laissez-les simplement dans le texte.</p>
       <div id="sigMissing" style="margin-top:12px"></div>
       <div id="inlineSignatureControls" class="inline-sig-controls">
         <div class="signature-options-row">
-          <span class="signature-options-label">Logo in Signatur:</span>
-          <div id="logoModeButtons" class="logo-mode-buttons" role="group" aria-label="Logo in Signatur auswählen">
-            <button type="button" class="logo-mode-btn" data-logo-mode="unesco">UNESCO-Logo</button>
-            <button type="button" class="logo-mode-btn" data-logo-mode="custom">Eigenes Logo hochladen</button>
-            <button type="button" class="logo-mode-btn" data-logo-mode="none">Kein Logo</button>
+          <span class="signature-options-label">Logo dans la signature :</span>
+          <div id="logoModeButtons" class="logo-mode-buttons" role="group" aria-label="Choisir le logo de la signature">
+            <button type="button" class="logo-mode-btn" data-logo-mode="unesco">Logo UNESCO</button>
+            <button type="button" class="logo-mode-btn" data-logo-mode="custom">Charger mon logo</button>
+            <button type="button" class="logo-mode-btn" data-logo-mode="none">Aucun logo</button>
           </div>
           <input type="file" id="logoFile" accept="image/*" style="display:none">
         </div>
-        <p class="hint">Text und Signatur sind im gleichen Feld bearbeitbar.</p>
+        <p class="hint">Le texte et la signature se modifient dans le même champ.</p>
         <div id="sigStatus" class="hint"></div>
       </div>
-      <div class="mail-reset" id="resetSigRow" style="display:none"><a href="#" id="defaultSigBtn">↺ Signatur zurücksetzen</a><a href="#" id="saveSig" class="save-default" title="Die aktuelle Signatur (und Logo-Auswahl) als deinen persönlichen Standard festlegen">✓ als meinen Standard speichern</a></div>
+      <div class="mail-reset" id="resetSigRow" style="display:none"><a href="#" id="defaultSigBtn">↺ Rétablir la signature par défaut</a><a href="#" id="saveSig" class="save-default" title="Définir la signature et le logo actuels comme valeurs par défaut">✓ enregistrer comme valeur par défaut</a></div>
       </div>
     </div>
 
     <div class="card preview-card">
       <div class="preview-head">
         <div>
-          <h2>Vorschau &amp; Versand</h2>
-          <p class="hint" id="previewHint">Öffne nur die E-Mail, die du kontrollieren oder anpassen möchtest. Änderungen werden automatisch gespeichert.</p>
-          <label class="check combine-option" id="combineRow" style="display:none"><input type="checkbox" id="combine"> Mehrere Kontakte eines Schülers in einer E-Mail zusammenfassen</label>
+          <h2>Aperçu &amp; envoi</h2>
+          <p class="hint" id="previewHint">Ouvrez seulement l’e-mail à vérifier ou adapter. Les modifications sont enregistrées automatiquement.</p>
+          <label class="check combine-option" id="combineRow" style="display:none"><input type="checkbox" id="combine"> Regrouper plusieurs contacts d’un élève dans un seul e-mail</label>
         </div>
         <div class="toolbar mail-actionbar">
-          <button id="resetSent" class="ghost sm" style="display:none">Versand-Status zurücksetzen</button>
-          <button id="sendAll">Alle senden …</button>
+          <button id="resetSent" class="ghost sm" style="display:none">Réinitialiser l’état d’envoi</button>
+          <button id="sendAll">Tout envoyer …</button>
         </div>
       </div>
       <div id="mailBanner"></div>
       <div id="mailSelectBar" class="mail-select-bar" style="display:none">
-        <label class="check"><input type="checkbox" id="selectAllMails"> <b>Alle auswählen</b></label>
+        <label class="check"><input type="checkbox" id="selectAllMails"> <b>Tout sélectionner</b></label>
         <span id="selectCount" class="hint"></span>
       </div>
       <div id="mailList"></div>
@@ -427,12 +415,12 @@
 
 <div id="confirmOverlay" style="position:fixed;inset:0;background:rgba(20,30,60,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px">
   <div style="background:#fff;border-radius:14px;max-width:440px;width:100%;padding:22px">
-    <h3 style="font-size:17px;margin:0 0 8px">Wirklich senden?</h3>
+    <h3 style="font-size:17px;margin:0 0 8px">Envoyer vraiment ?</h3>
     <p id="confirmText"></p>
     <p class="hint" id="confirmDetail"></p>
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px">
-      <button class="ghost" id="confirmCancel">Abbrechen</button>
-      <button id="confirmGo">Ja, jetzt senden</button>
+      <button class="ghost" id="confirmCancel">Annuler</button>
+      <button id="confirmGo">Oui, envoyer maintenant</button>
     </div>
   </div>
 </div>
@@ -447,7 +435,7 @@ function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").repla
 function escHtml(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 const STUDENT_NAME_DISPLAY_LIMIT = 38;
 function displayStudentName(name, limit=STUDENT_NAME_DISPLAY_LIMIT){
-  const raw = String(name || "").trim() || "(ohne Name)";
+  const raw = String(name || "").trim() || "(sans nom)";
   if(raw.length <= limit) return raw;
   const cut = raw.slice(0, Math.max(1, limit - 1));
   const lastSpace = cut.lastIndexOf(" ");
@@ -599,7 +587,7 @@ function composeEditorHtml(){
   if(state.options.useSig!==false){
     const sig = stripSignatureSeparators(state.template.signatureHtml || defaultSignatureTemplate());
     html += '<div class="editor-signature-spacer" data-signature-spacer="true"><br></div>';
-    html += '<div class="inline-signature" data-signature-inline="true" title="Signatur">'+sig+'</div>';
+    html += '<div class="inline-signature" data-signature-inline="true" title="Signature">'+sig+'</div>';
     html += composeLogoHtml();
   }
   return html;
@@ -793,10 +781,10 @@ function contactEmailKeys(){ return ["email1","email2"]; }
 function contactEmails(stu){ return contactEmailKeys().map(k=>(stu&&stu[k]||"").trim()).filter(Boolean).slice(0,2); }
 function renderStudents(){
   const wrap=document.getElementById("studentTable");
-  if(state.students.length===0){ wrap.innerHTML='<p class="muted">Noch keine Schüler. Klick auf „+ Schüler hinzufügen".</p>'; return; }
-  let html='<table class="student-grid"><thead><tr><th style="width:32%">Schüler</th><th style="width:31%">Kontakt-Mail 1</th><th style="width:31%">Kontakt-Mail 2</th><th style="width:54px"></th></tr></thead><tbody>';
+  if(state.students.length===0){ wrap.innerHTML='<p class="muted">Aucun élève pour l’instant. Cliquez sur « + Ajouter un élève ».</p>'; return; }
+  let html='<table class="student-grid"><thead><tr><th style="width:32%">Élève</th><th style="width:31%">E-mail de contact 1</th><th style="width:31%">E-mail de contact 2</th><th style="width:54px"></th></tr></thead><tbody>';
   state.students.forEach(s=>{
-    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Name"></td><td><input class="st-e1" value="${esc(s.email1)}" placeholder="kontakt1@..."></td><td><input class="st-e2" value="${esc(s.email2)}" placeholder="kontakt2@..."></td><td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
+    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Nom"></td><td><input class="st-e1" value="${esc(s.email1)}" placeholder="contact1@…"></td><td><input class="st-e2" value="${esc(s.email2)}" placeholder="contact2@…"></td><td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
   });
   html+='</tbody></table>'; wrap.innerHTML=html;
   wrap.querySelectorAll("tr[data-id]").forEach(tr=>{
@@ -817,13 +805,13 @@ document.getElementById("csvFile").onchange=e=>{ const f=e.target.files[0]; if(!
 const $start=document.getElementById("cfgStart"), $end=document.getElementById("cfgEnd"), $dur=document.getElementById("cfgDur");
 function initCfgInputs(){ $start.value=state.config.start; $end.value=state.config.end; $dur.value=state.config.durationMin; }
 $start.onchange=()=>{ state.config.start=$start.value; saveState(); renderCalendar(); }; $end.onchange=()=>{ state.config.end=$end.value; saveState(); renderCalendar(); }; $dur.onchange=()=>{ state.config.durationMin=Number($dur.value)||20; saveState(); renderCalendar(); };
-document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Wirklich ALLE gewählten Tage und zugewiesenen Termine löschen?\n\n(Schüler, Vorlage und Signatur bleiben erhalten.)")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.sent=[]; try{ sentSet.clear(); }catch(e){} saveState(); renderCalendar(); renderMails(); };
+document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Supprimer vraiment TOUS les jours choisis et les rendez-vous attribués ?\n\n(Les élèves, le texte et la signature sont conservés.)")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.sent=[]; try{ sentSet.clear(); }catch(e){} saveState(); renderCalendar(); renderMails(); };
 let calView=(function(){ const t=new Date(); return {y:t.getFullYear(), m:t.getMonth()}; })();
 const MINICAL_CSS='<style>.minical{max-width:430px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}</style>';
-function renderDateList(){ const host=document.getElementById("miniCal"); if(!host) return; const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate(); const todayStr=new Date().toISOString().slice(0,10); const title=first.toLocaleDateString("de-DE",{month:"long",year:"numeric"}); const wd=["Mo","Di","Mi","Do","Fr","Sa","So"]; let cells=""; for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>'; for(let d=1;d<=dim;d++){ const wd=new Date(y,m,d).getDay(); const weekend=(wd===0||wd===6); const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"]; if(weekend) cls.push("wknd"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today"); cells += weekend ? ('<div class="'+cls.join(" ")+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>'); } host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Tag anklicken = aus-/abwählen · gewählt: '+state.config.dates.length+'</div></div>'; host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; }); host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; }); updateCalResetVisibility(); }
+function renderDateList(){ const host=document.getElementById("miniCal"); if(!host) return; const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate(); const todayStr=new Date().toISOString().slice(0,10); const title=first.toLocaleDateString("fr-FR",{month:"long",year:"numeric"}); const wd=["lun.","mar.","mer.","jeu.","ven.","sam.","dim."]; let cells=""; for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>'; for(let d=1;d<=dim;d++){ const wd=new Date(y,m,d).getDay(); const weekend=(wd===0||wd===6); const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"]; if(weekend) cls.push("wknd"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today"); cells += weekend ? ('<div class="'+cls.join(" ")+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>'); } host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Cliquer sur un jour = (dé)sélectionner · choisis : '+state.config.dates.length+'</div></div>'; host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; }); host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; }); updateCalResetVisibility(); }
 function updateCalResetVisibility(){ const row=document.getElementById("resetCalRow"); if(row) row.style.display = (state.config.dates && state.config.dates.length>0) ? "" : "none"; }
-function renderCalendar(){ initCfgInputs(); renderDateList(); const grid=document.getElementById("calendarGrid"), sl=slots(); if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Wähle oben mindestens einen Tag im Kalender aus.</p>'; updateAssignSummary(); return; } if(sl.length===0){ grid.innerHTML='<p class="muted">Kein gültiges Zeitraster (prüfe Beginn/Ende/Dauer).</p>'; updateAssignSummary(); return; } const opts=['<option value="">— frei —</option>'].concat(state.students.map(s=>`<option value="${s.id}" title="${esc(s.name||"(ohne Name)")}">${esc(displayStudentName(s.name))}</option>`)).join(""); const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }; const groups={}; state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); }); const weekKeys=Object.keys(groups).sort(); grid.innerHTML=weekKeys.map(wk=>{ const days=groups[wk]; const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"}); const head='<tr><th class="th-time">Zeit</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>'; const bodyRows=sl.map((s,i)=>{ const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td'+(sel?' class="assigned"':'')+'><select data-key="'+key+'">'+opts.replace('value="'+sel+'"','value="'+sel+'" selected')+'</select></td>'; }).join(""); return '<tr><td class="td-time">'+s.start+'–'+s.end+'</td>'+cells+'</tr>'; }).join(""); return '<div class="weekblock"><div class="weekhead">Woche ab '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>'; }).join(""); grid.querySelectorAll("select[data-key]").forEach(sel=>{ sel.onchange=()=>{ const k=sel.dataset.key; const td=sel.closest("td"); if(sel.value){ state.assignments[k]=sel.value; if(td) td.classList.add("assigned"); } else { delete state.assignments[k]; if(td) td.classList.remove("assigned"); } saveState(); updateAssignSummary(); }; }); updateAssignSummary(); }
-function updateAssignSummary(){ const used=Object.values(state.assignments).filter(Boolean), counts={}; used.forEach(id=>counts[id]=(counts[id]||0)+1); const dupes=Object.keys(counts).filter(id=>counts[id]>1).map(id=>(state.students.find(s=>s.id===id)||{}).name).filter(Boolean); let txt=used.length+" Termin(e) vergeben."; if(dupes.length) txt += " ⚠︎ Mehrfach eingeplant: "+dupes.map(n=>displayStudentName(n)).join(", "); document.getElementById("assignSummary").textContent=txt; }
+function renderCalendar(){ initCfgInputs(); renderDateList(); const grid=document.getElementById("calendarGrid"), sl=slots(); if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Choisissez au moins un jour dans le calendrier ci-dessus.</p>'; updateAssignSummary(); return; } if(sl.length===0){ grid.innerHTML='<p class="muted">Plage horaire invalide (vérifiez début / fin / durée).</p>'; updateAssignSummary(); return; } const opts=['<option value="">— libre —</option>'].concat(state.students.map(s=>`<option value="${s.id}" title="${esc(s.name||"(sans nom)")}">${esc(displayStudentName(s.name))}</option>`)).join(""); const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }; const groups={}; state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); }); const weekKeys=Object.keys(groups).sort(); grid.innerHTML=weekKeys.map(wk=>{ const days=groups[wk]; const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}); const head='<tr><th class="th-time">Heure</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>'; const bodyRows=sl.map((s,i)=>{ const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td'+(sel?' class="assigned"':'')+'><select data-key="'+key+'">'+opts.replace('value="'+sel+'"','value="'+sel+'" selected')+'</select></td>'; }).join(""); return '<tr><td class="td-time">'+s.start+'–'+s.end+'</td>'+cells+'</tr>'; }).join(""); return '<div class="weekblock"><div class="weekhead">Semaine du '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>'; }).join(""); grid.querySelectorAll("select[data-key]").forEach(sel=>{ sel.onchange=()=>{ const k=sel.dataset.key; const td=sel.closest("td"); if(sel.value){ state.assignments[k]=sel.value; if(td) td.classList.add("assigned"); } else { delete state.assignments[k]; if(td) td.classList.remove("assigned"); } saveState(); updateAssignSummary(); }; }); updateAssignSummary(); }
+function updateAssignSummary(){ const used=Object.values(state.assignments).filter(Boolean), counts={}; used.forEach(id=>counts[id]=(counts[id]||0)+1); const dupes=Object.keys(counts).filter(id=>counts[id]>1).map(id=>(state.students.find(s=>s.id===id)||{}).name).filter(Boolean); let txt=used.length+" rendez-vous attribué(s)."; if(dupes.length) txt += " ⚠︎ Mehrfach eingeplant: "+dupes.map(n=>displayStudentName(n)).join(", "); document.getElementById("assignSummary").textContent=txt; }
 
 /* Rich editor */
 let activeEditor=null, savedRange=null, toolbarBusy=false, toolbarStateTimer=null;
@@ -1142,7 +1130,7 @@ function bindRichToolbars(){
             const txt=await navigator.clipboard.readText();
             if(txt) document.execCommand("insertText", false, txt);
           }catch(_){
-            alert("Einfügen über diesen Button wurde vom Browser blockiert. Du kannst stattdessen ⌘V benutzen.");
+            alert("Le collage via ce bouton a été bloqué par le navigateur. Utilisez plutôt ⌘V.");
           }
           toolbarBusy=false; commitEditor(editor); rememberSelection();
           return;
@@ -1201,7 +1189,7 @@ function bindRichToolbars(){
 
 /* Signature/logo/template binding */
 function renderTemplatePreview(){ const map=sigMap({DATE:formatFrenchDate(new Date().toISOString().slice(0,10)),TIME:"14h20",NAME:state.account.name||"",ENFANT:"Tim"}); document.getElementById("mailTemplatePreview").innerHTML=buildHtml(map,true); renderSigMissing(); }
-function renderSigMissing(){ const box=document.getElementById("sigMissing"); if(!box) return; const txt=textFromHtml(state.template.signatureHtml||""); const hasTodo=/\[[^\]]*(compléter|Nom|Fonction|salle|E-mail|Téléphone)[^\]]*\]/i.test(txt); if(state.options.useSig!==false && hasTodo){ box.innerHTML='<div class="banner warn">Bitte die gelb markierten Platzhalter in der Signatur ersetzen, bevor du die E-Mails versendest.</div>'; } else box.innerHTML=""; }
+function renderSigMissing(){ const box=document.getElementById("sigMissing"); if(!box) return; const txt=textFromHtml(state.template.signatureHtml||""); const hasTodo=/\[[^\]]*(compléter|Nom|Fonction|salle|E-mail|Téléphone)[^\]]*\]/i.test(txt); if(state.options.useSig!==false && hasTodo){ box.innerHTML='<div class="banner warn">Veuillez remplacer les champs surlignés en jaune dans la signature avant d’envoyer les e-mails.</div>'; } else box.innerHTML=""; }
 function setLogoFromDataUrl(dataUrl, mime, rerender=true, mode=null){
   const m=mime || ((String(dataUrl).match(/^data:([^;]+)/)||[])[1]) || "image/png";
   const ext=(m.split("/")[1]||"png").replace("jpeg","jpg");
@@ -1218,7 +1206,7 @@ async function loadUnescoLogo(force){
     const blob=await res.blob(); const r=new FileReader();
     r.onload=()=>{ setLogoFromDataUrl(String(r.result), blob.type||"image/png", true, "unesco"); const st=document.getElementById("sigStatus"); if(st) st.textContent=""; };
     r.readAsDataURL(blob);
-  }catch(e){ const st=document.getElementById("sigStatus"); if(st) st.textContent="UNESCO-Logo nicht gefunden. Liegt schullogo.png im App-Ordner?"; }
+  }catch(e){ const st=document.getElementById("sigStatus"); if(st) st.textContent="Logo UNESCO introuvable. schullogo.png est-il dans le dossier de l’app ?"; }
 }
 function normalizeLogoMode(){
   if(!state.options.logoMode) state.options.logoMode = (state.options.includeLogo===false ? "none" : "unesco");
@@ -1236,8 +1224,8 @@ function renderLogoPreview(){
   const st=document.getElementById("sigStatus");
   if(st){
     if(state.options.logoMode==="none") st.textContent="";
-    else if(state.options.logoMode==="custom") st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "Bitte eigenes Logo auswählen.";
-    else st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "UNESCO-Logo wird geladen.";
+    else if(state.options.logoMode==="custom") st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "Veuillez choisir un logo.";
+    else st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "Chargement du logo UNESCO …";
   }
 }
 let mailRenderRaf = null;
@@ -1277,12 +1265,12 @@ function bindSettings(){
     }
     if(toggleTemplate){
       toggleTemplate.textContent=collapsed ? "▸" : "▾";
-      toggleTemplate.title=collapsed ? "Bereich öffnen" : "Bereich schließen";
+      toggleTemplate.title=collapsed ? "Développer la section" : "Réduire la section";
       toggleTemplate.setAttribute("aria-expanded", String(!collapsed));
     }
     if(templateToggleZone){
       templateToggleZone.setAttribute("aria-expanded", String(!collapsed));
-      templateToggleZone.title=collapsed ? "Bereich öffnen" : "Bereich schließen";
+      templateToggleZone.title=collapsed ? "Développer la section" : "Réduire la section";
     }
   }
   function toggleTemplateSection(){
@@ -1334,7 +1322,7 @@ function bindSettings(){
   if(defaultSigBtn){
     defaultSigBtn.addEventListener("click", (e)=>{
       if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-      if(confirm("Signatur auf den Standard zurücksetzen? Die aktuelle Signatur (und das Logo) wird durch deinen gespeicherten Standard ersetzt – falls keiner gespeichert ist, durch den Werks-Standard.")){
+      if(confirm("Rétablir la signature par défaut ? La signature (et le logo) actuels seront remplacés par votre version enregistrée — ou, à défaut, par la version d’origine.")){
         applyHardSignatureReset();
       }
     }, true);
@@ -1362,7 +1350,7 @@ function bindSettings(){
   if(resetTplBody){
     resetTplBody.addEventListener("click", (e)=>{
       if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-      if(confirm("E-Mail-Text auf deinen Standard zurücksetzen? Betreff und Text werden ersetzt. Die Signatur bleibt erhalten.")){
+      if(confirm("Rétablir le texte par défaut ? L’objet et le texte seront remplacés. La signature est conservée.")){
         applyTemplateBodyReset();
       }
     }, true);
@@ -1373,20 +1361,20 @@ function bindSettings(){
     state.userDefaults=Object.assign({}, state.userDefaults, { subject: state.template.subject, bodyHtml: state.template.bodyHtml });
     saveState();
     updateTplResetVisibility();
-    showToast("Text als dein Standard gespeichert ✓");
+    showToast("Texte enregistré par défaut ✓");
   }
   function saveSignatureAsDefault(){
     commitEditor(body);
     state.userDefaults=Object.assign({}, state.userDefaults, { signatureHtml: state.template.signatureHtml, logoMode: state.options.logoMode, includeLogo: state.options.includeLogo!==false });
     saveState();
     updateTplResetVisibility();
-    showToast("Signatur als dein Standard gespeichert ✓");
+    showToast("Signature enregistrée par défaut ✓");
   }
   const saveTplBody=document.getElementById("saveTplBody");
   if(saveTplBody){
     saveTplBody.addEventListener("click", (e)=>{
       if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-      if(confirm("Den aktuellen E-Mail-Text und Betreff als deinen persönlichen Standard festlegen? Zurücksetzen stellt künftig diese Fassung wieder her.")){
+      if(confirm("Définir le texte et l’objet actuels comme votre modèle par défaut ? « Rétablir » restaurera désormais cette version.")){
         saveTemplateBodyAsDefault();
       }
     }, true);
@@ -1395,7 +1383,7 @@ function bindSettings(){
   if(saveSig){
     saveSig.addEventListener("click", (e)=>{
       if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-      if(confirm("Die aktuelle Signatur (und Logo-Auswahl) als deinen persönlichen Standard festlegen? Signatur zurücksetzen stellt künftig diese Signatur wieder her.")){
+      if(confirm("Définir la signature et le logo actuels comme valeurs par défaut ? « Rétablir la signature » restaurera désormais cette signature.")){
         saveSignatureAsDefault();
       }
     }, true);
@@ -1479,15 +1467,15 @@ function buildMessages(){
         if(state.template.logo && state.template.logo.dataUrl){ html=html.split(state.template.logo.dataUrl).join("cid:siglogo"); }
       }
       const emails=contactEmails(stu);
-      const fullStudent=stu.name||"(ohne Name)";
+      const fullStudent=stu.name||"(sans nom)";
       const add=(suf,label,to)=>{
         if(to.length){ msgs.push({id:d+"__"+i+"__"+suf,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:label,to,subject,defaultSubject,html,previewHtml}); }
       };
       if(state.options.combine){
-        const label = emails.length>2 ? (emails.length+" Kontakte") : (emails.length===2 ? "beide Kontakte" : "Kontakt");
+        const label = emails.length>2 ? (emails.length+" contacts") : (emails.length===2 ? "les deux contacts" : "Contact");
         add("c", label, emails);
       } else {
-        emails.forEach((email,idx)=>add(String(idx), "Kontakt "+(idx+1), [email]));
+        emails.forEach((email,idx)=>add(String(idx), "Contact "+(idx+1), [email]));
       }
     });
   });
@@ -1505,17 +1493,17 @@ function renderAuth(){
     if(account.email) state.account.email=account.email;
     if(!state.account.name && account.name) state.account.name=account.name;
     saveState();
-    box.innerHTML=`<div class="acct"><span class="pill ok">angemeldet</span><span><b>${esc(account.name||"")}</b> · ${esc(account.email||"")}</span></div>`;
+    box.innerHTML=`<div class="acct"><span class="pill ok">connecté</span><span><b>${esc(account.name||"")}</b> · ${esc(account.email||"")}</span></div>`;
     inBtn.style.display="none"; outBtn.style.display="inline-block";
-    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Angemeldet. Der Versand läuft automatisch über dieses Konto.";
+    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Connecté. L’envoi se fait automatiquement via ce compte.";
   } else {
-    box.innerHTML='<div class="banner warn">Noch nicht angemeldet. Der Sende-Button wird erst nach der Microsoft-Anmeldung aktiv.</div>';
+    box.innerHTML='<div class="banner warn">Pas encore connecté. Le bouton d’envoi s’active après la connexion à Microsoft.</div>';
     inBtn.style.display="inline-block"; outBtn.style.display="none";
-    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Bitte zuerst mit deinem Microsoft-Konto anmelden.";
+    const hint=document.getElementById("authHint"); if(hint) hint.textContent="Veuillez d’abord vous connecter avec votre compte Microsoft.";
   }
   renderTemplatePreview();
 }
-document.getElementById("signIn").onclick=async()=>{ const lb=document.getElementById("loginBox"), inBtn=document.getElementById("signIn"); inBtn.disabled=true; lb.style.display="block"; lb.innerHTML='<div class="banner info">Anmeldung wird vorbereitet …</div>'; let d; try{ d=await api("/api/graph/login-start"); }catch(e){ lb.innerHTML='<div class="banner err">Helfer nicht erreichbar. Läuft „Starten.command"?</div>'; inBtn.disabled=false; return; } if(!d.ok){ lb.innerHTML='<div class="banner err">'+esc(d.error||"Fehler")+'</div>'; inBtn.disabled=false; return; } const url=d.verification_uri||"https://login.microsoft.com/device"; lb.innerHTML=`<div class="banner info" style="line-height:1.7"><b>1.</b> Öffne <a href="${url}" target="_blank" rel="noopener"><b>${esc(url)}</b></a><br><b>2.</b> Gib diesen Code ein: <code class="k" style="font-size:17px">${esc(d.user_code)}</code><br><b>3.</b> Melde dich mit deinem Konto an und klicke <b>Zustimmen</b>.<br><span class="muted">Hier wird automatisch fortgefahren, sobald du fertig bist …</span></div>`; try{ window.open(url,"_blank","noopener"); }catch(e){} if(pollTimer) clearInterval(pollTimer); pollTimer=setInterval(async()=>{ let r; try{ r=await api("/api/graph/login-poll"); }catch(e){ return; } if(!r.ok){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">'+esc(r.error||"Fehler")+'</div>'; inBtn.disabled=false; return; } if(r.status==="ok"){ clearInterval(pollTimer); account=r.account; lb.style.display="none"; lb.innerHTML=""; inBtn.disabled=false; renderAuth(); renderMails(); } else if(r.status==="error"){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">Anmeldung nicht möglich: '+esc(r.error||"")+'</div>'; inBtn.disabled=false; } },4000); };
+document.getElementById("signIn").onclick=async()=>{ const lb=document.getElementById("loginBox"), inBtn=document.getElementById("signIn"); inBtn.disabled=true; lb.style.display="block"; lb.innerHTML='<div class="banner info">Préparation de la connexion …</div>'; let d; try{ d=await api("/api/graph/login-start"); }catch(e){ lb.innerHTML='<div class="banner err">Assistant introuvable. « Starten.command » est-il lancé ?</div>'; inBtn.disabled=false; return; } if(!d.ok){ lb.innerHTML='<div class="banner err">'+esc(d.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } const url=d.verification_uri||"https://login.microsoft.com/device"; lb.innerHTML=`<div class="banner info" style="line-height:1.7"><b>1.</b> Ouvrez <a href="${url}" target="_blank" rel="noopener"><b>${esc(url)}</b></a><br><b>2.</b> Saisissez ce code : <code class="k" style="font-size:17px">${esc(d.user_code)}</code><br><b>3.</b> Connectez-vous avec votre compte et cliquez sur <b>Accepter</b>.<br><span class="muted">La suite se fait automatiquement dès que vous avez terminé …</span></div>`; try{ window.open(url,"_blank","noopener"); }catch(e){} if(pollTimer) clearInterval(pollTimer); pollTimer=setInterval(async()=>{ let r; try{ r=await api("/api/graph/login-poll"); }catch(e){ return; } if(!r.ok){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">'+esc(r.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } if(r.status==="ok"){ clearInterval(pollTimer); account=r.account; lb.style.display="none"; lb.innerHTML=""; inBtn.disabled=false; renderAuth(); renderMails(); } else if(r.status==="error"){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">Connexion impossible : '+esc(r.error||"")+'</div>'; inBtn.disabled=false; } },4000); };
 document.getElementById("signOut").onclick=async()=>{ try{ await api("/api/graph/logout"); }catch(e){} account=null; renderAuth(); renderMails(); };
 function logoPayload(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl) return {name:lg.name||"logo.png",mime:lg.mime||"image/png",contentBytes:lg.dataUrl.split(",")[1]}; return null; }
 async function graphSend(messages){ return api("/api/graph/send", {messages:messages.map(m=>({id:m.id,subject:m.subject,html:m.html,to:m.to})), logo:logoPayload()}); }
@@ -1541,7 +1529,7 @@ function setMailEditedVisual(item, edited){
   if(edited && status && !existing){
     const pill = document.createElement("span");
     pill.className = "pill warn";
-    pill.textContent = "bearbeitet";
+    pill.textContent = "modifié";
     const toggle = status.querySelector(".toggle");
     status.insertBefore(pill, toggle || null);
   } else if(!edited && existing){ existing.remove(); }
@@ -1561,22 +1549,22 @@ function renderMails(openId){
     const stu=state.students.find(x=>x.id===sid);
     if(!stu) return;
     const n=contactEmails(stu).length;
-    if(n===0) missing.push(stu.name||"(ohne Name)");
+    if(n===0) missing.push(stu.name||"(sans nom)");
     if(n>=2) hasMultiContact=true;
   }));
   const sentCount=currentMsgs.filter(m=>sentSet.has(m.id)).length;
   const remaining=currentMsgs.length-sentCount;
   const warnBanners=[];
-  if(!account) warnBanners.push('<div class="banner warn">Bitte oben mit deinem Microsoft-Konto anmelden, um zu senden.</div>');
-  if(currentMsgs.length===0) warnBanners.push('<div class="banner warn">Noch keine versendbaren E-Mails. Weise im Reiter „Kalender" Schüler zu und trage E-Mail-Adressen ein.</div>');
+  if(!account) warnBanners.push('<div class="banner warn">Connectez-vous ci-dessus avec votre compte Microsoft pour envoyer.</div>');
+  if(currentMsgs.length===0) warnBanners.push('<div class="banner warn">Aucun e-mail à envoyer pour l’instant. Dans l’onglet « Calendrier », attribuez des élèves et saisissez les adresses e-mail.</div>');
   if(missing.length){
     const missingHtml=[...new Set(missing)].map(n=>`<span class="truncated-inline" title="${esc(n)}">${esc(displayStudentName(n))}</span>`).join(", ");
-    warnBanners.push(`<div class="banner warn">Ohne E-Mail-Adresse (werden übersprungen): ${missingHtml}</div>`);
+    warnBanners.push(`<div class="banner warn">Sans adresse e-mail (ignorés) : ${missingHtml}</div>`);
   }
   let b=warnBanners.length ? `<div class="banner-group">${warnBanners.join("")}</div>` : "";
   if(currentMsgs.length>0){
-    if(remaining===0) b+=`<div class="banner ok">Alle ${currentMsgs.length} E-Mail(s) wurden gesendet. Zum erneuten Senden: „Versand-Status zurücksetzen".</div>`;
-    else b+=`<div class="banner info">${remaining} von ${currentMsgs.length} E-Mail(s) offen · ${assigned} Termin(e).${sentCount?" "+sentCount+" bereits gesendet.":""}</div>`;
+    if(remaining===0) b+=`<div class="banner ok">Les ${currentMsgs.length} e-mail(s) ont été envoyés. Pour renvoyer : « Réinitialiser l’état d’envoi ».</div>`;
+    else b+=`<div class="banner info">${remaining} sur ${currentMsgs.length} e-mail(s) en attente · ${assigned} rendez-vous.${sentCount?" "+sentCount+" déjà envoyé(s).":""}</div>`;
   }
 
   const mailBanner=document.getElementById("mailBanner");
@@ -1590,8 +1578,8 @@ function renderMails(openId){
   if(sendBtn){
     sendBtn.style.display=remaining>0?"inline-block":"none";
     sendBtn.disabled=!account;
-    sendBtn.title=!account ? "Bitte zuerst mit Microsoft anmelden" : "";
-    sendBtn.textContent=`Alle senden (${remaining}) …`;
+    sendBtn.title=!account ? "Veuillez d’abord vous connecter avec Microsoft" : "";
+    sendBtn.textContent=`Tout envoyer (${remaining}) …`;
   }
   if(resetBtn) resetBtn.style.display=sentSet.size>0?"inline-block":"none";
 
@@ -1604,25 +1592,25 @@ function renderMails(openId){
     const sel=!excludedSet.has(m.id);
     return `<div class="mailitem ${done?'done':''} ${(!sel&&!done)?'unselected':''} ${openId===m.id?'open':''}" data-id="${m.id}">
       <div class="mailhead">
-        <label class="check" title="${done?'bereits gesendet':'E-Mail mitsenden'}"><input type="checkbox" class="mail-select" ${done?'checked disabled':(sel?'checked':'')}></label>
+        <label class="check" title="${done?'déjà envoyé':'Envoyer cet e-mail'}"><input type="checkbox" class="mail-select" ${done?'checked disabled':(sel?'checked':'')}></label>
         <div class="mail-main">
           <span class="who" title="${esc(m.student)}">${esc(m.studentDisplay||displayStudentName(m.student))}</span>
           <span class="parent-label">${esc(m.parentLabel)}</span>
-          <span class="recipient-line">An: ${esc(m.to.join(", "))}</span>
+          <span class="recipient-line">À : ${esc(m.to.join(", "))}</span>
         </div>
         <span class="status">
-          ${edited?'<span class="pill warn">bearbeitet</span>':''}
-          ${done?'<span class="pill ok">gesendet</span>':''}
-          <span class="toggle">${openId===m.id?'Schließen ▴':'Bearbeiten ▾'}</span>
+          ${edited?'<span class="pill warn">modifié</span>':''}
+          ${done?'<span class="pill ok">envoyé</span>':''}
+          <span class="toggle">${openId===m.id?'Fermer ▴':'Modifier ▾'}</span>
         </span>
       </div>
       <div class="mailbody">
         ${richToolbarHTML('me_'+m.id)}
         <div class="mail-compose-shell">
-          <div class="mailbody-head"><label class="mail-subject-label" for="ms_${m.id}">Betreff</label><input id="ms_${m.id}" class="mail-subject-input" data-ovk="${ovk}" data-msgid="${m.id}" value="${esc(m.subject)}" title="Betreff bearbeiten"></div>
+          <div class="mailbody-head"><label class="mail-subject-label" for="ms_${m.id}">Objet</label><input id="ms_${m.id}" class="mail-subject-input" data-ovk="${ovk}" data-msgid="${m.id}" value="${esc(m.subject)}" title="Modifier l’objet"></div>
           <div id="me_${m.id}" class="rich-editor mail-editor" contenteditable="true" data-ovk="${ovk}">${m.previewHtml}</div>
         </div>
-        <div class="mail-reset" style="${edited?'':'display:none'}"><a href="#" class="reset-ov" data-ovk="${ovk}">↺ auf Standard-Vorlage zurücksetzen</a></div>
+        <div class="mail-reset" style="${edited?'':'display:none'}"><a href="#" class="reset-ov" data-ovk="${ovk}">↺ Rétablir le modèle par défaut</a></div>
       </div>
     </div>`;
   }).join("");
@@ -1634,11 +1622,11 @@ function renderMails(openId){
     list.querySelectorAll(".mailitem.open").forEach(x=>{
       x.classList.remove("open");
       const oldToggle=x.querySelector(".toggle");
-      if(oldToggle) oldToggle.textContent="Bearbeiten ▾";
+      if(oldToggle) oldToggle.textContent="Modifier ▾";
     });
     if(shouldOpen){
       item.classList.add("open");
-      t.textContent="Schließen ▴";
+      t.textContent="Fermer ▴";
     }
   });
   list.querySelectorAll(".mail-editor").forEach(ed=>wireRichEditor(ed.id));
@@ -1695,17 +1683,17 @@ function refreshSelectionUI(){
     all.indeterminate = selected>0 && selected<sendable.length;
     all.checked = sendable.length>0 && selected===sendable.length;
     const lbl=all.parentElement.querySelector("b");
-    if(lbl) lbl.textContent = (selected===sendable.length && sendable.length>0) ? "Alle abwählen" : "Alle auswählen";
+    if(lbl) lbl.textContent = (selected===sendable.length && sendable.length>0) ? "Tout désélectionner" : "Tout sélectionner";
   }
   const cnt=document.getElementById("selectCount");
-  if(cnt) cnt.textContent = sendable.length ? (selected+" von "+sendable.length+" ausgewählt") : "";
+  if(cnt) cnt.textContent = sendable.length ? (selected+" sur "+sendable.length+" sélectionné(s)") : "";
   const bar=document.getElementById("mailSelectBar");
   if(bar) bar.style.display = sendable.length>=2 ? "flex" : "none";
   const sendBtn=document.getElementById("sendAll");
   if(sendBtn){
-    sendBtn.textContent = "Senden ("+selected+") …";
+    sendBtn.textContent = "Envoyer ("+selected+") …";
     sendBtn.disabled = !account || selected===0;
-    sendBtn.title = !account ? "Bitte zuerst mit Microsoft anmelden" : (selected===0 ? "Keine E-Mail ausgewählt" : "");
+    sendBtn.title = !account ? "Veuillez d’abord vous connecter avec Microsoft" : (selected===0 ? "Aucun e-mail sélectionné" : "");
   }
 }
 const _selAll=document.getElementById("selectAllMails");
@@ -1717,13 +1705,13 @@ if(_selAll){
     refreshSelectionUI();
   };
 }
-document.getElementById("resetSent").onclick=()=>{ if(sentSet.size===0){ alert("Es ist nichts als gesendet markiert."); return; } if(!confirm("Versand-Status zurücksetzen? Danach gelten alle Mails wieder als offen.")) return; sentSet.clear(); persistSent(); renderMails(); };
+document.getElementById("resetSent").onclick=()=>{ if(sentSet.size===0){ alert("Aucun e-mail n’est marqué comme envoyé."); return; } if(!confirm("Réinitialiser l’état d’envoi ? Tous les e-mails seront de nouveau en attente.")) return; sentSet.clear(); persistSent(); renderMails(); };
 
 /* Send all */
 const overlay=document.getElementById("confirmOverlay");
-document.getElementById("sendAll").onclick=()=>{ if(!account){ alert("Bitte zuerst mit Microsoft anmelden."); return; } currentMsgs=buildMessages(); if(currentMsgs.length===0){ alert("Keine E-Mails zum Senden."); return; } pendingSend=currentMsgs.filter(m=>!sentSet.has(m.id) && !excludedSet.has(m.id)); if(pendingSend.length===0){ alert("Keine E-Mail ausgewählt (oder alle ausgewählten wurden bereits gesendet).\nSetze unten ein Häkchen bei den E-Mails, die du senden möchtest."); return; } const students=new Set(pendingSend.map(m=>m.student)).size; document.getElementById("confirmText").textContent=`Es werden ${pendingSend.length} E-Mail(s) an die Kontakte von ${students} Schüler(n) verschickt.`; document.getElementById("confirmDetail").textContent=`Versand über dein Konto (${state.account.email}). Bereits gesendete werden übersprungen. Nicht rückgängig machbar.`; overlay.style.display="flex"; };
+document.getElementById("sendAll").onclick=()=>{ if(!account){ alert("Veuillez d’abord vous connecter avec Microsoft."); return; } currentMsgs=buildMessages(); if(currentMsgs.length===0){ alert("Aucun e-mail à envoyer."); return; } pendingSend=currentMsgs.filter(m=>!sentSet.has(m.id) && !excludedSet.has(m.id)); if(pendingSend.length===0){ alert("Aucun e-mail sélectionné (ou tous les e-mails sélectionnés ont déjà été envoyés).\nCochez ci-dessous les e-mails à envoyer."); return; } const students=new Set(pendingSend.map(m=>m.student)).size; document.getElementById("confirmText").textContent=`${pendingSend.length} e-mail(s) seront envoyés aux contacts de ${students} élève(s).`; document.getElementById("confirmDetail").textContent=`Envoi via votre compte (${state.account.email}). Les e-mails déjà envoyés sont ignorés. Action irréversible.`; overlay.style.display="flex"; };
 document.getElementById("confirmCancel").onclick=()=>overlay.style.display="none";
-document.getElementById("confirmGo").onclick=async()=>{ overlay.style.display="none"; if(!pendingSend.length) return; const btn=document.getElementById("sendAll"); btn.disabled=true; btn.textContent="Sende…"; let ok=0, fail=0, firstErr=""; try{ const r=await graphSend(pendingSend); if(!r.ok){ alert("Senden fehlgeschlagen: "+(r.error||"")); } else { const byId={}; r.results.forEach(x=>byId[x.id]=x); pendingSend.forEach(m=>{ const res=byId[m.id]; if(res&&res.ok){ ok++; sentSet.add(m.id); } else { fail++; if(!firstErr&&res) firstErr=res.error||""; } }); persistSent(); } }catch(e){ alert("Helfer nicht erreichbar?\n"+(e&&e.message?e.message:e)); } renderMails(); document.getElementById("mailBanner").innerHTML=`<div class="banner ${fail?'warn':'ok'}">${ok} gesendet${fail?(", "+fail+" fehlgeschlagen — "+esc(firstErr)):""}.</div>`+document.getElementById("mailBanner").innerHTML; pendingSend=[]; btn.disabled=false; };
+document.getElementById("confirmGo").onclick=async()=>{ overlay.style.display="none"; if(!pendingSend.length) return; const btn=document.getElementById("sendAll"); btn.disabled=true; btn.textContent="Envoi…"; let ok=0, fail=0, firstErr=""; try{ const r=await graphSend(pendingSend); if(!r.ok){ alert("Échec de l’envoi : "+(r.error||"")); } else { const byId={}; r.results.forEach(x=>byId[x.id]=x); pendingSend.forEach(m=>{ const res=byId[m.id]; if(res&&res.ok){ ok++; sentSet.add(m.id); } else { fail++; if(!firstErr&&res) firstErr=res.error||""; } }); persistSent(); } }catch(e){ alert("Assistant injoignable ?\n"+(e&&e.message?e.message:e)); } renderMails(); document.getElementById("mailBanner").innerHTML=`<div class="banner ${fail?'warn':'ok'}">${ok} envoyé(s)${fail?(", "+fail+" échec(s) — "+esc(firstErr)):""}.</div>`+document.getElementById("mailBanner").innerHTML; pendingSend=[]; btn.disabled=false; };
 
 /* Init */
 renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount();
