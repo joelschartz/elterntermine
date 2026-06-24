@@ -55,7 +55,7 @@
     border-radius:50%;background:rgba(47,95,215,.10);
   }
   header h1{position:relative;margin:0;font-size:25px;font-weight:820;letter-spacing:-.03em}
-  header p{position:relative;margin:5px 0 0;color:var(--muted);font-size:14px;max-width:760px}
+  header p{position:relative;margin:5px 0 0;color:var(--muted);font-size:14px;max-width:1120px;white-space:nowrap}
   .tabs{
     display:flex;gap:8px;
     padding:12px max(16px,calc((100vw - 1180px)/2 + 16px));
@@ -272,7 +272,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer automatiquement les e-mails de confirmation depuis votre propre compte (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R10</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R10</span></p>
 </header>
 
 <nav class="tabs">
@@ -310,7 +310,7 @@
       <h2 style="margin:0 0 4px">Jours d’entretien</h2>
       <p class="hint" style="margin:0 0 12px">Cliquez sur les jours où les entretiens ont lieu (le week-end n’est pas sélectionnable).</p>
       <div id="miniCal"></div>
-      <div style="max-width:430px;margin:0 auto"><div class="mail-reset" id="resetCalRow" style="display:none"><a href="#" id="resetCal" title="Supprimer tous les jours sélectionnés et les rendez-vous attribués">↺ Réinitialiser le calendrier &amp; les rendez-vous</a></div></div>
+      <div style="max-width:520px;margin:0 auto"><div class="mail-reset" id="resetCalRow" style="display:none"><a href="#" id="resetCal" title="Supprimer tous les jours sélectionnés et les rendez-vous attribués">↺ Réinitialiser le calendrier &amp; les rendez-vous</a></div></div>
     </div>
     <div class="card">
       <h2>Attribuer les rendez-vous</h2>
@@ -796,7 +796,7 @@ function renderStudents(){
   if(state.students.length===0){ wrap.innerHTML='<p class="muted">Aucun élève pour l’instant. Cliquez sur « + Ajouter un élève ».</p>'; return; }
   let html='<table class="student-grid"><thead><tr><th style="width:32%">Élève</th><th style="width:31%">E-mail de contact 1</th><th style="width:31%">E-mail de contact 2</th><th style="width:54px"></th></tr></thead><tbody>';
   state.students.forEach(s=>{
-    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Nom"></td><td><input class="st-e1" value="${esc(s.email1)}" placeholder="kontakt1@..."></td><td><input class="st-e2" value="${esc(s.email2)}" placeholder="kontakt2@..."></td><td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
+    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Nom"></td><td><input class="st-e1" value="${esc(s.email1)}" placeholder="contact1@..."></td><td><input class="st-e2" value="${esc(s.email2)}" placeholder="contact2@..."></td><td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
   });
   html+='</tbody></table>'; wrap.innerHTML=html;
   wrap.querySelectorAll("tr[data-id]").forEach(tr=>{
@@ -819,11 +819,65 @@ function initCfgInputs(){ $start.value=state.config.start; $end.value=state.conf
 $start.onchange=()=>{ state.config.start=$start.value; saveState(); renderCalendar(); }; $end.onchange=()=>{ state.config.end=$end.value; saveState(); renderCalendar(); }; $dur.onchange=()=>{ state.config.durationMin=Number($dur.value)||20; saveState(); renderCalendar(); };
 document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Voulez-vous vraiment supprimer TOUS les jours sélectionnés et les rendez-vous attribués ?\n\n(Les élèves, le modèle et la signature sont conservés.)")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.sent=[]; try{ sentSet.clear(); }catch(e){} saveState(); renderCalendar(); renderMails(); };
 let calView=(function(){ const t=new Date(); return {y:t.getFullYear(), m:t.getMonth()}; })();
-const MINICAL_CSS='<style>.minical{max-width:430px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}</style>';
-function renderDateList(){ const host=document.getElementById("miniCal"); if(!host) return; const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate(); const todayStr=new Date().toISOString().slice(0,10); const title=first.toLocaleDateString("fr-FR",{month:"long",year:"numeric"}); const wd=["Lu","Ma","Me","Je","Ve","Sa","Di"]; let cells=""; for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>'; for(let d=1;d<=dim;d++){ const wd=new Date(y,m,d).getDay(); const weekend=(wd===0||wd===6); const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"]; if(weekend) cls.push("wknd"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today"); cells += weekend ? ('<div class="'+cls.join(" ")+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>'); } host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Cliquer sur un jour = sélectionner/désélectionner · sélectionnés : '+state.config.dates.length+'</div></div>'; host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; }); host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; }); updateCalResetVisibility(); }
+const MINICAL_CSS='<style>.minical{max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}.minical .hint{white-space:nowrap}</style>';
+function renderDateList(){ const host=document.getElementById("miniCal"); if(!host) return; const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate(); const todayStr=new Date().toISOString().slice(0,10); const title=first.toLocaleDateString("fr-FR",{month:"long",year:"numeric"}); const wd=["Lu","Ma","Me","Je","Ve","Sa","Di"]; let cells=""; for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>'; for(let d=1;d<=dim;d++){ const wd=new Date(y,m,d).getDay(); const weekend=(wd===0||wd===6); const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"]; if(weekend) cls.push("wknd"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today"); cells += weekend ? ('<div class="'+cls.join(" ")+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>'); } host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Cliquer sur un jour = sélectionner/désélectionner · '+state.config.dates.length+' sélectionné(s)</div></div>'; host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; }); host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; }); updateCalResetVisibility(); }
 function updateCalResetVisibility(){ const row=document.getElementById("resetCalRow"); if(row) row.style.display = (state.config.dates && state.config.dates.length>0) ? "" : "none"; }
-function renderCalendar(){ initCfgInputs(); renderDateList(); const grid=document.getElementById("calendarGrid"), sl=slots(); if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Sélectionnez au moins un jour dans le calendrier ci-dessus.</p>'; updateAssignSummary(); return; } if(sl.length===0){ grid.innerHTML='<p class="muted">Plage horaire non valable (vérifiez début/fin/durée).</p>'; updateAssignSummary(); return; } const opts=['<option value="">— libre —</option>'].concat(state.students.map(s=>`<option value="${s.id}" title="${esc(s.name||"(sans nom)")}">${esc(displayStudentName(s.name))}</option>`)).join(""); const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }; const groups={}; state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); }); const weekKeys=Object.keys(groups).sort(); grid.innerHTML=weekKeys.map(wk=>{ const days=groups[wk]; const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}); const head='<tr><th class="th-time">Heure</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>'; const bodyRows=sl.map((s,i)=>{ const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td'+(sel?' class="assigned"':'')+'><select data-key="'+key+'">'+opts.replace('value="'+sel+'"','value="'+sel+'" selected')+'</select></td>'; }).join(""); return '<tr><td class="td-time">'+s.start+'–'+s.end+'</td>'+cells+'</tr>'; }).join(""); return '<div class="weekblock"><div class="weekhead">Semaine du '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>'; }).join(""); grid.querySelectorAll("select[data-key]").forEach(sel=>{ sel.onchange=()=>{ const k=sel.dataset.key; const td=sel.closest("td"); if(sel.value){ state.assignments[k]=sel.value; if(td) td.classList.add("assigned"); } else { delete state.assignments[k]; if(td) td.classList.remove("assigned"); } saveState(); updateAssignSummary(); }; }); updateAssignSummary(); }
-function updateAssignSummary(){ const used=Object.values(state.assignments).filter(Boolean), counts={}; used.forEach(id=>counts[id]=(counts[id]||0)+1); const dupes=Object.keys(counts).filter(id=>counts[id]>1).map(id=>(state.students.find(s=>s.id===id)||{}).name).filter(Boolean); let txt=used.length+" rendez-vous attribué(s)."; if(dupes.length) txt += " ⚠︎ Planifié plusieurs fois : "+dupes.map(n=>displayStudentName(n)).join(", "); document.getElementById("assignSummary").textContent=txt; }
+function assignmentStudents(){ return state.students.filter(s=>(s.name||"").trim() || contactEmails(s).length); }
+function assignmentOptionsFor(key){
+  const current=state.assignments[key]||"";
+  const already=new Set(Object.entries(state.assignments).filter(([k,v])=>k!==key && v).map(([k,v])=>v));
+  const opts=['<option value="">— libre —</option>'];
+  assignmentStudents().forEach(st=>{
+    if(already.has(st.id) && st.id!==current) return;
+    const selected=st.id===current ? ' selected' : '';
+    opts.push(`<option value="${st.id}" title="${esc(st.name||"(sans nom)")}"${selected}>${esc(displayStudentName(st.name))}</option>`);
+  });
+  return opts.join("");
+}
+function renderCalendar(){
+  initCfgInputs();
+  renderDateList();
+  const grid=document.getElementById("calendarGrid"), sl=slots();
+  if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Sélectionnez au moins un jour dans le calendrier ci-dessus.</p>'; updateAssignSummary(); return; }
+  if(sl.length===0){ grid.innerHTML='<p class="muted">Plage horaire non valable (vérifiez début/fin/durée).</p>'; updateAssignSummary(); return; }
+  const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+  const groups={};
+  state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); });
+  const weekKeys=Object.keys(groups).sort();
+  grid.innerHTML=weekKeys.map(wk=>{
+    const days=groups[wk];
+    const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+    const head='<tr><th class="th-time">Heure</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>';
+    const bodyRows=sl.map((slot,i)=>{
+      const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td'+(sel?' class="assigned"':'')+'><select data-key="'+key+'">'+assignmentOptionsFor(key)+'</select></td>'; }).join("");
+      return '<tr><td class="td-time">'+slot.start+'–'+slot.end+'</td>'+cells+'</tr>';
+    }).join("");
+    return '<div class="weekblock"><div class="weekhead">Semaine du '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>';
+  }).join("");
+  grid.querySelectorAll("select[data-key]").forEach(sel=>{
+    sel.onchange=()=>{
+      const k=sel.dataset.key;
+      if(sel.value){ state.assignments[k]=sel.value; }
+      else { delete state.assignments[k]; }
+      saveState();
+      renderCalendar();
+    };
+  });
+  updateAssignSummary();
+}
+function updateAssignSummary(){
+  const used=Object.values(state.assignments).filter(Boolean), counts={};
+  used.forEach(id=>counts[id]=(counts[id]||0)+1);
+  const students=assignmentStudents();
+  const studentIds=new Set(students.map(s=>s.id));
+  const uniqueAssigned=[...new Set(used)].filter(id=>studentIds.has(id));
+  const remaining=Math.max(0, students.length-uniqueAssigned.length);
+  const dupes=Object.keys(counts).filter(id=>counts[id]>1).map(id=>(state.students.find(s=>s.id===id)||{}).name).filter(Boolean);
+  let txt=used.length+" rendez-vous "+(used.length===1?"attribué":"attribués")+" · "+remaining+" élève"+(remaining===1?"":"s")+" encore à attribuer.";
+  if(remaining===0 && students.length>0) txt=used.length+" rendez-vous "+(used.length===1?"attribué":"attribués")+" · Tous les élèves sont attribués.";
+  if(dupes.length) txt += " ⚠︎ Planifié plusieurs fois : "+dupes.map(n=>displayStudentName(n)).join(", ");
+  document.getElementById("assignSummary").textContent=txt;
+}
 
 /* Rich editor */
 let activeEditor=null, savedRange=null, toolbarBusy=false, toolbarStateTimer=null;
@@ -1218,7 +1272,7 @@ async function loadUnescoLogo(force){
     const blob=await res.blob(); const r=new FileReader();
     r.onload=()=>{ setLogoFromDataUrl(String(r.result), blob.type||"image/png", true, "unesco"); const st=document.getElementById("sigStatus"); if(st) st.textContent=""; };
     r.readAsDataURL(blob);
-  }catch(e){ const st=document.getElementById("sigStatus"); if(st) st.textContent="Logo UNESCO introuvable. Liegt schullogo.png im App-Ordner?"; }
+  }catch(e){ const st=document.getElementById("sigStatus"); if(st) st.textContent="Logo UNESCO introuvable. Le fichier schullogo.png se trouve-t-il dans le dossier de l’app ?"; }
 }
 function normalizeLogoMode(){
   if(!state.options.logoMode) state.options.logoMode = (state.options.includeLogo===false ? "none" : "unesco");
@@ -1237,7 +1291,7 @@ function renderLogoPreview(){
   if(st){
     if(state.options.logoMode==="none") st.textContent="";
     else if(state.options.logoMode==="custom") st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "Veuillez choisir un logo personnel.";
-    else st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "Logo UNESCO wird geladen.";
+    else st.textContent=(state.template.logo && state.template.logo.dataUrl) ? "" : "Chargement du logo UNESCO.";
   }
 }
 let mailRenderRaf = null;
@@ -1484,7 +1538,7 @@ function buildMessages(){
         if(to.length){ msgs.push({id:d+"__"+i+"__"+suf,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:label,to,subject,defaultSubject,html,previewHtml}); }
       };
       if(state.options.combine){
-        const label = emails.length>2 ? (emails.length+" contacts") : (emails.length===2 ? "beide contacts" : "Contact");
+        const label = emails.length>2 ? (emails.length+" contacts") : (emails.length===2 ? "Deux contacts" : "Contact");
         add("c", label, emails);
       } else {
         emails.forEach((email,idx)=>add(String(idx), "Contact "+(idx+1), [email]));
@@ -1505,7 +1559,7 @@ function renderAuth(){
     if(account.email) state.account.email=account.email;
     if(!state.account.name && account.name) state.account.name=account.name;
     saveState();
-    box.innerHTML=`<div class="acct"><span class="pill ok">angemeldet</span><span><b>${esc(account.name||"")}</b> · ${esc(account.email||"")}</span></div>`;
+    box.innerHTML=`<div class="acct"><span class="pill ok">connecté</span><span><b>${esc(account.name||"")}</b> · ${esc(account.email||"")}</span></div>`;
     inBtn.style.display="none"; outBtn.style.display="inline-block";
     const hint=document.getElementById("authHint"); if(hint) hint.textContent="Connecté. L’envoi s’effectue automatiquement via ce compte.";
   } else {
