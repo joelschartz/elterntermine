@@ -256,7 +256,10 @@
   .template-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 8px 18px rgba(47,95,215,.18)}
   .reminder-toggle{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font-size:13px;font-weight:750;cursor:pointer}
   .reminder-toggle input{width:16px;height:16px;min-width:16px;margin:0}
-  .reminder-note{margin:2px 0 12px;font-size:12.5px;color:var(--muted)}
+  .reminder-note,.template-note{margin:2px 0 12px;font-size:12.5px;color:var(--muted)}
+  .template-settings{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:12px;margin:0 0 14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft)}
+  .setting-field{display:flex;flex-direction:column;gap:6px;min-width:0}.setting-field label,.setting-title{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.setting-field select,.setting-field input[type=time]{height:40px;padding:7px 10px;border-radius:12px;background:#fff}.reminder-setting{gap:8px}.reminder-main{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--ink)}.reminder-main input{width:16px;height:16px;margin:0}.reminder-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}.reminder-controls select{width:auto;min-width:74px}.reminder-controls input[type=time]{width:104px}.template-language-edit{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:750}.template-language-edit select{width:auto;min-width:148px;height:38px;padding:6px 10px;border-radius:999px;background:#fff}.contact-cell{display:grid;grid-template-columns:minmax(0,1fr) 136px;gap:8px;align-items:center}.contact-cell select{height:44px;padding:8px 10px;border-radius:11px;background:#fff;font-size:13px}.student-grid .contact-cell input{min-width:0}.lang-pill{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:850;color:var(--muted);margin-left:4px}
+  @media (max-width:900px){.template-settings{grid-template-columns:1fr}.contact-cell{grid-template-columns:1fr}.template-language-edit{margin-left:0;width:100%}}
   #appToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(16,24,40,.28);z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none}
 
   .sig-modal{position:fixed;inset:0;background:rgba(20,30,60,.48);display:none;align-items:center;justify-content:center;z-index:70;padding:18px}
@@ -280,7 +283,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R11</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R12</span></p>
 </header>
 
 <nav class="tabs">
@@ -293,7 +296,7 @@
   <section class="panel active" id="panel-students">
     <div class="card">
       <h2>Liste des élèves</h2>
-      <p class="hint">Inscrivez chaque élève une seule fois avec les adresses e-mail de contact. Les champs vides seront ignorés lors de l’envoi.</p>
+      <p class="hint">Inscrivez chaque élève une seule fois avec les adresses e-mail de contact et choisissez la langue souhaitée pour chaque contact. Les champs vides seront ignorés lors de l’envoi.</p>
       <div id="studentTable"></div>
       <div class="toolbar" style="margin-top:14px">
         <button id="addStudent">+ Ajouter un élève</button>
@@ -301,7 +304,7 @@
         <button class="ghost sm" id="importCsvBtn">Importer un CSV</button>
         <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none">
       </div>
-      <p class="hint">Format CSV (avec ou sans ligne d’en-tête) : <code class="k">Nom,E-mail de contact 1,E-mail de contact 2</code></p>
+      <p class="hint">Format CSV (avec ou sans ligne d’en-tête) : <code class="k">Nom,E-mail de contact 1,E-mail de contact 2</code>. Optionnel : ajoutez deux colonnes langue (<code class="k">fr/de/en/lb</code>).</p>
     </div>
   </section>
 
@@ -351,12 +354,36 @@
         <label class="signature-toggle"><input type="checkbox" id="useSigTop"> Signature</label>
       </div>
       <div id="templateEditorArea" class="template-editor-area">
+      <div class="template-settings" aria-label="Paramètres des e-mails">
+        <div class="setting-field">
+          <label for="trimesterSelect">Trimestre</label>
+          <select id="trimesterSelect">
+            <option value="1">1er trimestre</option>
+            <option value="2">2e trimestre</option>
+            <option value="3">3e trimestre</option>
+          </select>
+        </div>
+        <div class="setting-field">
+          <label for="defaultLang">Langue par défaut</label>
+          <select id="defaultLang">
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+            <option value="lb">Lëtzebuergesch</option>
+          </select>
+        </div>
+        <div class="setting-field reminder-setting">
+          <span class="setting-title">Rappel</span>
+          <label class="reminder-main" title="Les rappels sont envoyés automatiquement si l’app est ouverte et connectée."><input type="checkbox" id="reminderEnabled"> Envoyer un rappel automatique</label>
+          <div class="reminder-controls"><span>à</span><input type="time" id="reminderTime"><span>,</span><select id="reminderDays"><option value="1">1 jour</option><option value="2">2 jours</option><option value="3">3 jours</option></select><span>avant le rendez-vous</span></div>
+        </div>
+      </div>
       <div class="template-tabs" id="templateModeTabs" role="tablist" aria-label="Choisir le modèle d’e-mail">
         <button type="button" class="template-tab active" data-template-mode="confirmation">Confirmation</button>
         <button type="button" class="template-tab" data-template-mode="reminder">Rappel automatique</button>
-        <label class="reminder-toggle" title="Les rappels sont envoyés automatiquement la veille du rendez-vous à 15h00, si l’app est ouverte et connectée."><input type="checkbox" id="reminderEnabled"> Rappel la veille à 15h00</label>
+        <div class="template-language-edit"><span>Langue du modèle</span><select id="templateLang"><option value="fr">Français</option><option value="de">Deutsch</option><option value="en">English</option><option value="lb">Lëtzebuergesch</option></select></div>
       </div>
-      <p class="reminder-note" id="reminderNote" style="display:none">Ce modèle est utilisé pour l’e-mail de rappel envoyé automatiquement la veille du rendez-vous à 15h00.</p>
+      <p class="template-note" id="templateNote"></p>
       <div id="mailTemplatePreview"></div>
       <div class="rich-toolbar" data-for="tplBodyEditor" aria-label="Barre de mise en forme">
           <button class="ot-ic editor-undo" data-cmd="undo" title="Annuler" disabled><svg viewBox="0 0 20 20"><path d="M8 6H4v-4"/><path d="M4 6c2.3-2.6 6.3-3.2 9.1-1.3 3.3 2.2 3.9 6.9 1.2 9.8-2.1 2.2-5.4 2.8-8.1 1.5"/></svg></button>
@@ -398,7 +425,7 @@
         <div id="tplBodyEditor" class="rich-editor mail-editor template-mail-editor" contenteditable="true" spellcheck="true"></div>
       </div>
       <div class="mail-reset" id="resetTplBodyRow" style="display:none"><a href="#" id="resetTplBody">↺ Réinitialiser le texte par défaut</a><a href="#" id="saveTplBody" class="save-default" title="Définir le texte actuel + l’objet comme standard personnel">✓ enregistrer comme standard</a></div>
-      <p class="hint">Les variables <code class="k">{DATE}</code>, <code class="k">{TIME}</code> et <code class="k">{ENFANT}</code> sont automatiquement remplacées à l’envoi. Pour le rappel, <code class="k">{DATE}</code> et <code class="k">{TIME}</code> correspondent au rendez-vous du lendemain.</p>
+      <p class="hint">Les variables <code class="k">{DATE}</code>, <code class="k">{TIME}</code>, <code class="k">{ENFANT}</code>, <code class="k">{TRIMESTRE}</code> et <code class="k">{RAPPEL_DELAI}</code> sont automatiquement remplacées à l’envoi.</p>
       <div id="sigMissing" style="margin-top:12px"></div>
       <div id="inlineSignatureControls" class="inline-sig-controls">
         <div class="signature-options-row">
@@ -454,7 +481,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 55;
+const APP_VERSION = 56;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -470,31 +497,83 @@ function displayStudentName(name, limit=STUDENT_NAME_DISPLAY_LIMIT){
 }
 function stripBold(text){ return (text||"").replace(/\*\*(.+?)\*\*/g,"$1"); }
 function htmlFromPlain(s){ return escHtml(s||"").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>"); }
-function defaultBodyText(){ return "Chers parents,\n\n"+
-"Je vous confirme notre rendez-vous individuel au sujet du troisième trimestre et du bilan intermédiaire de votre enfant {ENFANT}, fixé au {DATE} à {TIME}.\n"+
-"L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.\n\n"+
-"Je vous remercie d’avance pour votre présence."; }
-function defaultBodyHtml(){
-  return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.45;color:#000">'+
-    'Chers parents,<br><br>'+ 
-    'Je vous confirme notre rendez-vous individuel au sujet du troisième trimestre et du bilan intermédiaire de votre enfant {ENFANT}, fixé au {DATE} à {TIME}.<br>'+ 
-    'L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.<br><br>'+ 
-    'Je vous remercie d’avance pour votre présence.'+
-  '</div>';
+function bodyHtmlFromPlain(s){ return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.45;color:#000">'+htmlFromPlain(s)+'</div>'; }
+const LANGS=[
+  {code:"fr",label:"Français",short:"FR"},
+  {code:"de",label:"Deutsch",short:"DE"},
+  {code:"en",label:"English",short:"EN"},
+  {code:"lb",label:"Lëtzebuergesch",short:"LU"}
+];
+function normalizeLang(lang){
+  const raw=String(lang||"").trim().toLowerCase();
+  if(["de","deutsch","german","allemand"].includes(raw)) return "de";
+  if(["en","eng","english","anglais"].includes(raw)) return "en";
+  if(["lb","lu","lux","letzebuergesch","lëtzebuergesch","luxembourgish","luxembourgeois"].includes(raw)) return "lb";
+  return "fr";
 }
-function defaultReminderSubject(){ return "Rappel — rendez-vous individuel demain"; }
-function defaultReminderBodyText(){ return "Chers parents,\n\n"+
-"Je me permets de vous rappeler notre rendez-vous individuel prévu demain, {DATE}, à {TIME}, concernant votre enfant {ENFANT}.\n"+
-"L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.\n\n"+
-"Je vous remercie d’avance pour votre présence."; }
-function defaultReminderBodyHtml(){
-  return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.45;color:#000">'+
-    'Chers parents,<br><br>'+
-    'Je me permets de vous rappeler notre rendez-vous individuel prévu demain, {DATE}, à {TIME}, concernant votre enfant {ENFANT}.<br>'+
-    'L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.<br><br>'+
-    'Je vous remercie d’avance pour votre présence.'+
-  '</div>';
+function langMeta(lang){ lang=normalizeLang(lang); return LANGS.find(l=>l.code===lang)||LANGS[0]; }
+function langOptionsHtml(selected){ selected=normalizeLang(selected); return LANGS.map(l=>`<option value="${l.code}"${l.code===selected?' selected':''}>${l.label}</option>`).join(""); }
+function trimesterNumber(){ const n=Number(state && state.options ? state.options.trimester : 3); return Math.min(3, Math.max(1, n||3)); }
+function reminderDaysBefore(){ const n=Number(state && state.options ? state.options.reminderDaysBefore : 1); return Math.min(3, Math.max(1, n||1)); }
+function reminderTimeValue(){ return /^\d{2}:\d{2}$/.test(String(state && state.options ? state.options.reminderTime : "")) ? state.options.reminderTime : "15:00"; }
+const TRIMESTER_TEXTS={
+  fr:["premier trimestre","deuxième trimestre","troisième trimestre"],
+  de:["1. Trimester","2. Trimester","3. Trimester"],
+  en:["first trimester","second trimester","third trimester"],
+  lb:["éischten Trimester","zweeten Trimester","drëtten Trimester"]
+};
+function trimesterText(lang){ return (TRIMESTER_TEXTS[normalizeLang(lang)]||TRIMESTER_TEXTS.fr)[trimesterNumber()-1]; }
+function reminderLeadText(lang){ const d=reminderDaysBefore(); lang=normalizeLang(lang); const m={
+  fr:["demain","dans deux jours","dans trois jours"],
+  de:["morgen","in zwei Tagen","in drei Tagen"],
+  en:["tomorrow","in two days","in three days"],
+  lb:["muer","an zwee Deeg","an dräi Deeg"]
+}; return (m[lang]||m.fr)[d-1]; }
+function formatDateByLang(iso, lang){
+  lang=normalizeLang(lang); const d=new Date(iso+"T00:00:00");
+  const loc=lang==="de"?"de-DE":(lang==="en"?"en-GB":(lang==="lb"?"lb-LU":"fr-FR"));
+  let s=new Intl.DateTimeFormat(loc,{weekday:"long",day:"numeric",month:"long"}).format(d);
+  if(lang==="fr" && d.getDate()===1) s=s.replace(/\b1\b/,"1er");
+  return s;
 }
+function formatTimeByLang(hhmm, lang){
+  const [h,m]=String(hhmm||"00:00").split(":");
+  if(normalizeLang(lang)==="fr") return parseInt(h,10)+"h"+String(m||"00").padStart(2,"0");
+  if(normalizeLang(lang)==="lb") return String(h).padStart(2,"0")+":"+String(m||"00").padStart(2,"0")+" Auer";
+  if(normalizeLang(lang)==="de") return String(h).padStart(2,"0")+":"+String(m||"00").padStart(2,"0")+" Uhr";
+  return String(h).padStart(2,"0")+":"+String(m||"00").padStart(2,"0");
+}
+function formatFrenchDate(iso){ return formatDateByLang(iso,"fr"); }
+function formatFrenchTime(hhmm){ return formatTimeByLang(hhmm,"fr"); }
+function messageMap(ds, hhmm, stu, lang){
+  const name = typeof stu==="string" ? stu : ((stu && stu.name) || "");
+  lang=normalizeLang(lang);
+  return {DATE:formatDateByLang(ds,lang),TIME:formatTimeByLang(hhmm,lang),NAME:state.account.name||"",ENFANT:name,TRIMESTRE:trimesterText(lang),TRIMESTER:trimesterText(lang),TRIMESTRE_NUM:String(trimesterNumber()),RAPPEL_DELAI:reminderLeadText(lang),RAPPEL_JOURS:String(reminderDaysBefore())};
+}
+const TEMPLATE_DEFAULTS={
+  fr:{
+    confirmation:{subject:"Rendez-vous individuel — bilan du {TRIMESTRE}",body:"Chers parents,\n\nJe vous confirme notre rendez-vous individuel au sujet du {TRIMESTRE} et du bilan intermédiaire de votre enfant {ENFANT}, fixé au {DATE} à {TIME}.\nL’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.\n\nJe vous remercie d’avance pour votre présence."},
+    reminder:{subject:"Rappel — rendez-vous individuel",body:"Chers parents,\n\nJe me permets de vous rappeler notre rendez-vous individuel prévu {RAPPEL_DELAI}, le {DATE}, à {TIME}, concernant votre enfant {ENFANT}.\nL’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.\n\nJe vous remercie d’avance pour votre présence."}
+  },
+  de:{
+    confirmation:{subject:"Einzelgespräch — Bilanz zum {TRIMESTRE}",body:"Liebe Eltern,\n\nich bestätige Ihnen hiermit unseren Termin für ein individuelles Gespräch zum {TRIMESTRE} und zum Zwischenbericht Ihres Kindes {ENFANT}. Der Termin findet am {DATE} um {TIME} statt.\nDas Gespräch dauert ungefähr zwanzig Minuten und findet in meinem Klassensaal statt.\n\nVielen Dank im Voraus für Ihre Anwesenheit."},
+    reminder:{subject:"Erinnerung — individuelles Gespräch",body:"Liebe Eltern,\n\nich möchte Sie gerne an unser individuelles Gespräch {RAPPEL_DELAI}, am {DATE} um {TIME}, bezüglich Ihres Kindes {ENFANT} erinnern.\nDas Gespräch dauert ungefähr zwanzig Minuten und findet in meinem Klassensaal statt.\n\nVielen Dank im Voraus für Ihre Anwesenheit."}
+  },
+  en:{
+    confirmation:{subject:"Individual meeting — {TRIMESTRE} report",body:"Dear parents,\n\nI confirm our individual meeting about the {TRIMESTRE} and the interim report of your child {ENFANT}, scheduled for {DATE} at {TIME}.\nThe meeting will last about twenty minutes and will take place in my classroom.\n\nThank you in advance for your attendance."},
+    reminder:{subject:"Reminder — individual meeting",body:"Dear parents,\n\nI would like to remind you of our individual meeting scheduled for {RAPPEL_DELAI}, on {DATE} at {TIME}, concerning your child {ENFANT}.\nThe meeting will last about twenty minutes and will take place in my classroom.\n\nThank you in advance for your attendance."}
+  },
+  lb:{
+    confirmation:{subject:"Individuellt Gespréich — Bilan vum {TRIMESTRE}",body:"Léif Elteren,\n\nEch confirméieren Iech eist individuellt Gespréich zum {TRIMESTRE} an zum Zwëschebilan vun Ärem Kand {ENFANT}, festgeluecht op {DATE} um {TIME}.\nD’Gespréich dauert ongeféier zwanzeg Minutten a fënnt a mengem Klassesall statt.\n\nEch soen Iech am Viraus Merci fir Är Presenz."},
+    reminder:{subject:"Rappel — individuellt Gespréich",body:"Léif Elteren,\n\nEch erënneren Iech gär un eist individuellt Gespréich {RAPPEL_DELAI}, den {DATE} um {TIME}, betreffend Äert Kand {ENFANT}.\nD’Gespréich dauert ongeféier zwanzeg Minutten a fënnt a mengem Klassesall statt.\n\nEch soen Iech am Viraus Merci fir Är Presenz."}
+  }
+};
+function factoryTemplate(lang, mode){ lang=normalizeLang(lang); mode=(mode==="reminder")?"reminder":"confirmation"; const src=(TEMPLATE_DEFAULTS[lang]||TEMPLATE_DEFAULTS.fr)[mode]; return {v:1,subject:src.subject,body:src.body,bodyHtml:bodyHtmlFromPlain(src.body)}; }
+function defaultBodyText(lang="fr"){ return factoryTemplate(lang,"confirmation").body; }
+function defaultBodyHtml(lang="fr"){ return factoryTemplate(lang,"confirmation").bodyHtml; }
+function defaultReminderSubject(lang="fr"){ return factoryTemplate(lang,"reminder").subject; }
+function defaultReminderBodyText(lang="fr"){ return factoryTemplate(lang,"reminder").body; }
+function defaultReminderBodyHtml(lang="fr"){ return factoryTemplate(lang,"reminder").bodyHtml; }
 function plainDefaultSignature(){ return "Bien cordialement,\nJoël Schartz\n\nInstituteur école fondamentale de Strassen\nBâtiment Hueflach – Salle HP13\n11, Rue du Cimetière\nL-8018 Strassen\njoel.schartz@education.lu\nTél: 31 02 62 508"; }
 function defaultSignatureTemplate(){ return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#000">'+
 '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.2;color:#000">Bien cordialement,</div>'+ 
@@ -513,7 +592,7 @@ function defaultState(){
     students: [],
     config: { dates: [], start:"14:00", end:"16:00", durationMin:20 },
     assignments: {}, sent: [], reminderSent: [], subjectOverrides: {},
-    options: { combine:false, useSig:true, includeLogo:true, logoMode:"unesco", templateCollapsed:false, templateMode:"confirmation", reminderEnabled:true },
+    options: { combine:false, useSig:true, includeLogo:true, logoMode:"unesco", templateCollapsed:false, templateMode:"confirmation", templateLang:"fr", defaultLang:"fr", trimester:3, reminderEnabled:true, reminderDaysBefore:1, reminderTime:"15:00" },
     graph: { clientId:"", tenant:"organizations" },
     account: { name:"", email:"" },
     // Vom Nutzer selbst festgelegter Standard (überschreibt den Werks-Standard beim Zurücksetzen).
@@ -530,8 +609,26 @@ function defaultState(){
       v: 1,
       subject: defaultReminderSubject(),
       body: defaultReminderBodyText(), bodyHtml: defaultReminderBodyHtml()
-    }
+    },
+    localizedTemplates: {}
   };
+}
+function normalizeLocalizedTemplates(src){
+  const out={};
+  LANGS.filter(l=>l.code!=="fr").forEach(l=>{
+    out[l.code]={};
+    ["confirmation","reminder"].forEach(mode=>{
+      const base=factoryTemplate(l.code, mode);
+      const got=src && src[l.code] && src[l.code][mode] ? src[l.code][mode] : {};
+      const tpl=Object.assign({}, base, got||{});
+      if(!tpl.subject) tpl.subject=base.subject;
+      if(!tpl.bodyHtml) tpl.bodyHtml=bodyHtmlFromPlain(tpl.body || base.body);
+      tpl.body=textFromHtml(tpl.bodyHtml) || tpl.body || base.body;
+      tpl.v=1;
+      out[l.code][mode]=tpl;
+    });
+  });
+  return out;
 }
 let state = loadState();
 function loadState(){
@@ -565,21 +662,40 @@ function loadState(){
       tpl.bodyHtml = defaultBodyHtml();
       tpl.body = defaultBodyText();
     }
+    if((s.appVersion||0) < 56){
+      const txtForTrimesterMigration = (tpl.subject||"") + " " + (textFromHtml(tpl.bodyHtml||"") || tpl.body || "");
+      if(/Rendez-vous individuel/i.test(txtForTrimesterMigration) && /trimestre/i.test(txtForTrimesterMigration) && /bilan interm/i.test(txtForTrimesterMigration)){
+        const f=factoryTemplate("fr","confirmation");
+        tpl.subject=f.subject; tpl.bodyHtml=f.bodyHtml; tpl.body=f.body;
+      }
+    }
     delete tpl.sigFields;
     tpl.v = 16;
     const reminderTpl = Object.assign({}, d.reminderTemplate, s.reminderTemplate||{});
     if(!reminderTpl.bodyHtml) reminderTpl.bodyHtml = htmlFromPlain(reminderTpl.body || defaultReminderBodyText());
     reminderTpl.body = textFromHtml(reminderTpl.bodyHtml) || reminderTpl.body || defaultReminderBodyText();
     reminderTpl.subject = reminderTpl.subject || defaultReminderSubject();
+    if((s.appVersion||0) < 56){
+      const rtxt=(reminderTpl.subject||"")+" "+(textFromHtml(reminderTpl.bodyHtml||"")||reminderTpl.body||"");
+      if(/rappel|demain|prévu demain|prevu demain/i.test(rtxt)){
+        const rf=factoryTemplate("fr","reminder");
+        reminderTpl.subject=rf.subject; reminderTpl.bodyHtml=rf.bodyHtml; reminderTpl.body=rf.body;
+      }
+    }
     reminderTpl.v = 1;
     const options = Object.assign({}, d.options, s.options||{});
+    options.defaultLang = normalizeLang(options.defaultLang||"fr");
+    options.templateLang = normalizeLang(options.templateLang||options.defaultLang||"fr");
+    options.trimester = Math.min(3, Math.max(1, Number(options.trimester)||3));
+    options.reminderDaysBefore = Math.min(3, Math.max(1, Number(options.reminderDaysBefore)||1));
+    if(!/^\d{2}:\d{2}$/.test(String(options.reminderTime||""))) options.reminderTime="15:00";
     if(!options.logoMode){ options.logoMode = (options.includeLogo===false ? "none" : "unesco"); }
     if(needsSignatureWindowMigration){ options.useSig = true; options.includeLogo = true; options.logoMode = "unesco"; }
     // v13: Signatur-Logo als feste Auswahl: UNESCO / Eigenes Logo / Aucun logo.
     if((s.appVersion||0) < 13 && options.logoMode !== "custom"){ options.includeLogo = true; options.logoMode = "unesco"; }
     return {
       appVersion: APP_VERSION,
-      students: Array.isArray(s.students)? s.students : [],
+      students: (Array.isArray(s.students)? s.students : []).map(st=>Object.assign({}, st, {lang1: normalizeLang(st.lang1||options.defaultLang||"fr"), lang2: normalizeLang(st.lang2||options.defaultLang||"fr")})),
       config: Object.assign(d.config, s.config||{}),
       assignments: s.assignments||{},
       overrides: s.overrides||{},
@@ -591,7 +707,8 @@ function loadState(){
       account: Object.assign(d.account, s.account||{}),
       userDefaults: s.userDefaults || null,
       template: tpl,
-      reminderTemplate: reminderTpl
+      reminderTemplate: reminderTpl,
+      localizedTemplates: normalizeLocalizedTemplates(s.localizedTemplates||{})
     };
   }catch(e){ return defaultState(); }
 }
@@ -600,8 +717,6 @@ function saveState(){ state.appVersion = APP_VERSION; try{ localStorage.setItem(
 function timeToMin(t){ const [h,m]=t.split(":").map(Number); return h*60+m; }
 function minToTime(x){ return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0"); }
 function slots(){ const a=timeToMin(state.config.start), b=timeToMin(state.config.end), d=Number(state.config.durationMin)||0; const out=[]; if(d>0){ for(let t=a;t+d<=b;t+=d) out.push({start:minToTime(t), end:minToTime(t+d)}); } return out; }
-function formatFrenchDate(iso){ const d=new Date(iso+"T00:00:00"); let s=new Intl.DateTimeFormat("fr-FR",{weekday:"long",day:"numeric",month:"long"}).format(d); if(d.getDate()===1) s=s.replace(/\b1\b/,"1er"); return s; }
-function formatFrenchTime(hhmm){ const [h,m]=hhmm.split(":"); return parseInt(h,10)+"h"+m.padStart(2,"0"); }
 function fillPlain(tpl,map){ return Object.keys(map).reduce((s,k)=>s.split("{"+k+"}").join(map[k]), tpl||""); }
 function fillHtml(tpl,map){ const safe={}; Object.keys(map).forEach(k=>safe[k]=escHtml(map[k])); return fillPlain(tpl||"", safe); }
 function sanitizeHtml(html){
@@ -634,24 +749,36 @@ function signatureSeparatorHtml(){
 function logoIsVisible(){ return state.options.useSig!==false && state.options.logoMode!=="none" && state.options.includeLogo!==false; }
 function composeLogoHtml(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl){ return '<div class="signature-logo-separator" data-signature-separator="true" contenteditable="false" aria-hidden="true"></div><div class="inline-logo" data-logo-inline="true" contenteditable="false" title="Logo"><img src="'+lg.dataUrl+'" alt=""></div>'; } return ''; }
 function currentTemplateMode(){ return (state.options && state.options.templateMode==="reminder") ? "reminder" : "confirmation"; }
-function templateDataForMode(mode){
-  if(mode==="reminder"){
-    state.reminderTemplate = Object.assign({v:1,subject:defaultReminderSubject(),body:defaultReminderBodyText(),bodyHtml:defaultReminderBodyHtml()}, state.reminderTemplate||{});
-    if(!state.reminderTemplate.bodyHtml) state.reminderTemplate.bodyHtml=htmlFromPlain(state.reminderTemplate.body||defaultReminderBodyText());
-    if(!state.reminderTemplate.subject) state.reminderTemplate.subject=defaultReminderSubject();
-    return state.reminderTemplate;
+function currentTemplateLang(){ return normalizeLang((state.options && state.options.templateLang) || (state.options && state.options.defaultLang) || "fr"); }
+function ensureLocalizedTemplates(){ state.localizedTemplates=normalizeLocalizedTemplates(state.localizedTemplates||{}); }
+function templateDataForMode(mode, lang){
+  mode=(mode==="reminder")?"reminder":"confirmation";
+  lang=normalizeLang(lang||currentTemplateLang());
+  if(lang==="fr"){
+    if(mode==="reminder"){
+      const base=factoryTemplate("fr","reminder");
+      state.reminderTemplate = Object.assign({}, base, state.reminderTemplate||{});
+      if(!state.reminderTemplate.bodyHtml) state.reminderTemplate.bodyHtml=bodyHtmlFromPlain(state.reminderTemplate.body||base.body);
+      if(!state.reminderTemplate.subject) state.reminderTemplate.subject=base.subject;
+      state.reminderTemplate.body=textFromHtml(state.reminderTemplate.bodyHtml)||state.reminderTemplate.body||base.body;
+      return state.reminderTemplate;
+    }
+    const base=factoryTemplate("fr","confirmation");
+    state.template = Object.assign({}, state.template||{}, {subject:(state.template&&state.template.subject)||base.subject, body:(state.template&&state.template.body)||base.body, bodyHtml:(state.template&&state.template.bodyHtml)||base.bodyHtml});
+    return state.template;
   }
-  return state.template;
+  ensureLocalizedTemplates();
+  return state.localizedTemplates[lang][mode];
 }
 function templateModeLabel(mode){ return mode==="reminder" ? "rappel" : "confirmation"; }
-function setTemplateBodyForMode(mode, subject, bodyHtml){
-  const tpl=templateDataForMode(mode);
+function setTemplateBodyForMode(mode, subject, bodyHtml, lang){
+  const tpl=templateDataForMode(mode, lang);
   tpl.subject=subject; tpl.bodyHtml=bodyHtml; tpl.body=textFromHtml(bodyHtml);
 }
-function composeEditorHtml(mode){
-  mode=mode||currentTemplateMode();
-  const tpl=templateDataForMode(mode);
-  let html = sanitizeHtml(tpl.bodyHtml || (mode==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml()));
+function composeEditorHtml(mode, lang){
+  mode=mode||currentTemplateMode(); lang=normalizeLang(lang||currentTemplateLang());
+  const tpl=templateDataForMode(mode, lang);
+  let html = sanitizeHtml(tpl.bodyHtml || factoryTemplate(lang, mode).bodyHtml);
   if(state.options.useSig!==false){
     const sig = stripSignatureSeparators(state.template.signatureHtml || defaultSignatureTemplate());
     html += '<div class="editor-signature-spacer" data-signature-spacer="true"><br></div>';
@@ -710,14 +837,13 @@ function removeSignatureTailFromBodyHtml(html){
 }
 function normalizeTextForCompare(s){ return String(s||"").replace(/ /g," ").replace(/\s+/g," ").trim(); }
 function resetBodyFormattingIfStillDefault(){
-  const mode=currentTemplateMode();
-  const tpl=templateDataForMode(mode);
-  const defText = mode==="reminder" ? defaultReminderBodyText() : defaultBodyText();
-  const defHtml = mode==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml();
+  const mode=currentTemplateMode(), lang=currentTemplateLang();
+  const tpl=templateDataForMode(mode, lang);
+  const def=factoryTemplate(lang, mode);
   const txt=normalizeTextForCompare(textFromHtml(tpl.bodyHtml||""));
-  if(txt && txt===normalizeTextForCompare(defText)){
-    tpl.bodyHtml=defHtml;
-    tpl.body=defText;
+  if(txt && txt===normalizeTextForCompare(def.body)){
+    tpl.bodyHtml=def.bodyHtml;
+    tpl.body=def.body;
   }
 }
 // Liest den aktuellen Text/Signatur-Stand bevorzugt direkt aus dem Editor (Live-DOM),
@@ -726,7 +852,7 @@ function resetBodyFormattingIfStillDefault(){
 function liveTemplateParts(){
   const ed=document.getElementById("tplBodyEditor");
   if(ed){ try{ return splitComposeEditorHtml(ed.innerHTML); }catch(e){} }
-  const tpl=templateDataForMode(currentTemplateMode());
+  const tpl=templateDataForMode(currentTemplateMode(), currentTemplateLang());
   return { bodyHtml: tpl.bodyHtml||"", signatureHtml: state.template.signatureHtml||"" };
 }
 function normHtmlForCompare(s){ return String(s||"").replace(/\s+/g," ").replace(/>\s+</g,"><").trim().toLowerCase(); }
@@ -754,21 +880,39 @@ function htmlEqualsNormalized(a,b){
 }
 let mailDefaultPreviewByOvk={};
 // "Wirksamer Standard" = der vom Nutzer gespeicherte Standard, sonst der Werks-Standard.
-function effDefaultBodyHtml(){ const mode=currentTemplateMode(); return mode==="reminder" ? ((state.userDefaults && state.userDefaults.reminderBodyHtml) || defaultReminderBodyHtml()) : ((state.userDefaults && state.userDefaults.bodyHtml) || defaultBodyHtml()); }
-function effDefaultBodyText(){ const html=effDefaultBodyHtml(); return textFromHtml(html) || (currentTemplateMode()==="reminder" ? defaultReminderBodyText() : defaultBodyText()); }
-function effDefaultSubject(){ const mode=currentTemplateMode(); return mode==="reminder" ? ((state.userDefaults && state.userDefaults.reminderSubject!=null) ? state.userDefaults.reminderSubject : defaultReminderSubject()) : ((state.userDefaults && state.userDefaults.subject!=null) ? state.userDefaults.subject : defaultState().template.subject); }
+function userDefaultTemplateFor(mode=currentTemplateMode(), lang=currentTemplateLang()){
+  mode=(mode==="reminder")?"reminder":"confirmation"; lang=normalizeLang(lang);
+  const ud=state.userDefaults||{};
+  if(lang==="fr") return mode==="reminder" ? {subject:ud.reminderSubject, bodyHtml:ud.reminderBodyHtml} : {subject:ud.subject, bodyHtml:ud.bodyHtml};
+  return (ud.localizedTemplates && ud.localizedTemplates[lang] && ud.localizedTemplates[lang][mode]) || {};
+}
+function setUserDefaultTemplate(mode, lang, subject, bodyHtml){
+  mode=(mode==="reminder")?"reminder":"confirmation"; lang=normalizeLang(lang);
+  state.userDefaults=Object.assign({}, state.userDefaults||{});
+  if(lang==="fr"){
+    if(mode==="reminder"){ state.userDefaults.reminderSubject=subject; state.userDefaults.reminderBodyHtml=bodyHtml; }
+    else { state.userDefaults.subject=subject; state.userDefaults.bodyHtml=bodyHtml; }
+  } else {
+    state.userDefaults.localizedTemplates=state.userDefaults.localizedTemplates||{};
+    state.userDefaults.localizedTemplates[lang]=state.userDefaults.localizedTemplates[lang]||{};
+    state.userDefaults.localizedTemplates[lang][mode]={subject,bodyHtml};
+  }
+}
+function effDefaultBodyHtml(mode=currentTemplateMode(), lang=currentTemplateLang()){ const ud=userDefaultTemplateFor(mode,lang); return ud.bodyHtml || factoryTemplate(lang,mode).bodyHtml; }
+function effDefaultBodyText(mode=currentTemplateMode(), lang=currentTemplateLang()){ const html=effDefaultBodyHtml(mode,lang); return textFromHtml(html) || factoryTemplate(lang,mode).body; }
+function effDefaultSubject(mode=currentTemplateMode(), lang=currentTemplateLang()){ const ud=userDefaultTemplateFor(mode,lang); return (ud.subject!=null) ? ud.subject : factoryTemplate(lang,mode).subject; }
 function effDefaultSignatureHtml(){ return (state.userDefaults && state.userDefaults.signatureHtml) || defaultSignatureTemplate(); }
 function effDefaultSignatureText(){ return (state.userDefaults && state.userDefaults.signatureHtml) ? textFromHtml(state.userDefaults.signatureHtml) : plainDefaultSignature(); }
 function effDefaultLogoMode(){ return (state.userDefaults && state.userDefaults.logoMode) || "unesco"; }
 function effDefaultIncludeLogo(){ return state.userDefaults ? (state.userDefaults.includeLogo!==false) : true; }
-function hasUserBodyDefault(){ return currentTemplateMode()==="reminder" ? !!(state.userDefaults && state.userDefaults.reminderBodyHtml) : !!(state.userDefaults && state.userDefaults.bodyHtml); }
+function hasUserBodyDefault(){ const ud=userDefaultTemplateFor(); return !!ud.bodyHtml; }
 function hasUserSignatureDefault(){ return !!(state.userDefaults && state.userDefaults.signatureHtml); }
 function templateBodyIsDefault(){
   // Als "Standard" gilt nur, wenn Text/Betreff UND Formatierung exakt dem wirksamen
   // Standard (eigener gespeicherter, sonst Werks-Standard) entsprechen.
   const parts=liveTemplateParts();
   const subjEl=document.getElementById("tplSubject");
-  const tpl=templateDataForMode(currentTemplateMode());
+  const tpl=templateDataForMode(currentTemplateMode(), currentTemplateLang());
   const subj=subjEl ? subjEl.value : (tpl.subject||"");
   const htmlMatch=htmlEqualsNormalized(parts.bodyHtml, effDefaultBodyHtml());
   return htmlMatch && subj===effDefaultSubject();
@@ -829,10 +973,11 @@ function forceTemplateEditorHtml(html){
   scheduleToolbarStateUpdate(editor);
 }
 function sigMap(base){ return Object.assign({}, base||{}); }
-function buildHtml(map, forPreview, mode="confirmation"){
+function buildHtml(map, forPreview, mode="confirmation", lang="fr"){
+  lang=normalizeLang(lang);
   const fullMap = sigMap(map);
-  const tpl=templateDataForMode(mode);
-  let inner = sanitizeHtml(fillHtml(tpl.bodyHtml || htmlFromPlain(tpl.body), fullMap)).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+  const tpl=templateDataForMode(mode, lang);
+  let inner = sanitizeHtml(fillHtml(tpl.bodyHtml || bodyHtmlFromPlain(tpl.body), fullMap)).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
   if(state.options.useSig!==false){
     let sigHtml = (state.template.signatureHtml||"").trim();
     if(!sigHtml){ sigHtml = htmlFromPlain(state.template.signature||""); }
@@ -853,13 +998,20 @@ document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{ document.querySel
 
 /* Students */
 function contactEmailKeys(){ return ["email1","email2"]; }
-function contactEmails(stu){ return contactEmailKeys().map(k=>(stu&&stu[k]||"").trim()).filter(Boolean).slice(0,2); }
+function studentContactLang(stu, idx){ return normalizeLang((stu && stu["lang"+(idx+1)]) || (state.options && state.options.defaultLang) || "fr"); }
+function contactDetails(stu){ return contactEmailKeys().map((k,idx)=>({email:(stu&&stu[k]||"").trim(), lang:studentContactLang(stu,idx), idx})).filter(c=>c.email).slice(0,2); }
+function contactEmails(stu){ return contactDetails(stu).map(c=>c.email); }
 function renderStudents(){
   const wrap=document.getElementById("studentTable");
   if(state.students.length===0){ wrap.innerHTML='<p class="muted">Aucun élève pour l’instant. Cliquez sur « + Ajouter un élève ».</p>'; return; }
-  let html='<table class="student-grid"><thead><tr><th style="width:32%">Élève</th><th style="width:31%">E-mail de contact 1</th><th style="width:31%">E-mail de contact 2</th><th style="width:54px"></th></tr></thead><tbody>';
+  let html='<table class="student-grid"><thead><tr><th style="width:28%">Élève</th><th style="width:34%">Contact 1</th><th style="width:34%">Contact 2</th><th style="width:54px"></th></tr></thead><tbody>';
   state.students.forEach(s=>{
-    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Nom"></td><td><input class="st-e1" value="${esc(s.email1)}" placeholder="contact1@..."></td><td><input class="st-e2" value="${esc(s.email2)}" placeholder="contact2@..."></td><td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
+    if(!s.lang1) s.lang1=state.options.defaultLang||"fr";
+    if(!s.lang2) s.lang2=state.options.defaultLang||"fr";
+    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Nom"></td>`+
+      `<td><div class="contact-cell"><input class="st-e1" value="${esc(s.email1)}" placeholder="contact1@..."><select class="st-l1" title="Langue de l’e-mail">${langOptionsHtml(s.lang1)}</select></div></td>`+
+      `<td><div class="contact-cell"><input class="st-e2" value="${esc(s.email2)}" placeholder="contact2@..."><select class="st-l2" title="Langue de l’e-mail">${langOptionsHtml(s.lang2)}</select></div></td>`+
+      `<td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
   });
   html+='</tbody></table>'; wrap.innerHTML=html;
   wrap.querySelectorAll("tr[data-id]").forEach(tr=>{
@@ -867,14 +1019,16 @@ function renderStudents(){
     tr.querySelector(".st-name").oninput=e=>{ st.name=e.target.value; saveState(); };
     ["email1","email2"].forEach((key,idx)=>{
       const inp=tr.querySelector(".st-e"+(idx+1));
+      const langSel=tr.querySelector(".st-l"+(idx+1));
       if(inp) inp.oninput=e=>{ st[key]=e.target.value; saveState(); };
+      if(langSel) langSel.onchange=e=>{ st["lang"+(idx+1)]=normalizeLang(e.target.value); saveState(); renderMails(); };
     });
     tr.querySelector(".st-del").onclick=()=>{ state.students=state.students.filter(x=>x.id!==id); Object.keys(state.assignments).forEach(k=>{ if(state.assignments[k]===id) delete state.assignments[k]; }); saveState(); renderStudents(); };
   });
 }
-document.getElementById("addStudent").onclick=()=>{ state.students.push({id:uid(),name:"",email1:"",email2:""}); saveState(); renderStudents(); };
+document.getElementById("addStudent").onclick=()=>{ const dl=normalizeLang(state.options.defaultLang||"fr"); state.students.push({id:uid(),name:"",email1:"",email2:"",lang1:dl,lang2:dl}); saveState(); renderStudents(); };
 document.getElementById("importCsvBtn").onclick=()=>document.getElementById("csvFile").click();
-document.getElementById("csvFile").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ String(r.result).split(/\r?\n/).filter(l=>l.trim()).forEach((line,i)=>{ const c=line.split(/[,;\t]/).map(x=>x.trim()); if(i===0 && /name|schüler|eleve|élève/i.test(c[0])) return; if(!c[0]) return; state.students.push({id:uid(),name:c[0],email1:c[1]||"",email2:c[2]||""}); }); saveState(); renderStudents(); }; r.readAsText(f); e.target.value=""; };
+document.getElementById("csvFile").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ String(r.result).split(/\r?\n/).filter(l=>l.trim()).forEach((line,i)=>{ const c=line.split(/[,;\t]/).map(x=>x.trim()); if(i===0 && /name|schüler|eleve|élève/i.test(c[0])) return; if(!c[0]) return; const dl=normalizeLang(state.options.defaultLang||"fr"); state.students.push({id:uid(),name:c[0],email1:c[1]||"",email2:c[2]||"",lang1:normalizeLang(c[3]||dl),lang2:normalizeLang(c[4]||dl)}); }); saveState(); renderStudents(); }; r.readAsText(f); e.target.value=""; };
 
 /* Calendar */
 const $start=document.getElementById("cfgStart"), $end=document.getElementById("cfgEnd"), $dur=document.getElementById("cfgDur");
@@ -1185,7 +1339,7 @@ function commitEditor(editor){
     if(suppressTemplateCommit) return;
     sanitizePastedImages(editor);
     const parts=splitComposeEditorHtml(editor.innerHTML);
-    const tpl=templateDataForMode(currentTemplateMode());
+    const tpl=templateDataForMode(currentTemplateMode(), currentTemplateLang());
     tpl.bodyHtml=parts.bodyHtml; tpl.body=textFromHtml(parts.bodyHtml);
     if(parts.signatureHtml!==null){ state.template.signatureHtml=parts.signatureHtml; state.template.signature=textFromHtml(parts.signatureHtml); }
     renderTemplatePreview(); renderLogoPreview();
@@ -1318,7 +1472,7 @@ function bindRichToolbars(){
 }
 
 /* Signature/logo/template binding */
-function renderTemplatePreview(){ const map=sigMap({DATE:formatFrenchDate(new Date().toISOString().slice(0,10)),TIME:"14h20",NAME:state.account.name||"",ENFANT:"Tim"}); document.getElementById("mailTemplatePreview").innerHTML=buildHtml(map,true,currentTemplateMode()); renderSigMissing(); }
+function renderTemplatePreview(){ const lang=currentTemplateLang(); const ds=new Date().toISOString().slice(0,10); const map=sigMap(messageMap(ds,"14:20",{name:"Tim"},lang)); document.getElementById("mailTemplatePreview").innerHTML=buildHtml(map,true,currentTemplateMode(),lang); renderSigMissing(); }
 function renderSigMissing(){ const box=document.getElementById("sigMissing"); if(!box) return; const txt=textFromHtml(state.template.signatureHtml||""); const hasTodo=/\[[^\]]*(compléter|Nom|Fonction|salle|E-mail|Téléphone)[^\]]*\]/i.test(txt); if(state.options.useSig!==false && hasTodo){ box.innerHTML='<div class="banner warn">Veuillez remplacer les espaces réservés surlignés en jaune dans la signature avant d’envoyer les e-mails.</div>'; } else box.innerHTML=""; }
 function setLogoFromDataUrl(dataUrl, mime, rerender=true, mode=null){
   const m=mime || ((String(dataUrl).match(/^data:([^;]+)/)||[])[1]) || "image/png";
@@ -1375,8 +1529,14 @@ function updateTemplateSignatureView(body, renderTemplateCollapseState){
 }
 function bindSettings(){
   const su=document.getElementById("tplSubject"), body=document.getElementById("tplBodyEditor");
-  su.value=templateDataForMode(currentTemplateMode()).subject; body.innerHTML=composeEditorHtml(currentTemplateMode()); resetEditorHistory(body);
-  su.oninput=()=>{ const tpl=templateDataForMode(currentTemplateMode()); tpl.subject=su.value; saveState(); renderMails(); updateTplResetVisibility(); };
+  const trimesterSelect=document.getElementById("trimesterSelect");
+  const defaultLang=document.getElementById("defaultLang");
+  const templateLang=document.getElementById("templateLang");
+  const reminderDays=document.getElementById("reminderDays");
+  const reminderTime=document.getElementById("reminderTime");
+  const currentTpl=()=>templateDataForMode(currentTemplateMode(), currentTemplateLang());
+  su.value=currentTpl().subject; body.innerHTML=composeEditorHtml(currentTemplateMode(), currentTemplateLang()); resetEditorHistory(body);
+  su.oninput=()=>{ const tpl=currentTpl(); tpl.subject=su.value; saveState(); renderMails(); updateTplResetVisibility(); };
   // Robuste, direkte Reaktion auf jede Änderung im Editor (unabhängig vom Commit-Pfad):
   body.addEventListener("input", updateTplResetVisibility);
   body.addEventListener("keyup", updateTplResetVisibility);
@@ -1386,14 +1546,27 @@ function bindSettings(){
 
   const templateModeTabs=document.getElementById("templateModeTabs");
   const reminderEnabled=document.getElementById("reminderEnabled");
-  const reminderNote=document.getElementById("reminderNote");
-  function refreshTemplateModeTabs(){
-    const mode=currentTemplateMode();
-    if(templateModeTabs){
-      templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>btn.classList.toggle("active", btn.dataset.templateMode===mode));
-    }
+  const templateNote=document.getElementById("templateNote");
+  function reminderScheduleText(){ return reminderTimeValue()+" · "+reminderDaysBefore()+" jour"+(reminderDaysBefore()>1?"s":"")+" avant le rendez-vous"; }
+  function refreshTemplateControls(){
+    const mode=currentTemplateMode(), lang=currentTemplateLang();
+    if(templateModeTabs){ templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>btn.classList.toggle("active", btn.dataset.templateMode===mode)); }
     if(reminderEnabled) reminderEnabled.checked = state.options.reminderEnabled!==false;
-    if(reminderNote) reminderNote.style.display = mode==="reminder" ? "" : "none";
+    if(trimesterSelect) trimesterSelect.value=String(trimesterNumber());
+    if(defaultLang) defaultLang.value=normalizeLang(state.options.defaultLang||"fr");
+    if(templateLang) templateLang.value=lang;
+    if(reminderDays) reminderDays.value=String(reminderDaysBefore());
+    if(reminderTime) reminderTime.value=reminderTimeValue();
+    if(templateNote){
+      const l=langMeta(lang).label;
+      templateNote.textContent = mode==="reminder" ? `Ce modèle (${l}) est utilisé pour l’e-mail de rappel automatique (${reminderScheduleText()}).` : `Ce modèle (${l}) est utilisé pour l’e-mail de confirmation envoyé après l’attribution du rendez-vous.`;
+    }
+  }
+  function reloadTemplateEditor(){
+    const tpl=currentTpl();
+    su.value=tpl.subject||"";
+    forceTemplateEditorHtml(composeEditorHtml(currentTemplateMode(), currentTemplateLang()));
+    refreshTemplateControls(); renderTemplatePreview(); updateTplResetVisibility(); renderMails();
   }
   function switchTemplateMode(mode){
     if(mode!=="reminder") mode="confirmation";
@@ -1401,23 +1574,24 @@ function bindSettings(){
     commitEditor(body);
     state.options.templateMode=mode;
     saveState();
-    const tpl=templateDataForMode(mode);
-    su.value=tpl.subject||"";
-    forceTemplateEditorHtml(composeEditorHtml(mode));
-    refreshTemplateModeTabs();
-    renderTemplatePreview();
-    updateTplResetVisibility();
-    renderMails();
+    reloadTemplateEditor();
   }
-  if(templateModeTabs){
-    templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>{
-      btn.onclick=(e)=>{ e.preventDefault(); e.stopPropagation(); switchTemplateMode(btn.dataset.templateMode); };
-    });
+  function switchTemplateLang(lang){
+    lang=normalizeLang(lang);
+    if(lang===currentTemplateLang()) return;
+    commitEditor(body);
+    state.options.templateLang=lang;
+    saveState();
+    reloadTemplateEditor();
   }
-  if(reminderEnabled){
-    reminderEnabled.onchange=()=>{ state.options.reminderEnabled=reminderEnabled.checked; saveState(); renderMails(); if(reminderEnabled.checked) checkDueRemindersSoon(); };
-  }
-  refreshTemplateModeTabs();
+  if(templateModeTabs){ templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>{ btn.onclick=(e)=>{ e.preventDefault(); e.stopPropagation(); switchTemplateMode(btn.dataset.templateMode); }; }); }
+  if(templateLang){ templateLang.onchange=()=>switchTemplateLang(templateLang.value); }
+  if(defaultLang){ defaultLang.onchange=()=>{ state.options.defaultLang=normalizeLang(defaultLang.value); if(!state.options.templateLang) state.options.templateLang=state.options.defaultLang; saveState(); refreshTemplateControls(); renderStudents(); renderMails(); }; }
+  if(trimesterSelect){ trimesterSelect.onchange=()=>{ state.options.trimester=Math.min(3,Math.max(1,Number(trimesterSelect.value)||3)); saveState(); renderTemplatePreview(); renderMails(); refreshTemplateControls(); }; }
+  if(reminderEnabled){ reminderEnabled.onchange=()=>{ state.options.reminderEnabled=reminderEnabled.checked; saveState(); refreshTemplateControls(); renderMails(); if(reminderEnabled.checked) checkDueRemindersSoon(); }; }
+  if(reminderDays){ reminderDays.onchange=()=>{ state.options.reminderDaysBefore=Math.min(3,Math.max(1,Number(reminderDays.value)||1)); saveState(); refreshTemplateControls(); renderTemplatePreview(); renderMails(); if(state.options.reminderEnabled!==false) checkDueRemindersSoon(); }; }
+  if(reminderTime){ reminderTime.onchange=()=>{ state.options.reminderTime=reminderTime.value||"15:00"; saveState(); refreshTemplateControls(); renderMails(); if(state.options.reminderEnabled!==false) checkDueRemindersSoon(); }; }
+  refreshTemplateControls();
 
   const templateCard=document.getElementById("templateCard");
   const toggleTemplate=document.getElementById("toggleTemplate");
@@ -1462,9 +1636,10 @@ function bindSettings(){
       document.querySelectorAll(".color-picker.open,.ot-more.open").forEach(n=>n.classList.remove("open"));
       const editor=document.getElementById("tplBodyEditor");
       const parts=splitComposeEditorHtml(editor ? editor.innerHTML : "");
-      const activeTpl=templateDataForMode(currentTemplateMode());
-      const keptBody=cleanBodyHtmlAfterSignatureRemoval(removeSignatureTailFromBodyHtml(parts.bodyHtml || activeTpl.bodyHtml || (currentTemplateMode()==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml())));
-      activeTpl.bodyHtml=keptBody || (currentTemplateMode()==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml());
+      const activeTpl=templateDataForMode(currentTemplateMode(), currentTemplateLang());
+      const def=factoryTemplate(currentTemplateLang(), currentTemplateMode());
+      const keptBody=cleanBodyHtmlAfterSignatureRemoval(removeSignatureTailFromBodyHtml(parts.bodyHtml || activeTpl.bodyHtml || def.bodyHtml));
+      activeTpl.bodyHtml=keptBody || def.bodyHtml;
       activeTpl.body=textFromHtml(activeTpl.bodyHtml);
       resetBodyFormattingIfStillDefault();
       state.template.signatureHtml=effDefaultSignatureHtml();
@@ -1499,7 +1674,7 @@ function bindSettings(){
     suppressTemplateCommit=true;
     try{
       document.querySelectorAll(".color-picker.open,.ot-more.open").forEach(n=>n.classList.remove("open"));
-      const activeTpl=templateDataForMode(currentTemplateMode());
+      const activeTpl=templateDataForMode(currentTemplateMode(), currentTemplateLang());
       activeTpl.subject=effDefaultSubject();
       activeTpl.bodyHtml=effDefaultBodyHtml();
       activeTpl.body=effDefaultBodyText();
@@ -1525,9 +1700,10 @@ function bindSettings(){
   function saveTemplateBodyAsDefault(){
     commitEditor(body);
     const mode=currentTemplateMode();
-    const activeTpl=templateDataForMode(mode);
+    const lang=currentTemplateLang();
+    const activeTpl=templateDataForMode(mode, lang);
     const su=document.getElementById("tplSubject"); if(su) activeTpl.subject=su.value;
-    state.userDefaults=Object.assign({}, state.userDefaults, mode==="reminder" ? { reminderSubject: activeTpl.subject, reminderBodyHtml: activeTpl.bodyHtml } : { subject: activeTpl.subject, bodyHtml: activeTpl.bodyHtml });
+    setUserDefaultTemplate(mode, lang, activeTpl.subject, activeTpl.bodyHtml);
     saveState();
     updateTplResetVisibility();
     showToast("Texte enregistré comme standard ✓");
@@ -1614,6 +1790,12 @@ function bindSettings(){
   const combine=document.getElementById("combine"); combine.checked=!!state.options.combine; combine.onchange=()=>{ state.options.combine=combine.checked; saveState(); renderMails(); };
 }
 /* Build messages */
+function labelWithLang(label, lang){ return label+" · "+langMeta(lang).short; }
+function contactGroupsByLang(details){
+  const groups={};
+  details.forEach(c=>{ const l=normalizeLang(c.lang); (groups[l]=groups[l]||[]).push(c); });
+  return groups;
+}
 function buildMessages(){
   const sl=slots(), msgs=[];
   mailDefaultPreviewByOvk={};
@@ -1623,28 +1805,36 @@ function buildMessages(){
       if(!sid) return;
       const stu=state.students.find(x=>x.id===sid);
       if(!stu) return;
-      const map={DATE:formatFrenchDate(d),TIME:formatFrenchTime(s.start),NAME:state.account.name||"",ENFANT:stu.name};
-      const defaultSubject=stripBold(fillPlain(state.template.subject,map));
-      const ovk=d+"__"+i;
-      const hasSubjectOverride=!!(state.subjectOverrides && Object.prototype.hasOwnProperty.call(state.subjectOverrides, ovk));
-      const subject=hasSubjectOverride ? state.subjectOverrides[ovk] : defaultSubject;
-      let html=buildHtml(map,false), previewHtml=buildHtml(map,true);
-      mailDefaultPreviewByOvk[ovk]=previewHtml;
-      if(state.overrides && state.overrides[ovk]){
-        previewHtml=state.overrides[ovk];
-        html=state.overrides[ovk];
-        if(state.template.logo && state.template.logo.dataUrl){ html=html.split(state.template.logo.dataUrl).join("cid:siglogo"); }
-      }
-      const emails=contactEmails(stu);
+      const details=contactDetails(stu);
+      if(!details.length) return;
       const fullStudent=stu.name||"(sans nom)";
-      const add=(suf,label,to)=>{
-        if(to.length){ msgs.push({id:d+"__"+i+"__"+suf,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:label,to,subject,defaultSubject,html,previewHtml}); }
+      const add=(lang,suf,label,to)=>{
+        lang=normalizeLang(lang);
+        if(!to.length) return;
+        const map=messageMap(d,s.start,stu,lang);
+        const tpl=templateDataForMode("confirmation",lang);
+        const defaultSubject=stripBold(fillPlain(tpl.subject,map));
+        const ovk=d+"__"+i+"__"+lang+"__"+suf;
+        const hasSubjectOverride=!!(state.subjectOverrides && Object.prototype.hasOwnProperty.call(state.subjectOverrides, ovk));
+        const subject=hasSubjectOverride ? state.subjectOverrides[ovk] : defaultSubject;
+        let html=buildHtml(map,false,"confirmation",lang), previewHtml=buildHtml(map,true,"confirmation",lang);
+        mailDefaultPreviewByOvk[ovk]=previewHtml;
+        if(state.overrides && state.overrides[ovk]){
+          previewHtml=state.overrides[ovk];
+          html=state.overrides[ovk];
+          if(state.template.logo && state.template.logo.dataUrl){ html=html.split(state.template.logo.dataUrl).join("cid:siglogo"); }
+        }
+        msgs.push({id:ovk,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:labelWithLang(label,lang),to,subject,defaultSubject,html,previewHtml,lang});
       };
       if(state.options.combine){
-        const label = emails.length>2 ? (emails.length+" contacts") : (emails.length===2 ? "Deux contacts" : "Contact");
-        add("c", label, emails);
+        const groups=contactGroupsByLang(details);
+        Object.keys(groups).forEach(lang=>{
+          const arr=groups[lang];
+          const label = arr.length>1 ? (arr.length===2 ? "Deux contacts" : arr.length+" contacts") : "Contact "+(arr[0].idx+1);
+          add(lang,"c"+lang,label,arr.map(c=>c.email));
+        });
       } else {
-        emails.forEach((email,idx)=>add(String(idx), "Contact "+(idx+1), [email]));
+        details.forEach(c=>add(c.lang,String(c.idx),"Contact "+(c.idx+1),[c.email]));
       }
     });
   });
@@ -1652,11 +1842,10 @@ function buildMessages(){
 }
 
 function appointmentDateTime(ds, hhmm){ return new Date(ds+"T"+hhmm+":00"); }
-function reminderDueAt(ds){ const d=new Date(ds+"T15:00:00"); d.setDate(d.getDate()-1); return d; }
+function reminderDueAt(ds){ const d=new Date(ds+"T"+reminderTimeValue()+":00"); d.setDate(d.getDate()-reminderDaysBefore()); return d; }
 function reminderWindowOpen(ds, slot){ const now=new Date(); const due=reminderDueAt(ds); const end=appointmentDateTime(ds, slot.end); return now>=due && now<end; }
 function buildReminderMessages(onlyDue=true){
   const sl=slots(), msgs=[];
-  const tpl=templateDataForMode("reminder");
   state.config.dates.forEach(d=>{
     sl.forEach((s,i)=>{
       if(onlyDue && !reminderWindowOpen(d,s)) return;
@@ -1664,21 +1853,28 @@ function buildReminderMessages(onlyDue=true){
       if(!sid) return;
       const stu=state.students.find(x=>x.id===sid);
       if(!stu) return;
-      const emails=contactEmails(stu);
-      if(!emails.length) return;
-      const map={DATE:formatFrenchDate(d),TIME:formatFrenchTime(s.start),NAME:state.account.name||"",ENFANT:stu.name};
-      const subject=stripBold(fillPlain(tpl.subject||defaultReminderSubject(), map));
-      let html=buildHtml(map,false,"reminder"), previewHtml=buildHtml(map,true,"reminder");
-      if(state.template.logo && state.template.logo.dataUrl){ html=html.split(state.template.logo.dataUrl).join("cid:siglogo"); }
+      const details=contactDetails(stu);
+      if(!details.length) return;
       const fullStudent=stu.name||"(sans nom)";
-      const add=(suf,label,to)=>{
-        if(to.length){ msgs.push({id:"reminder__"+d+"__"+i+"__"+suf,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:label,to,subject,html,previewHtml,dueAt:reminderDueAt(d).toISOString()}); }
+      const add=(lang,suf,label,to)=>{
+        lang=normalizeLang(lang);
+        if(!to.length) return;
+        const map=messageMap(d,s.start,stu,lang);
+        const tpl=templateDataForMode("reminder",lang);
+        const subject=stripBold(fillPlain(tpl.subject||defaultReminderSubject(lang), map));
+        let html=buildHtml(map,false,"reminder",lang), previewHtml=buildHtml(map,true,"reminder",lang);
+        if(state.template.logo && state.template.logo.dataUrl){ html=html.split(state.template.logo.dataUrl).join("cid:siglogo"); }
+        msgs.push({id:"reminder__"+d+"__"+i+"__"+lang+"__"+suf,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:labelWithLang(label,lang),to,subject,html,previewHtml,dueAt:reminderDueAt(d).toISOString(),lang});
       };
       if(state.options.combine){
-        const label = emails.length>2 ? (emails.length+" contacts") : (emails.length===2 ? "Deux contacts" : "Contact");
-        add("c", label, emails);
+        const groups=contactGroupsByLang(details);
+        Object.keys(groups).forEach(lang=>{
+          const arr=groups[lang];
+          const label = arr.length>1 ? (arr.length===2 ? "Deux contacts" : arr.length+" contacts") : "Contact "+(arr[0].idx+1);
+          add(lang,"c"+lang,label,arr.map(c=>c.email));
+        });
       } else {
-        emails.forEach((email,idx)=>add(String(idx), "Contact "+(idx+1), [email]));
+        details.forEach(c=>add(c.lang,String(c.idx),"Contact "+(c.idx+1),[c.email]));
       }
     });
   });
@@ -1746,7 +1942,7 @@ function persistReminderSent(){ state.reminderSent=[...reminderSentSet]; saveSta
 // Bewusst nur im Speicher (nicht persistiert): bei jedem Neustart sind wieder alle
 // sélectionné(s). Bereits envoyée sind über sentSet ohnehin geschützt.
 let excludedSet=new Set();
-function ovkOf(id){ return id.split("__").slice(0,2).join("__"); }
+function ovkOf(id){ return id.split("__").slice(0,4).join("__"); }
 function richToolbarHTML(forId){ const tpl=document.querySelector(".rich-toolbar"); return '<div class="rich-toolbar" data-for="'+forId+'" style="margin-top:10px">'+(tpl?tpl.innerHTML:"")+'</div>'; }
 function mailEditedByKey(ovk, defaultSubject){
   const bodyEdited=!!(state.overrides && state.overrides[ovk]);
