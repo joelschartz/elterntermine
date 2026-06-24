@@ -142,7 +142,7 @@
   .schedule th{background:#f7f9fd;font-size:12px;white-space:nowrap;color:var(--ink)}
   .schedule td.td-time,.schedule .th-time{white-space:nowrap;font-weight:750;font-variant-numeric:tabular-nums;background:#fbfdff;position:sticky;left:0;z-index:1;width:132px;min-width:132px;max-width:132px}
   .schedule select{min-width:145px;padding:7px 8px;border-radius:9px}
-  .schedule td.assigned{background:var(--accent-soft)}.schedule td.assigned select{border-color:var(--accent);font-weight:700;color:var(--ink);background:#fff}
+  .schedule td.assigned{background:var(--accent-soft)}.schedule td.assigned select{border-color:var(--accent);font-weight:700;color:var(--ink);background:#fff}.schedule td.past{background:#f3f5f8;color:#98a2b3}.schedule td.past select{background:#f6f7f9!important;color:#98a2b3!important;border-color:#e4e7ec!important;cursor:not-allowed;font-weight:500!important}.schedule td.past.assigned{background:#eef1f5}
   .weekblock{margin-bottom:18px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}.weekblock .schedule{border:0;border-radius:0}
   .weekblock .weekhead{font-weight:800;font-size:13px;color:#21335c;background:linear-gradient(180deg,#f5f8ff,#eef4ff);border-bottom:1px solid var(--line);padding:9px 12px}
   .acct{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--ok-soft);border:1px solid #bfe6cf;border-radius:14px}
@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R23</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R24</span></p>
 </header>
 
 <nav class="tabs">
@@ -375,7 +375,7 @@
         </div>
         <div class="setting-field reminder-setting">
           <span class="setting-title">Rappel</span>
-          <label class="reminder-main" title="Les rappels sont envoyés automatiquement si l’app est ouverte et connectée."><input type="checkbox" id="reminderEnabled"> Envoyer un rappel automatique</label>
+          <label class="reminder-main" title="Les rappels seront programmés dans Outlook uniquement lorsque vous cliquez sur Envoyer."><input type="checkbox" id="reminderEnabled"> Envoyer un rappel automatique</label>
           <div class="reminder-controls"><span>à</span><input type="time" id="reminderTime"><span>,</span><select id="reminderDays"><option value="1">1 jour</option><option value="2">2 jours</option><option value="3">3 jours</option></select><span>avant le rendez-vous</span></div>
         </div>
         <div class="setting-field signature-setting">
@@ -442,7 +442,6 @@
           </div>
           <input type="file" id="logoFile" accept="image/*" style="display:none">
         </div>
-        <p class="hint">Le texte et la signature sont modifiables dans le même champ.</p>
         <div id="sigStatus" class="hint"></div>
       </div>
       <div class="mail-reset" id="resetSigRow" style="display:none"><a href="#" id="defaultSigBtn">↺ Réinitialiser la signature</a><a href="#" id="saveSig" class="save-default" title="Définir la signature actuelle (et le choix du logo) comme standard personnel">✓ enregistrer comme standard</a></div>
@@ -486,7 +485,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 66;
+const APP_VERSION = 68;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -771,7 +770,7 @@ function signatureSeparatorHtml(){
 }
 function logoIsVisible(){ return state.options.useSig!==false && state.options.logoMode!=="none" && state.options.includeLogo!==false; }
 function composeLogoHtml(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl){ return '<div class="signature-logo-separator" data-signature-separator="true" contenteditable="false" aria-hidden="true"></div><div class="inline-logo" data-logo-inline="true" contenteditable="false" title="Logo"><img src="'+lg.dataUrl+'" alt=""></div>'; } return ''; }
-function currentTemplateMode(){ return (state.options && state.options.templateMode==="reminder") ? "reminder" : "confirmation"; }
+function currentTemplateMode(){ return (state.options && state.options.reminderEnabled!==false && state.options.templateMode==="reminder") ? "reminder" : "confirmation"; }
 function currentTemplateLang(){ return normalizeLang((state.options && state.options.templateLang) || "fr"); }
 function ensureLocalizedTemplates(){ state.localizedTemplates=normalizeLocalizedTemplates(state.localizedTemplates||{}); }
 function templateDataForMode(mode, lang){
@@ -1107,8 +1106,15 @@ function renderCalendar(){
     const days=groups[wk];
     const monLbl=new Date(wk+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
     const head='<tr><th class="th-time">Heure</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>';
+    const now=new Date();
     const bodyRows=sl.map((slot,i)=>{
-      const cells=days.map(d=>{ const key=d+"__"+i, sel=state.assignments[key]||""; return '<td'+(sel?' class="assigned"':'')+'><select data-key="'+key+'">'+assignmentOptionsFor(key)+'</select></td>'; }).join("");
+      const cells=days.map(d=>{
+        const key=d+"__"+i, sel=state.assignments[key]||"";
+        const isPast=appointmentDateTime(d, slot.end) <= now;
+        const cls=[]; if(sel) cls.push("assigned"); if(isPast) cls.push("past");
+        const disabled=isPast ? ' disabled title="Rendez-vous passé"' : '';
+        return '<td'+(cls.length?' class="'+cls.join(' ')+""+'"':'')+'><select data-key="'+key+'"'+disabled+'>'+assignmentOptionsFor(key)+'</select></td>';
+      }).join("");
       return '<tr><td class="td-time">'+slot.start+'–'+slot.end+'</td>'+cells+'</tr>';
     }).join("");
     return '<div class="weekblock"><div class="weekhead">Semaine du '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>';
@@ -1592,13 +1598,17 @@ function bindSettings(){
   function reminderScheduleText(){ return reminderScheduleSummary(); }
   function refreshTemplateControls(){
     const mode=currentTemplateMode(), lang=currentTemplateLang();
-    if(templateModeTabs){ templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>btn.classList.toggle("active", btn.dataset.templateMode===mode)); }
-    if(reminderEnabled) reminderEnabled.checked = state.options.reminderEnabled!==false;
+    const reminderOn=state.options.reminderEnabled!==false;
+    if(templateModeTabs){ templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>{
+      if(btn.dataset.templateMode==="reminder") btn.style.display = reminderOn ? "" : "none";
+      btn.classList.toggle("active", btn.dataset.templateMode===mode);
+    }); }
+    if(reminderEnabled) reminderEnabled.checked = reminderOn;
     if(trimesterSelect) trimesterSelect.value=String(trimesterNumber());
     if(defaultLangStudents) defaultLangStudents.value=normalizeLang(state.options.defaultLang||"fr");
     if(templateLang) templateLang.value=lang;
-    if(reminderDays) reminderDays.value=String(reminderDaysBefore());
-    if(reminderTime) reminderTime.value=reminderTimeValue();
+    if(reminderDays){ reminderDays.value=String(reminderDaysBefore()); reminderDays.disabled=!reminderOn; }
+    if(reminderTime){ reminderTime.value=reminderTimeValue(); reminderTime.disabled=!reminderOn; }
     if(templateNote){
       const l=langMeta(lang).label;
       templateNote.textContent = mode==="reminder" ? `Ce modèle (${l}) est utilisé pour l’e-mail de rappel automatique (${reminderScheduleText()}).` : `Ce modèle (${l}) est utilisé pour l’e-mail de confirmation envoyé après l’attribution du rendez-vous.`;
@@ -1630,9 +1640,13 @@ function bindSettings(){
   if(templateLang){ templateLang.onchange=()=>switchTemplateLang(templateLang.value); }
   if(defaultLangStudents){ defaultLangStudents.onchange=()=>{ state.options.defaultLang=normalizeLang(defaultLangStudents.value); saveState(); refreshTemplateControls(); renderStudents(); renderMails(); }; }
   if(trimesterSelect){ trimesterSelect.onchange=()=>{ state.options.trimester=Math.min(3,Math.max(1,Number(trimesterSelect.value)||3)); saveState(); renderTemplatePreview(); renderMails(); refreshTemplateControls(); }; }
-  if(reminderEnabled){ reminderEnabled.onchange=()=>{ state.options.reminderEnabled=reminderEnabled.checked; saveState(); refreshTemplateControls(); renderMails(); if(reminderEnabled.checked) checkDueRemindersSoon(); }; }
-  if(reminderDays){ reminderDays.onchange=()=>{ state.options.reminderDaysBefore=Math.min(3,Math.max(1,Number(reminderDays.value)||1)); saveState(); refreshTemplateControls(); renderTemplatePreview(); renderMails(); if(state.options.reminderEnabled!==false) checkDueRemindersSoon(); }; }
-  if(reminderTime){ reminderTime.onchange=()=>{ state.options.reminderTime=reminderTime.value||"15:00"; saveState(); refreshTemplateControls(); renderMails(); if(state.options.reminderEnabled!==false) checkDueRemindersSoon(); }; }
+  if(reminderEnabled){ reminderEnabled.onchange=()=>{
+    state.options.reminderEnabled=reminderEnabled.checked;
+    if(!reminderEnabled.checked) state.options.templateMode="confirmation";
+    saveState(); reloadTemplateEditor(); renderMails();
+  }; }
+  if(reminderDays){ reminderDays.onchange=()=>{ state.options.reminderDaysBefore=Math.min(3,Math.max(1,Number(reminderDays.value)||1)); saveState(); refreshTemplateControls(); renderTemplatePreview(); renderMails(); }; }
+  if(reminderTime){ reminderTime.onchange=()=>{ state.options.reminderTime=reminderTime.value||"15:00"; saveState(); refreshTemplateControls(); renderMails(); }; }
   refreshTemplateControls();
 
   const templateCard=document.getElementById("templateCard");
@@ -1843,6 +1857,7 @@ function buildMessages(){
   mailDefaultPreviewByOvk={};
   state.config.dates.forEach(d=>{
     sl.forEach((s,i)=>{
+      if(appointmentDateTime(d, s.end) <= new Date()) return;
       const sid=state.assignments[d+"__"+i];
       if(!sid) return;
       const stu=state.students.find(x=>x.id===sid);
@@ -1916,13 +1931,28 @@ function buildReminderMessages(onlyDue=true){
   return msgs;
 }
 function pendingDueReminderMessages(){ return buildReminderMessages(true).filter(m=>!reminderSentSet.has(m.id)); }
+function pastAssignedAppointmentsCount(){
+  const now=new Date(); let n=0; const sl=slots();
+  state.config.dates.forEach(d=>sl.forEach((s,i)=>{ if(state.assignments[d+"__"+i] && appointmentDateTime(d,s.end)<=now) n++; }));
+  return n;
+}
+function reminderConflictsForConfirmations(confirmMsgs){
+  if(state.options.reminderEnabled===false || !Array.isArray(confirmMsgs) || !confirmMsgs.length) return [];
+  const byId={}; buildReminderMessages(false).forEach(m=>{ byId[m.id]=m; });
+  const now=new Date(), out=[];
+  confirmMsgs.forEach(m=>{
+    const r=byId["reminder__"+m.id];
+    if(r && !reminderSentSet.has(r.id) && (!r.appointmentEnd || new Date(r.appointmentEnd)>now) && new Date(r.dueAt)<=now) out.push(r);
+  });
+  return out;
+}
 function plannedReminderMessagesForConfirmations(confirmMsgs){
   if(state.options.reminderEnabled===false || !Array.isArray(confirmMsgs) || !confirmMsgs.length) return [];
   const byId={}; buildReminderMessages(false).forEach(m=>{ byId[m.id]=m; });
   const now=new Date(), out=[];
   confirmMsgs.forEach(m=>{
     const r=byId["reminder__"+m.id];
-    if(r && !reminderSentSet.has(r.id) && (!r.appointmentEnd || new Date(r.appointmentEnd)>now)) out.push(r);
+    if(r && !reminderSentSet.has(r.id) && new Date(r.dueAt)>now && (!r.appointmentEnd || new Date(r.appointmentEnd)>now)) out.push(r);
   });
   return out;
 }
@@ -1948,36 +1978,14 @@ function renderAuth(){
   }
   renderTemplatePreview();
 }
-document.getElementById("signIn").onclick=async()=>{ const lb=document.getElementById("loginBox"), inBtn=document.getElementById("signIn"); inBtn.disabled=true; lb.style.display="block"; lb.innerHTML='<div class="banner info">Préparation de la connexion …</div>'; let d; try{ d=await api("/api/graph/login-start"); }catch(e){ lb.innerHTML='<div class="banner err">Assistant local inaccessible. « Starten.command » est-il lancé ?</div>'; inBtn.disabled=false; return; } if(!d.ok){ lb.innerHTML='<div class="banner err">'+esc(d.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } const url=d.verification_uri||"https://login.microsoft.com/device"; lb.innerHTML=`<div class="banner info" style="line-height:1.7"><b>1.</b> Ouvrez <a href="${url}" target="_blank" rel="noopener"><b>${esc(url)}</b></a><br><b>2.</b> Saisissez ce code : <code class="k" style="font-size:17px">${esc(d.user_code)}</code><br><b>3.</b> Connectez-vous avec votre compte et cliquez sur <b>Accepter</b>.<br><span class="muted">La procédure continue automatiquement ici dès que vous avez terminé …</span></div>`; try{ window.open(url,"_blank","noopener"); }catch(e){} if(pollTimer) clearInterval(pollTimer); pollTimer=setInterval(async()=>{ let r; try{ r=await api("/api/graph/login-poll"); }catch(e){ return; } if(!r.ok){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">'+esc(r.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } if(r.status==="ok"){ clearInterval(pollTimer); account=r.account; lb.style.display="none"; lb.innerHTML=""; inBtn.disabled=false; renderAuth(); renderMails(); checkDueRemindersSoon(); } else if(r.status==="error"){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">Connexion impossible : '+esc(r.error||"")+'</div>'; inBtn.disabled=false; } },4000); };
+document.getElementById("signIn").onclick=async()=>{ const lb=document.getElementById("loginBox"), inBtn=document.getElementById("signIn"); inBtn.disabled=true; lb.style.display="block"; lb.innerHTML='<div class="banner info">Préparation de la connexion …</div>'; let d; try{ d=await api("/api/graph/login-start"); }catch(e){ lb.innerHTML='<div class="banner err">Assistant local inaccessible. « Starten.command » est-il lancé ?</div>'; inBtn.disabled=false; return; } if(!d.ok){ lb.innerHTML='<div class="banner err">'+esc(d.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } const url=d.verification_uri||"https://login.microsoft.com/device"; lb.innerHTML=`<div class="banner info" style="line-height:1.7"><b>1.</b> Ouvrez <a href="${url}" target="_blank" rel="noopener"><b>${esc(url)}</b></a><br><b>2.</b> Saisissez ce code : <code class="k" style="font-size:17px">${esc(d.user_code)}</code><br><b>3.</b> Connectez-vous avec votre compte et cliquez sur <b>Accepter</b>.<br><span class="muted">La procédure continue automatiquement ici dès que vous avez terminé …</span></div>`; try{ window.open(url,"_blank","noopener"); }catch(e){} if(pollTimer) clearInterval(pollTimer); pollTimer=setInterval(async()=>{ let r; try{ r=await api("/api/graph/login-poll"); }catch(e){ return; } if(!r.ok){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">'+esc(r.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } if(r.status==="ok"){ clearInterval(pollTimer); account=r.account; lb.style.display="none"; lb.innerHTML=""; inBtn.disabled=false; renderAuth(); renderMails(); } else if(r.status==="error"){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">Connexion impossible : '+esc(r.error||"")+'</div>'; inBtn.disabled=false; } },4000); };
 document.getElementById("signOut").onclick=async()=>{ try{ await api("/api/graph/logout"); }catch(e){} account=null; renderAuth(); renderMails(); };
 function logoPayload(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl) return {name:lg.name||"logo.png",mime:lg.mime||"image/png",contentBytes:lg.dataUrl.split(",")[1]}; return null; }
 async function graphSend(messages){ return api("/api/graph/send", {messages:messages.map(m=>({id:m.id,subject:m.subject,html:m.html,to:m.to,deferUntil:m.deferUntil||m.dueAt||null})), logo:logoPayload()}); }
 let reminderSending=false, reminderTimer=null;
-function checkDueRemindersSoon(){ setTimeout(autoSendDueReminders, 1200); }
-async function autoSendDueReminders(){
-  if(reminderSending || state.options.reminderEnabled===false || !account) return;
-  const due=pendingDueReminderMessages();
-  if(!due.length) return;
-  reminderSending=true;
-  try{
-    const r=await graphSend(due);
-    if(r && r.ok){
-      let ok=0, fail=0;
-      const byId={}; (r.results||[]).forEach(x=>byId[x.id]=x);
-      due.forEach(m=>{ const res=byId[m.id]; if(res&&res.ok){ ok++; reminderSentSet.add(m.id); } else fail++; });
-      persistReminderSent();
-      if(ok) showToast(ok+" rappel(s) envoyé(s) automatiquement ✓");
-      if(fail) showToast(fail+" rappel(s) non envoyé(s)");
-      renderMails();
-    }
-  }catch(e){ /* silencieux : la bannière de connexion/envoi reste visible */ }
-  finally{ reminderSending=false; }
-}
-function startReminderScheduler(){
-  if(reminderTimer) clearInterval(reminderTimer);
-  reminderTimer=setInterval(autoSendDueReminders, 60000);
-  checkDueRemindersSoon();
-}
+function checkDueRemindersSoon(){ /* Rappels : uniquement programmés lors de l’envoi manuel. */ }
+async function autoSendDueReminders(){ return; }
+function startReminderScheduler(){ return; }
 
 /* Render mails */
 let currentMsgs=[], sentSet=new Set(state.sent||[]), reminderSentSet=new Set(state.reminderSent||[]), pendingSend=[], pendingReminderPlan=[];
@@ -2033,18 +2041,22 @@ function renderMails(openId){
     const missingHtml=[...new Set(missing)].map(n=>`<span class="truncated-inline" title="${esc(n)}">${esc(displayStudentName(n))}</span>`).join(", ");
     warnBanners.push(`<div class="banner warn">Sans adresse e-mail (seront ignorés) : ${missingHtml}</div>`);
   }
+  const pastAppts=pastAssignedAppointmentsCount();
+  if(pastAppts){
+    warnBanners.push(`<div class="banner warn">${pastAppts} rendez-vous déjà passé(s) sont grisés dans le calendrier et ignorés pour l’envoi.</div>`);
+  }
   if(state.options.reminderEnabled!==false){
-    const dueReminders=pendingDueReminderMessages();
-    const allReminders=buildReminderMessages(false);
-    const now=new Date();
-    const plannedReminders=allReminders.filter(m=>!reminderSentSet.has(m.id) && (!m.appointmentEnd || new Date(m.appointmentEnd)>now));
-    const scheduledReminders=allReminders.filter(m=>reminderSentSet.has(m.id)).length;
-    if(dueReminders.length){
-      warnBanners.push(`<div class="banner info">Rappels automatiques : ${dueReminders.length} e-mail(s) de rappel à envoyer maintenant.</div>`);
-    } else if(plannedReminders.length){
-      warnBanners.push(`<div class="banner info">Rappels automatiques : ${plannedReminders.length} rappel(s) pas encore programmé(s). Ils seront programmés dans Outlook lors de l’envoi de la confirmation.</div>`);
+    const pendingConfirmations=currentMsgs.filter(m=>!sentSet.has(m.id));
+    const plannedReminders=plannedReminderMessagesForConfirmations(pendingConfirmations);
+    const reminderConflicts=reminderConflictsForConfirmations(pendingConfirmations);
+    const scheduledReminders=buildReminderMessages(false).filter(m=>reminderSentSet.has(m.id)).length;
+    if(reminderConflicts.length){
+      warnBanners.push(`<div class="banner warn">${reminderConflicts.length} rappel(s) ne peuvent plus être programmés : le moment du rappel est déjà passé. Modifiez l’heure ou choisissez 1, 2 ou 3 jours avant.</div>`);
+    }
+    if(plannedReminders.length){
+      warnBanners.push(`<div class="banner info">Rappels automatiques : ${plannedReminders.length} rappel(s) seront programmés dans Outlook uniquement après avoir cliqué sur « Tout envoyer ».</div>`);
     } else if(scheduledReminders>0){
-      warnBanners.push(`<div class="banner ok">Rappels automatiques : ${scheduledReminders} rappel(s) programmé(s) dans Outlook ou déjà envoyé(s).</div>`);
+      warnBanners.push(`<div class="banner ok">Rappels automatiques : ${scheduledReminders} rappel(s) déjà programmé(s) dans Outlook.</div>`);
     }
   }
   let b=warnBanners.length ? `<div class="banner-group">${warnBanners.join("")}</div>` : "";
@@ -2203,11 +2215,13 @@ document.getElementById("sendAll").onclick=()=>{
     return;
   }
   pendingReminderPlan=plannedReminderMessagesForConfirmations(pendingSend);
+  const pendingReminderConflicts=reminderConflictsForConfirmations(pendingSend);
   const students=new Set(pendingSend.map(m=>m.student)).size;
   document.getElementById("confirmText").textContent=`${pendingSend.length} e-mail(s) de confirmation seront envoyés maintenant aux contacts de ${students} élève(s).`;
   const detail=[`Envoi via votre compte (${state.account.email}). Les e-mails de confirmation déjà envoyés seront ignorés. Action irréversible.`];
   const reminderText=reminderPlanSentence(pendingReminderPlan);
   if(reminderText) detail.push(reminderText);
+  if(pendingReminderConflicts.length) detail.push(`${pendingReminderConflicts.length} rappel(s) ne seront pas programmés, car le moment du rappel est déjà passé.`);
   document.getElementById("confirmDetail").textContent=detail.join(" ");
   overlay.style.display="flex";
 };
@@ -2256,7 +2270,7 @@ document.getElementById("confirmGo").onclick=async()=>{
 };
 
 /* Init */
-renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount(); startReminderScheduler();
+renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount();
 </script>
 </body>
 </html>
