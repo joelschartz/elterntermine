@@ -223,11 +223,8 @@
   .mailhead .check{margin:0}
   .mailitem.done .mailhead{background:#fbfefc}
   .mailitem.unselected{opacity:.5}.mailitem.unselected .mailhead{background:#fbfcfe}
-  .mail-select-bar{display:flex;align-items:center;gap:14px;padding:4px 2px 12px 35px;flex-wrap:wrap}.mail-select-bar .check{margin:0;cursor:pointer}.mail-select-bar #selectCount{font-size:12.5px}
-  .combine-option{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
-  .combine-option input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:15px;height:15px;min-width:15px;flex:0 0 15px;margin:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;display:inline-grid;place-content:center;cursor:pointer;transition:background .12s ease,border-color .12s ease}
-  .combine-option input[type="checkbox"]:checked{background:var(--accent);border-color:var(--accent)}
-  .combine-option input[type="checkbox"]:checked:after{content:"";width:7px;height:3.5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}
+  .mail-select-bar{display:flex;align-items:baseline;gap:14px;padding:4px 2px 12px 35px;flex-wrap:wrap}.mail-select-bar .check{margin:0;cursor:pointer}.mail-select-bar #selectCount{font-size:12.5px}
+  .combine-option{margin-top:12px;color:var(--muted);font-weight:600;cursor:pointer}
   .mail-avatar{display:none}
   .mail-main{min-width:0;display:grid;grid-template-columns:135px 95px minmax(0,1fr);align-items:center;column-gap:10px;overflow:hidden}.mailhead .who{display:block;font-weight:850;font-size:14.5px;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}.mailhead .parent-label{display:block;color:var(--muted);font-size:12.5px;font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mailhead .recipient-line{display:block;color:var(--muted);font-size:12.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:0}.mailhead .dot{display:none}
   .mailhead .toggle{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:12.5px;font-weight:800;user-select:none;padding:6px 10px;border-radius:999px;background:var(--accent-soft);white-space:nowrap;border:1px solid #d7e3ff}
@@ -275,7 +272,7 @@
 <body>
 <header>
   <h1>ElternTermine · Microsoft 365</h1>
-  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R9</span></p>
+  <p>Termine planen und Bestätigungs-Mails automatisch über das eigene Konto senden (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R10</span></p>
 </header>
 
 <nav class="tabs">
@@ -411,7 +408,7 @@
         <div>
           <h2>Vorschau &amp; Versand</h2>
           <p class="hint" id="previewHint">Öffne nur die E-Mail, die du kontrollieren oder anpassen möchtest. Änderungen werden automatisch gespeichert.</p>
-          <label class="combine-option" id="combineRow" style="display:none"><input type="checkbox" id="combine"> Mehrere Kontakte eines Schülers in einer E-Mail zusammenfassen</label>
+          <label class="check combine-option" id="combineRow" style="display:none"><input type="checkbox" id="combine"> Mehrere Kontakte eines Schülers in einer E-Mail zusammenfassen</label>
         </div>
         <div class="toolbar mail-actionbar">
           <button id="resetSent" class="ghost sm" style="display:none">Versand-Status zurücksetzen</button>
