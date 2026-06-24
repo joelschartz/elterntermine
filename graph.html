@@ -217,12 +217,12 @@
   #mailList{display:flex;flex-direction:column;gap:6px;padding:10px 22px 22px}
   .mailitem{border:1px solid var(--line);border-radius:13px;margin:0;overflow:hidden;background:#fff;box-shadow:none;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease}
   .mailitem:hover{border-color:var(--line-strong);box-shadow:0 6px 18px rgba(20,30,60,.05)}
-  .mailitem.done{border-color:#c9ead7;background:#fbfefc}
+  .mailitem.done{border-color:#d9e1ee;background:#fbfcfe;opacity:.58}
   .mailitem.open{border-color:#b9cdfc;box-shadow:0 14px 34px rgba(47,95,215,.10);transform:translateY(-1px)}
   .mailhead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:6px 14px;background:#fff;cursor:default;min-height:44px}
   .mailhead .check{margin:0}
-  .mailitem.done .mailhead{background:#fbfefc}
-  .mailitem.unselected{opacity:.5}.mailitem.unselected .mailhead{background:#fbfcfe}
+  .mailitem.done .mailhead{background:#fbfcfe}
+  .mailitem.unselected{opacity:1}.mailitem.unselected .mailhead{background:#fff}
   .mail-select-bar{display:flex;align-items:baseline;gap:14px;padding:4px 2px 12px 35px;flex-wrap:wrap}.mail-select-bar .check{margin:0;cursor:pointer}.mail-select-bar #selectCount{font-size:12.5px}
   .combine-option{margin-top:12px;color:var(--muted);font-weight:600;cursor:pointer}
   .mail-avatar{display:none}
@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R33</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R34</span></p>
 </header>
 
 <nav class="tabs">
@@ -1102,7 +1102,25 @@ function buildHtml(map, forPreview, mode="confirmation", lang="fr"){
 }
 
 /* Tabs */
-document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active")); t.classList.add("active"); document.getElementById("panel-"+t.dataset.tab).classList.add("active"); if(t.dataset.tab==="calendar") renderCalendar(); if(t.dataset.tab==="mails") renderMails(); window.scrollTo(0,0); }; });
+let studentEmailValidationAll=false;
+const touchedStudentEmailFields = new Set();
+function studentEmailFieldKey(id,contact){ return String(id||"")+"::"+String(contact||""); }
+document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{
+  const active=document.querySelector(".tab.active");
+  const fromTab=active ? active.dataset.tab : "";
+  const toTab=t.dataset.tab;
+  if(fromTab==="students" && toTab!=="students"){
+    studentEmailValidationAll=true;
+    validateStudentEmailsUI({force:true});
+  }
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");
+  document.getElementById("panel-"+toTab).classList.add("active");
+  if(toTab==="calendar") renderCalendar();
+  if(toTab==="mails") renderMails();
+  window.scrollTo(0,0);
+}; });
 
 /* Students */
 function contactEmailKeys(){ return ["email1","email2"]; }
@@ -1129,16 +1147,22 @@ function renderStudents(){
     ["email1","email2"].forEach((key,idx)=>{
       const inp=tr.querySelector(".st-e"+(idx+1));
       const langSel=tr.querySelector(".st-l"+(idx+1));
-      if(inp) inp.oninput=e=>{ st[key]=e.target.value; saveState(); validateStudentEmailsUI(); renderMails(); };
+      if(inp){
+        inp.onfocus=()=>{ inp.classList.remove("email-invalid"); inp.title=""; const box=document.getElementById("studentEmailWarnings"); if(box) box.innerHTML=""; };
+        inp.oninput=e=>{ st[key]=e.target.value; saveState(); inp.classList.remove("email-invalid"); inp.title=""; renderMails(); };
+        inp.onblur=()=>{ touchedStudentEmailFields.add(studentEmailFieldKey(id, idx+1)); validateStudentEmailsUI(); renderMails(); };
+      }
       if(langSel) langSel.onchange=e=>{ st["lang"+(idx+1)]=normalizeLang(e.target.value); saveState(); renderMails(); };
     });
     tr.querySelector(".st-del").onclick=()=>{ state.students=state.students.filter(x=>x.id!==id); Object.keys(state.assignments).forEach(k=>{ if(state.assignments[k]===id) delete state.assignments[k]; }); saveState(); renderStudents(); };
   });
   validateStudentEmailsUI();
 }
-function validateStudentEmailsUI(){
+function validateStudentEmailsUI(opts={}){
   const wrap=document.getElementById("studentTable");
   if(!wrap) return;
+  const force=!!opts.force || studentEmailValidationAll;
+  const visibleInvalid=[];
   wrap.querySelectorAll("tr[data-id]").forEach(tr=>{
     const id=tr.dataset.id;
     const st=state.students.find(x=>x.id===id);
@@ -1147,17 +1171,18 @@ function validateStudentEmailsUI(){
       if(!inp) return;
       const v=String((st&&st["email"+i]) || inp.value || "").trim();
       const bad=!!v && !isValidEmailFormat(v);
-      inp.classList.toggle("email-invalid", bad);
-      inp.title=bad ? "Format d’e-mail invalide" : "";
+      const show=bad && (force || touchedStudentEmailFields.has(studentEmailFieldKey(id,i)));
+      inp.classList.toggle("email-invalid", show);
+      inp.title=show ? "Format d’e-mail invalide" : "";
+      if(show) visibleInvalid.push({student:(st&&st.name)||"(sans nom)", contact:i, email:v});
     });
   });
   const box=document.getElementById("studentEmailWarnings");
   if(box){
-    const invalid=invalidStudentEmails();
-    if(!invalid.length){ box.innerHTML=""; }
+    if(!visibleInvalid.length){ box.innerHTML=""; }
     else {
-      const examples=invalid.slice(0,3).map(x=>`${esc(displayStudentName(x.student))} · contact ${x.contact}`).join(", ");
-      const more=invalid.length>3 ? `, +${invalid.length-3}` : "";
+      const examples=visibleInvalid.slice(0,3).map(x=>`${esc(displayStudentName(x.student))} · contact ${x.contact}`).join(", ");
+      const more=visibleInvalid.length>3 ? `, +${visibleInvalid.length-3}` : "";
       box.innerHTML=`<div class="banner warn">Format d’e-mail invalide : ${examples}${more}. Ces adresses seront ignorées à l’envoi.</div>`;
     }
   }
