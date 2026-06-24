@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R31</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R33</span></p>
 </header>
 
 <nav class="tabs">
@@ -579,9 +579,12 @@ function actionSummary(emailN, reminderN, noun){
   emailN=Number(emailN)||0; reminderN=Number(reminderN)||0;
   noun=noun||"e-mails";
   if(emailN===0) return "Aucun e-mail sélectionné.";
-  const emailLabel = noun==="confirmations" ? confirmationCount(emailN) : emailCount(emailN);
-  let txt="Maintenant : "+emailLabel+".";
-  if(reminderN>0) txt += " Après l’envoi : "+reminderCount(reminderN)+" programmé"+(reminderN===1?"":"s")+" dans Outlook.";
+  const isConfirm=noun==="confirmations";
+  const emailLabel = isConfirm ? confirmationCount(emailN) : emailCount(emailN);
+  let txt = isConfirm
+    ? emailLabel+" "+(emailN===1?"sera envoyée maintenant":"seront envoyées maintenant")+"."
+    : emailLabel+" "+(emailN===1?"sera envoyé":"seront envoyés")+".";
+  if(reminderN>0) txt += " "+reminderCount(reminderN)+" "+(reminderN===1?"sera programmé":"seront programmés")+" dans Outlook après l’envoi.";
   return txt;
 }
 function looksLikeDefaultConfirmationSubject(subject){
