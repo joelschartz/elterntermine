@@ -257,9 +257,10 @@
   .reminder-toggle{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font-size:13px;font-weight:750;cursor:pointer}
   .reminder-toggle input{width:16px;height:16px;min-width:16px;margin:0}
   .reminder-note,.template-note{margin:2px 0 12px;font-size:12.5px;color:var(--muted)}
-  .template-settings{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:12px;margin:0 0 14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft)}
+  .template-settings{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(320px,1.2fr);gap:12px;margin:0 0 14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft)}
+  .student-lang-default{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft)}.student-lang-default label{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.student-lang-default select{height:40px;width:auto;min-width:170px;padding:7px 10px;border-radius:999px;background:#fff}
   .setting-field{display:flex;flex-direction:column;gap:6px;min-width:0}.setting-field label,.setting-title{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.setting-field select,.setting-field input[type=time]{height:40px;padding:7px 10px;border-radius:12px;background:#fff}.reminder-setting{gap:8px}.reminder-main{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--ink)}.reminder-main input{width:16px;height:16px;margin:0}.reminder-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}.reminder-controls select{width:auto;min-width:74px}.reminder-controls input[type=time]{width:104px}.template-language-edit{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:750}.template-language-edit select{width:auto;min-width:148px;height:38px;padding:6px 10px;border-radius:999px;background:#fff}.contact-cell{display:grid;grid-template-columns:minmax(0,1fr) 136px;gap:8px;align-items:center}.contact-cell select{height:44px;padding:8px 10px;border-radius:11px;background:#fff;font-size:13px}.student-grid .contact-cell input{min-width:0}.lang-pill{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:850;color:var(--muted);margin-left:4px}
-  @media (max-width:900px){.template-settings{grid-template-columns:1fr}.contact-cell{grid-template-columns:1fr}.template-language-edit{margin-left:0;width:100%}}
+  @media (max-width:900px){.template-settings{grid-template-columns:1fr}.student-lang-default{align-items:flex-start;flex-direction:column}.contact-cell{grid-template-columns:1fr}.template-language-edit{margin-left:0;width:100%}}
   #appToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(16,24,40,.28);z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none}
 
   .sig-modal{position:fixed;inset:0;background:rgba(20,30,60,.48);display:none;align-items:center;justify-content:center;z-index:70;padding:18px}
@@ -283,7 +284,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R12</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R13</span></p>
 </header>
 
 <nav class="tabs">
@@ -297,6 +298,15 @@
     <div class="card">
       <h2>Liste des élèves</h2>
       <p class="hint">Inscrivez chaque élève une seule fois avec les adresses e-mail de contact et choisissez la langue souhaitée pour chaque contact. Les champs vides seront ignorés lors de l’envoi.</p>
+      <div class="student-lang-default">
+        <label for="defaultLangStudents">Langue standard pour nouveaux contacts</label>
+        <select id="defaultLangStudents">
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="en">English</option>
+          <option value="lb">Lëtzebuergesch</option>
+        </select>
+      </div>
       <div id="studentTable"></div>
       <div class="toolbar" style="margin-top:14px">
         <button id="addStudent">+ Ajouter un élève</button>
@@ -304,7 +314,7 @@
         <button class="ghost sm" id="importCsvBtn">Importer un CSV</button>
         <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none">
       </div>
-      <p class="hint">Format CSV (avec ou sans ligne d’en-tête) : <code class="k">Nom,E-mail de contact 1,E-mail de contact 2</code>. Optionnel : ajoutez deux colonnes langue (<code class="k">fr/de/en/lb</code>).</p>
+      <p class="hint">Format CSV (avec ou sans ligne d’en-tête) : <code class="k">Nom,E-mail de contact 1,E-mail de contact 2</code>. Optionnel : ajoutez deux colonnes langue pour les contacts (<code class="k">fr/de/en/lb</code>).</p>
     </div>
   </section>
 
@@ -361,15 +371,6 @@
             <option value="1">1er trimestre</option>
             <option value="2">2e trimestre</option>
             <option value="3">3e trimestre</option>
-          </select>
-        </div>
-        <div class="setting-field">
-          <label for="defaultLang">Langue par défaut</label>
-          <select id="defaultLang">
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-            <option value="lb">Lëtzebuergesch</option>
           </select>
         </div>
         <div class="setting-field reminder-setting">
@@ -481,7 +482,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 56;
+const APP_VERSION = 57;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -749,7 +750,7 @@ function signatureSeparatorHtml(){
 function logoIsVisible(){ return state.options.useSig!==false && state.options.logoMode!=="none" && state.options.includeLogo!==false; }
 function composeLogoHtml(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl){ return '<div class="signature-logo-separator" data-signature-separator="true" contenteditable="false" aria-hidden="true"></div><div class="inline-logo" data-logo-inline="true" contenteditable="false" title="Logo"><img src="'+lg.dataUrl+'" alt=""></div>'; } return ''; }
 function currentTemplateMode(){ return (state.options && state.options.templateMode==="reminder") ? "reminder" : "confirmation"; }
-function currentTemplateLang(){ return normalizeLang((state.options && state.options.templateLang) || (state.options && state.options.defaultLang) || "fr"); }
+function currentTemplateLang(){ return normalizeLang((state.options && state.options.templateLang) || "fr"); }
 function ensureLocalizedTemplates(){ state.localizedTemplates=normalizeLocalizedTemplates(state.localizedTemplates||{}); }
 function templateDataForMode(mode, lang){
   mode=(mode==="reminder")?"reminder":"confirmation";
@@ -1530,7 +1531,7 @@ function updateTemplateSignatureView(body, renderTemplateCollapseState){
 function bindSettings(){
   const su=document.getElementById("tplSubject"), body=document.getElementById("tplBodyEditor");
   const trimesterSelect=document.getElementById("trimesterSelect");
-  const defaultLang=document.getElementById("defaultLang");
+  const defaultLangStudents=document.getElementById("defaultLangStudents");
   const templateLang=document.getElementById("templateLang");
   const reminderDays=document.getElementById("reminderDays");
   const reminderTime=document.getElementById("reminderTime");
@@ -1553,7 +1554,7 @@ function bindSettings(){
     if(templateModeTabs){ templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>btn.classList.toggle("active", btn.dataset.templateMode===mode)); }
     if(reminderEnabled) reminderEnabled.checked = state.options.reminderEnabled!==false;
     if(trimesterSelect) trimesterSelect.value=String(trimesterNumber());
-    if(defaultLang) defaultLang.value=normalizeLang(state.options.defaultLang||"fr");
+    if(defaultLangStudents) defaultLangStudents.value=normalizeLang(state.options.defaultLang||"fr");
     if(templateLang) templateLang.value=lang;
     if(reminderDays) reminderDays.value=String(reminderDaysBefore());
     if(reminderTime) reminderTime.value=reminderTimeValue();
@@ -1586,7 +1587,7 @@ function bindSettings(){
   }
   if(templateModeTabs){ templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>{ btn.onclick=(e)=>{ e.preventDefault(); e.stopPropagation(); switchTemplateMode(btn.dataset.templateMode); }; }); }
   if(templateLang){ templateLang.onchange=()=>switchTemplateLang(templateLang.value); }
-  if(defaultLang){ defaultLang.onchange=()=>{ state.options.defaultLang=normalizeLang(defaultLang.value); if(!state.options.templateLang) state.options.templateLang=state.options.defaultLang; saveState(); refreshTemplateControls(); renderStudents(); renderMails(); }; }
+  if(defaultLangStudents){ defaultLangStudents.onchange=()=>{ state.options.defaultLang=normalizeLang(defaultLangStudents.value); saveState(); refreshTemplateControls(); renderStudents(); renderMails(); }; }
   if(trimesterSelect){ trimesterSelect.onchange=()=>{ state.options.trimester=Math.min(3,Math.max(1,Number(trimesterSelect.value)||3)); saveState(); renderTemplatePreview(); renderMails(); refreshTemplateControls(); }; }
   if(reminderEnabled){ reminderEnabled.onchange=()=>{ state.options.reminderEnabled=reminderEnabled.checked; saveState(); refreshTemplateControls(); renderMails(); if(reminderEnabled.checked) checkDueRemindersSoon(); }; }
   if(reminderDays){ reminderDays.onchange=()=>{ state.options.reminderDaysBefore=Math.min(3,Math.max(1,Number(reminderDays.value)||1)); saveState(); refreshTemplateControls(); renderTemplatePreview(); renderMails(); if(state.options.reminderEnabled!==false) checkDueRemindersSoon(); }; }
