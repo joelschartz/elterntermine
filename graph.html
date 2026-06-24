@@ -226,7 +226,7 @@
   .mail-select-bar{display:flex;align-items:baseline;gap:14px;padding:4px 2px 12px 35px;flex-wrap:wrap}.mail-select-bar .check{margin:0;cursor:pointer}.mail-select-bar #selectCount{font-size:12.5px}
   .combine-option{margin-top:12px;color:var(--muted);font-weight:600;cursor:pointer}
   .mail-avatar{display:none}
-  .mail-main{min-width:0;display:grid;grid-template-columns:135px 145px minmax(0,1fr);align-items:center;column-gap:16px;overflow:hidden}.mailhead .who{display:block;font-weight:850;font-size:14.5px;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}.mailhead .parent-label{display:block;color:var(--muted);font-size:12.5px;font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mailhead .recipient-line{display:block;color:var(--muted);font-size:12.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:0}.mailhead .dot{display:none}
+  .mail-main{min-width:0;display:grid;grid-template-columns:135px 95px minmax(0,1fr);align-items:center;column-gap:10px;overflow:hidden}.mailhead .who{display:block;font-weight:850;font-size:14.5px;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}.mailhead .parent-label{display:block;color:var(--muted);font-size:12.5px;font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mailhead .recipient-line{display:block;color:var(--muted);font-size:12.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:0}.mailhead .dot{display:none}
   .mailhead .toggle{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:12.5px;font-weight:800;user-select:none;padding:6px 10px;border-radius:999px;background:var(--accent-soft);white-space:nowrap;border:1px solid #d7e3ff}
   .mailhead .toggle:hover{background:#e3ecff}
   .mailitem.open .toggle{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R29</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R31</span></p>
 </header>
 
 <nav class="tabs">
@@ -485,7 +485,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 72;
+const APP_VERSION = 74;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -550,13 +550,7 @@ function selectedEmailCountText(n){
   return emailCount(n)+" sélectionné"+(n===1?"":"s");
 }
 function sendActionSentence(emailN, reminderN){
-  emailN=Number(emailN)||0; reminderN=Number(reminderN)||0;
-  if(emailN===0) return "Aucun e-mail sélectionné.";
-  let txt=emailCount(emailN)+" "+(emailN===1?"sera envoyé":"seront envoyés")+".";
-  if(reminderN>0){
-    txt += " "+reminderCount(reminderN)+" "+(reminderN===1?"sera programmé":"seront programmés")+" dans Outlook après l’envoi.";
-  }
-  return txt;
+  return actionSummary(emailN, reminderN, "e-mails");
 }
 function appointmentCount(n){ return countFr(n,"rendez-vous","rendez-vous"); }
 function trimesterNumber(){ const n=Number(state && state.options ? state.options.trimester : 3); return Math.min(3, Math.max(1, n||3)); }
@@ -577,9 +571,51 @@ function reminderPlanSentence(reminders){
   if(!reminders || !reminders.length) return "";
   const n=reminders.length;
   if(n===1){
-    return "Rappel automatique : 1 e-mail de rappel sera programmé dans Outlook pour "+formatReminderDueLabel(reminders[0].dueAt)+".";
+    return "Après l’envoi : 1 rappel programmé dans Outlook pour "+formatReminderDueLabel(reminders[0].dueAt)+".";
   }
-  return "Rappels automatiques : "+reminderCount(n)+" seront programmés dans Outlook ("+reminderScheduleSummary()+").";
+  return "Après l’envoi : "+reminderCount(n)+" programmés dans Outlook ("+reminderScheduleSummary()+").";
+}
+function actionSummary(emailN, reminderN, noun){
+  emailN=Number(emailN)||0; reminderN=Number(reminderN)||0;
+  noun=noun||"e-mails";
+  if(emailN===0) return "Aucun e-mail sélectionné.";
+  const emailLabel = noun==="confirmations" ? confirmationCount(emailN) : emailCount(emailN);
+  let txt="Maintenant : "+emailLabel+".";
+  if(reminderN>0) txt += " Après l’envoi : "+reminderCount(reminderN)+" programmé"+(reminderN===1?"":"s")+" dans Outlook.";
+  return txt;
+}
+function looksLikeDefaultConfirmationSubject(subject){
+  const s=String(subject||"").trim();
+  return /^Rendez-vous individuel\s*[—-]\s*bilan du (\{TRIMESTRE\}|1er trimestre|2e trimestre|3e trimestre|premier trimestre|deuxième trimestre|troisième trimestre)$/i.test(s);
+}
+function looksLikeDefaultConfirmationBodyHtml(html, body){
+  const txt=normalizeTextForCompare(textFromHtml(html||"") || body || "");
+  return /Chers parents/i.test(txt) && /Je vous confirme notre rendez-vous individuel/i.test(txt) && /bilan interm[eé]diaire/i.test(txt) && /Je vous remercie d[’']avance pour votre pr[eé]sence/i.test(txt);
+}
+function migrateTemplateDefaultsToVariables(tpl){
+  if(!tpl) return tpl;
+  const subj=tpl.subject||"";
+  if(looksLikeDefaultConfirmationSubject(subj) && looksLikeDefaultConfirmationBodyHtml(tpl.bodyHtml, tpl.body)){
+    const f=factoryTemplate("fr","confirmation");
+    tpl.subject=f.subject;
+    const bodyTxt=normalizeTextForCompare(textFromHtml(tpl.bodyHtml||"")||tpl.body||"");
+    const fTxt=normalizeTextForCompare(f.body);
+    // Si le texte ressemble au modèle d’origine, on restaure aussi le HTML propre, avec variables.
+    if(bodyTxt===fTxt || /au sujet du (premier|deuxième|troisième) trimestre/i.test(bodyTxt)){
+      tpl.bodyHtml=f.bodyHtml;
+      tpl.body=f.body;
+    }
+  }
+  return tpl;
+}
+function migrateUserDefaultsToVariables(ud){
+  if(!ud) return null;
+  const out=JSON.parse(JSON.stringify(ud));
+  if(looksLikeDefaultConfirmationSubject(out.subject) && looksLikeDefaultConfirmationBodyHtml(out.bodyHtml, out.body)){
+    const f=factoryTemplate("fr","confirmation");
+    out.subject=f.subject; out.bodyHtml=f.bodyHtml; out.body=f.body;
+  }
+  return out;
 }
 const TRIMESTER_TEXTS={
   fr:["premier trimestre","deuxième trimestre","troisième trimestre"],
@@ -664,8 +700,8 @@ function defaultState(){
     // null = noch keiner gespeichert -> Werks-Standard gilt.
     userDefaults: null,
     template: {
-      v: 16,
-      subject: "Rendez-vous individuel — bilan du 3e trimestre",
+      v: 17,
+      subject: factoryTemplate("fr","confirmation").subject,
       body: defaultBodyText(), bodyHtml: defaultBodyHtml(),
       signature: plainDefaultSignature(),
       signatureHtml: defaultSignatureTemplate(), logo: null
@@ -734,8 +770,11 @@ function loadState(){
         tpl.subject=f.subject; tpl.bodyHtml=f.bodyHtml; tpl.body=f.body;
       }
     }
+    if((s.appVersion||0) < 73){
+      migrateTemplateDefaultsToVariables(tpl);
+    }
     delete tpl.sigFields;
-    tpl.v = 16;
+    tpl.v = 17;
     const reminderTpl = Object.assign({}, d.reminderTemplate, s.reminderTemplate||{});
     if(!reminderTpl.bodyHtml) reminderTpl.bodyHtml = htmlFromPlain(reminderTpl.body || defaultReminderBodyText());
     reminderTpl.body = textFromHtml(reminderTpl.bodyHtml) || reminderTpl.body || defaultReminderBodyText();
@@ -770,7 +809,7 @@ function loadState(){
       options,
       graph: Object.assign(d.graph, s.graph||{}),
       account: Object.assign(d.account, s.account||{}),
-      userDefaults: s.userDefaults || null,
+      userDefaults: migrateUserDefaultsToVariables(s.userDefaults || null),
       template: tpl,
       reminderTemplate: reminderTpl,
       localizedTemplates: normalizeLocalizedTemplates(s.localizedTemplates||{})
@@ -830,6 +869,7 @@ function templateDataForMode(mode, lang){
     }
     const base=factoryTemplate("fr","confirmation");
     state.template = Object.assign({}, state.template||{}, {subject:(state.template&&state.template.subject)||base.subject, body:(state.template&&state.template.body)||base.body, bodyHtml:(state.template&&state.template.bodyHtml)||base.bodyHtml});
+    migrateTemplateDefaultsToVariables(state.template);
     return state.template;
   }
   ensureLocalizedTemplates();
@@ -2014,7 +2054,7 @@ function buildMessages(){
       const groups=contactGroupsByLang(details);
       Object.keys(groups).forEach(lang=>{
         const arr=groups[lang];
-        const label = arr.length>1 ? (arr.length===2 ? "Deux contacts" : arr.length+" contacts") : "Contact "+(arr[0].idx+1);
+        const label = arr.length>1 ? (arr.length===2 ? "2 contacts" : arr.length+" contacts") : "Contact "+(arr[0].idx+1);
         add(lang,"c"+lang,label,arr.map(c=>c.email));
       });
     });
@@ -2051,7 +2091,7 @@ function buildReminderMessages(onlyDue=true){
       const groups=contactGroupsByLang(details);
       Object.keys(groups).forEach(lang=>{
         const arr=groups[lang];
-        const label = arr.length>1 ? (arr.length===2 ? "Deux contacts" : arr.length+" contacts") : "Contact "+(arr[0].idx+1);
+        const label = arr.length>1 ? (arr.length===2 ? "2 contacts" : arr.length+" contacts") : "Contact "+(arr[0].idx+1);
         add(lang,"c"+lang,label,arr.map(c=>c.email));
       });
     });
@@ -2350,11 +2390,8 @@ document.getElementById("sendAll").onclick=()=>{
   }
   pendingReminderPlan=plannedReminderMessagesForConfirmations(pendingSend);
   const pendingReminderConflicts=reminderConflictsForConfirmations(pendingSend);
-  const students=new Set(pendingSend.map(m=>m.student)).size;
-  document.getElementById("confirmText").textContent=`${confirmationCount(pendingSend.length)} ${pendingSend.length===1?"sera envoyée":"seront envoyées"} maintenant.`;
-  const detail=[`Envoi via votre compte (${state.account.email}). Action irréversible.`];
-  const reminderText=reminderPlanSentence(pendingReminderPlan);
-  if(reminderText) detail.push(reminderText);
+  document.getElementById("confirmText").textContent=actionSummary(pendingSend.length, pendingReminderPlan.length, "confirmations");
+  const detail=[`Compte : ${state.account.email}. Action irréversible.`];
   if(pendingReminderConflicts.length) detail.push(`${reminderCount(pendingReminderConflicts.length)} ne ${pendingReminderConflicts.length===1?"sera":"seront"} pas programmé${pendingReminderConflicts.length===1?"":"s"}, car le moment du rappel est déjà passé.`);
   document.getElementById("confirmDetail").textContent=detail.join(" ");
   overlay.style.display="flex";
@@ -2398,10 +2435,10 @@ document.getElementById("confirmGo").onclick=async()=>{
     }
   }catch(e){ alert("Assistant local inaccessible ?\n"+(e&&e.message?e.message:e)); }
   renderMails();
-  const reminderPart=reminderOk ? ` ${reminderCount(reminderOk)} ${programmedWord(reminderOk)} dans Outlook (${reminderScheduleSummary()}).` : (reminderFail ? ` ${reminderCount(reminderFail)} non programmé${reminderFail===1?"":"s"}${firstReminderErr?(" — "+esc(firstReminderErr)):""}.` : "");
-  const confirmPart=`${confirmationCount(ok)} ${sentWord(ok,true)}`;
-  const failPart=fail ? `, ${countFr(fail,"échec","échecs")} — ${esc(firstErr)}` : "";
-  document.getElementById("mailBanner").innerHTML=`<div class="banner ${(fail||reminderFail)?'warn':'ok'}">${confirmPart}${failPart}.${reminderPart}</div>`+document.getElementById("mailBanner").innerHTML;
+  const reminderPart=reminderOk ? ` Après l’envoi : ${reminderCount(reminderOk)} programmé${reminderOk===1?"":"s"} dans Outlook.` : (reminderFail ? ` ${reminderCount(reminderFail)} non programmé${reminderFail===1?"":"s"}${firstReminderErr?(" — "+esc(firstReminderErr)):""}.` : "");
+  const confirmPart=`Maintenant : ${confirmationCount(ok)} ${sentWord(ok,true)}.`;
+  const failPart=fail ? ` ${countFr(fail,"échec","échecs")} — ${esc(firstErr)}.` : "";
+  document.getElementById("mailBanner").innerHTML=`<div class="banner ${(fail||reminderFail)?'warn':'ok'}">${confirmPart}${reminderPart}${failPart}</div>`+document.getElementById("mailBanner").innerHTML;
   pendingSend=[]; pendingReminderPlan=[]; btn.disabled=false;
 };
 
