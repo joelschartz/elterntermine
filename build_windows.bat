@@ -1,11 +1,11 @@
 @echo off
-REM ===== Baut ElternTermine.exe (einmalig, auf einem Windows-PC) =====
+REM ===== Crée ElternTermine.exe (une fois, sur un PC Windows) =====
 cd /d "%~dp0"
 echo.
-echo == PyInstaller installieren (falls noetig) ==
+echo == Installer PyInstaller (si nécessaire) ==
 python -m pip install --upgrade pyinstaller certifi
 echo.
-echo == ElternTermine.exe bauen ==
+echo == Créer ElternTermine.exe ==
 python -m PyInstaller --onefile --name ElternTermine ^
   --add-data "graph.html;." ^
   --add-data "index.html;." ^
@@ -14,7 +14,7 @@ python -m PyInstaller --onefile --name ElternTermine ^
   server.py
 echo.
 echo ============================================================
-echo  Fertig. Die Datei liegt unter:  dist\ElternTermine.exe
-echo  Diese .exe gibst du den Kollegen.
+echo  Terminé. Le fichier se trouve dans :  dist\ElternTermine.exe
+echo  Vous pouvez transmettre ce .exe aux collègues.
 echo ============================================================
 pause

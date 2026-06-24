@@ -1,42 +1,22 @@
-# Windows-.exe bauen (einmalig, durch dich)
+# Créer une version Windows (.exe)
 
-Ziel: eine **einzige `ElternTermine.exe`**, die du den Kollegen gibst. Sie brauchen dann
-**nichts** zu installieren — nur doppelklicken und einmal per Code bei Microsoft anmelden.
+Objectif : créer un seul fichier **ElternTermine.exe** à transmettre aux collègues. Ils n’ont rien à installer : ils double-cliquent, se connectent une fois à Microsoft avec le code, puis utilisent l’application.
 
-Das Bauen machst **du einmal** auf einem **Windows-PC** (auf dem Schul-PC, wo du lokaler
-Admin bist, geht das). Danach ist die .exe fertig und beliebig oft verteilbar.
+## Étapes
 
-## Schritte (Windows, ~5 Minuten)
+1. Installer Python sur le PC Windows si nécessaire.
+2. Copier le dossier **ElternTermineWeb_v54** sur le PC Windows.
+3. Double-cliquer sur **build_windows.bat**.
+4. Le fichier généré se trouve dans **dist\ElternTermine.exe**.
 
-1. **Python installieren** (nur auf dem Bau-PC): https://www.python.org/downloads/
-   → beim Setup **„Add python.exe to PATH"** anhaken.
-2. Den Ordner `ElternTermineWeb` auf den Windows-PC kopieren.
-3. In dem Ordner die Datei **`build_windows.bat` doppelklicken**.
-   (Sie installiert PyInstaller und baut die .exe.)
-4. Fertig: die Datei liegt dann unter **`dist\ElternTermine.exe`**.
+Commande utilisée :
 
-Falls du es lieber von Hand machst — in der Eingabeaufforderung (cmd) im Ordner:
-
-```
-pip install pyinstaller certifi
+```powershell
 pyinstaller --onefile --name ElternTermine --add-data "graph.html;." --add-data "index.html;." --add-data "schullogo.png;." --hidden-import certifi server.py
 ```
 
-## Den Kollegen geben
+## Distribution
 
-- Nur **`ElternTermine.exe`** weitergeben (z. B. per Mail/USB/Teams).
-- Der Kollege: **Doppelklick** → ein schwarzes Fenster + Browser öffnen sich →
-  im Browser **„Mit Microsoft anmelden"** → Code eingeben, anmelden, zustimmen → loslegen.
-- Beim ersten Start zeigt Windows evtl. **„Der Computer wurde geschützt"**
-  (unbekannter Herausgeber, weil die .exe nicht teuer signiert ist) →
-  **„Weitere Informationen" → „Trotzdem ausführen"**. Das ist **keine** Installation und
-  **keine** Admin-Freigabe, nur ein einmaliger Klick.
-- Das schwarze Fenster offen lassen, solange die App genutzt wird; Schließen beendet sie.
-
-## Wichtig / ehrlich
-
-- Manche Schul-PCs sind sehr streng gesperrt und blockieren das Ausführen **jeder**
-  unbekannten .exe (Geräte-Richtlinie). Falls die .exe gar nicht startet, liegt es daran —
-  dann am besten **vorher an einem echten Kollegen-PC testen**, bevor du sie breit verteilst.
-- Jeder Kollege meldet sich mit **seinem eigenen** Konto an und sendet aus seinem eigenen
-  Postfach. Der Login-Schlüssel (`graph_token.json`) bleibt lokal neben der .exe.
+- Transmettre uniquement **ElternTermine.exe** si une version autonome est souhaitée.
+- Au premier lancement, Windows peut afficher un avertissement de sécurité. Dans ce cas : **Informations complémentaires** → **Exécuter quand même**.
+- Chaque collègue se connecte avec son propre compte Microsoft et envoie depuis sa propre boîte mail.

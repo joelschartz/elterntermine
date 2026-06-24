@@ -359,7 +359,7 @@ function Handle-Request($stream, $req) {
         if (-not $token) { Send-Json $stream @{ ok = $false; error = "Nicht angemeldet. Bitte erneut mit Microsoft anmelden." }; return }
         $data = $null
         try { $data = $req.Body | ConvertFrom-Json } catch {}
-        if (-not $data -or -not $data.messages) { Send-Json $stream @{ ok = $false; error = "Keine E-Mails." }; return }
+        if (-not $data -or -not $data.messages) { Send-Json $stream @{ ok = $false; error = "Aucun e-mail." }; return }
         $results = @()
         foreach ($m in $data.messages) {
             $msg = @{
@@ -391,7 +391,7 @@ function Handle-Request($stream, $req) {
                 $token = Get-AccessToken
                 if ($token) {
                     $t = Graph-SignatureFromMail $token
-                    if ($t) { $sigs = @(@{ name = "Aus gesendeter Mail"; text = $t }) }
+                    if ($t) { $sigs = @(@{ name = "Depuis un e-mail envoyé"; text = $t }) }
                 }
             }
             Send-Json $stream @{ ok = $true; signatures = $sigs }
@@ -438,24 +438,24 @@ function Handle-Request($stream, $req) {
 }
 
 # ----------------------------------------------------------- Start
-Update-UiFromGitHub
+# Interface française locale : pas de mise à jour GitHub automatique.
 try {
     $listener = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Loopback, $Port)
     $listener.Start()
 } catch {
     Write-Host ""
-    Write-Host "FEHLER: Konnte den lokalen Server nicht starten (Port $Port belegt?)."
+    Write-Host "ERREUR : impossible de démarrer le serveur local (port $Port déjà utilisé ?)."
     Write-Host $_.Exception.Message
-    Read-Host "Enter zum Schliessen"
+    Read-Host "Entrée pour fermer"
     return
 }
 
 $url = "http://127.0.0.1:$Port/graph.html"
 try { Set-Content -Path $LogFile -Value ("=== Start " + (Get-Date) + " ===") -Encoding UTF8 } catch {}
 Write-Host "============================================================"
-Write-Host "  ElternTermine laeuft.   [Version: v11 - Auto-Update]"
-Write-Host "  Im Browser:  $url"
-Write-Host "  Dieses Fenster offen lassen. Schliessen = beenden."
+Write-Host "  Rendez-vous parents est lancé.   [Version : v54 - FR]"
+Write-Host "  Dans le navigateur :  $url"
+Write-Host "  Laissez cette fenêtre ouverte. La fermer = quitter."
 Write-Host "============================================================"
 try { Start-Process $url } catch {}
 

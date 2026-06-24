@@ -1,4 +1,4 @@
 @echo off
-REM ===== ElternTermine starten (Windows) =====
-REM Doppelklick startet den Helfer; der Browser oeffnet sich automatisch.
+REM ===== Démarrer Rendez-vous parents (Windows) =====
+REM Un double-clic démarre l’assistant local ; le navigateur s’ouvre automatiquement.
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0ElternTermine.ps1"

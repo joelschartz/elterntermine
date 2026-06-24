@@ -130,7 +130,7 @@ def _signatures_mac():
     proc = subprocess.run(["osascript", "-e", names_script],
                           capture_output=True, text=True, timeout=30)
     if proc.returncode != 0:
-        raise RuntimeError(proc.stderr.strip() or "Signaturen nicht lesbar")
+        raise RuntimeError(proc.stderr.strip() or "Signatures illisibles")
     names = [n.strip() for n in proc.stdout.splitlines() if n.strip()]
     sigs = []
     for name in names:
@@ -378,7 +378,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             logo = find_signature_logo()
             if logo:
                 return self._json(200, {"ok": True, "logo": logo})
-            return self._json(200, {"ok": False, "error": "Kein Logo gefunden."})
+            return self._json(200, {"ok": False, "error": "Aucun logo trouvé."})
         except Exception as e:
             return self._json(200, {"ok": False, "error": str(e)})
 
@@ -401,7 +401,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         st, dc = _form_post(OAUTH_BASE + "/devicecode",
                             {"client_id": GRAPH_CLIENT_ID, "scope": GRAPH_SCOPE})
         if "device_code" not in dc:
-            return self._json(200, {"ok": False, "error": dc.get("error_description") or dc.get("error") or "Fehler"})
+            return self._json(200, {"ok": False, "error": dc.get("error_description") or dc.get("error") or "Erreur"})
         _pending_device["device_code"] = dc["device_code"]
         _pending_device["interval"] = int(dc.get("interval", 5))
         return self._json(200, {"ok": True,
@@ -413,7 +413,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def handle_graph_login_poll(self):
         dcode = _pending_device.get("device_code")
         if not dcode:
-            return self._json(200, {"ok": False, "error": "Kein Login gestartet."})
+            return self._json(200, {"ok": False, "error": "Aucune connexion démarrée."})
         st, tok = _form_post(OAUTH_BASE + "/token", {
             "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
             "client_id": GRAPH_CLIENT_ID, "device_code": dcode})
@@ -435,7 +435,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self._json(200, {"ok": True, "status": "pending"})
         _pending_device.clear()
         return self._json(200, {"ok": True, "status": "error",
-                                "error": tok.get("error_description") or err or "Fehler"})
+                                "error": tok.get("error_description") or err or "Erreur"})
 
     # ---- Graph: Abmelden ----
     def handle_graph_logout(self):
@@ -453,10 +453,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         messages = data.get("messages", []) or []
         logo = data.get("logo")  # {name, mime, contentBytes} oder None
         if not messages:
-            return self._json(200, {"ok": False, "error": "Keine E-Mails."})
+            return self._json(200, {"ok": False, "error": "Aucun e-mail."})
         token = _access_token()
         if not token:
-            return self._json(200, {"ok": False, "error": "Nicht angemeldet. Bitte erneut mit Microsoft anmelden."})
+            return self._json(200, {"ok": False, "error": "Non connecté. Veuillez vous reconnecter avec Microsoft."})
         results = []
         for m in messages:
             payload = {
@@ -511,13 +511,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         try:
             data = json.loads(self.rfile.read(length).decode("utf-8"))
         except Exception:
-            return self._json(400, {"ok": False, "error": "Ungueltige Anfrage."})
+            return self._json(400, {"ok": False, "error": "Requête non valable."})
 
         from_addr = (data.get("from") or "").strip()
         action = data.get("action", "send")  # "send" oder "open"
         messages = data.get("messages", []) or []
         if not messages:
-            return self._json(200, {"ok": False, "error": "Keine E-Mails."})
+            return self._json(200, {"ok": False, "error": "Aucun e-mail."})
 
         results = []
         for m in messages:
@@ -538,7 +538,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 if proc.returncode == 0:
                     results.append({"id": m.get("id"), "ok": True})
                 else:
-                    err = (proc.stderr or "").strip() or "AppleScript-Fehler"
+                    err = (proc.stderr or "").strip() or "Erreur AppleScript"
                     results.append({"id": m.get("id"), "ok": False, "error": err})
             except Exception as e:
                 results.append({"id": m.get("id"), "ok": False, "error": str(e)})
@@ -551,7 +551,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         try:
             data = json.loads(raw.decode("utf-8"))
         except Exception:
-            return self._json(400, {"ok": False, "error": "Ungueltige Anfrage."})
+            return self._json(400, {"ok": False, "error": "Requête non valable."})
 
         sender = data.get("sender", {}) or {}
         host = sender.get("host", "smtp.gmail.com")
@@ -564,9 +564,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
         if not user or not password:
             return self._json(200, {"ok": False,
-                                    "error": "E-Mail-Adresse oder App-Passwort fehlt."})
+                                    "error": "Adresse e-mail ou mot de passe d’application manquant."})
         if not messages:
-            return self._json(200, {"ok": False, "error": "Keine E-Mails zum Senden."})
+            return self._json(200, {"ok": False, "error": "Aucun e-mail à envoyer."})
 
         results = []
         try:
@@ -595,10 +595,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self._json(200, {"ok": True, "results": results})
         except smtplib.SMTPAuthenticationError:
             return self._json(200, {"ok": False,
-                                    "error": ("Anmeldung bei Gmail fehlgeschlagen. "
-                                              "Pruefe die Absender-Adresse und benutze "
-                                              "ein App-Passwort (nicht dein normales "
-                                              "Passwort).")})
+                                    "error": ("Échec de la connexion à Gmail. "
+                                              "Vérifiez l’adresse de l’expéditeur et utilisez "
+                                              "un mot de passe d’application (pas votre mot de passe "
+                                              "habituel).")})
         except Exception as e:
             return self._json(200, {"ok": False, "error": str(e)})
 
@@ -621,24 +621,8 @@ GITHUB_UI_URL = "https://raw.githubusercontent.com/joelschartz/elterntermine/mai
 
 
 def update_ui_from_github():
-    """Laedt beim Start die neueste graph.html aus dem GitHub-Repo und ersetzt die
-    lokale Kopie. So bekommen alle Nutzer App-Updates ohne Neuinstallation.
-    Schlaegt der Download fehl (offline, gesperrt), bleibt die lokale Datei erhalten."""
-    target = os.path.join(DIRECTORY, "graph.html")
-    try:
-        print("  Suche nach Update ...")
-        req = urllib.request.Request(GITHUB_UI_URL, headers={"Cache-Control": "no-cache"})
-        with urllib.request.urlopen(req, context=make_ssl_context(), timeout=8) as r:
-            data = r.read().decode("utf-8", "replace")
-        # Nur schreiben, wenn es wirklich unsere App ist (kein GitHub-404-Text o. ae.).
-        if "tplBodyEditor" in data and "<html" in data.lower():
-            with open(target, "w", encoding="utf-8") as f:
-                f.write(data)
-            print("  Oberflaeche auf neueste Version aktualisiert (GitHub).")
-        else:
-            print("  (Update-Antwort unerwartet - nutze lokale Oberflaeche.)")
-    except Exception:
-        print("  (Offline / GitHub nicht erreichbar - nutze lokale Oberflaeche.)")
+    """Conserve l’interface française locale de cette version."""
+    return
 
 
 def main():
@@ -650,18 +634,18 @@ def main():
         used_fallback = actual_port != PORT
         url = f"http://{host}:{actual_port}/graph.html"
         print("=" * 56)
-        print("  ElternTermine laeuft.")
+        print("  Rendez-vous parents est lancé.")
         if used_fallback:
-            print(f"  Hinweis: Port {PORT} war bereits belegt.")
-            print(f"  Deshalb wurde automatisch Port {actual_port} verwendet.")
-        print(f"  Im Browser oeffnen:  {url}")
-        print("  Zum Beenden: dieses Fenster schliessen (oder Strg+C)")
+            print(f"  Remarque : le port {PORT} était déjà utilisé.")
+            print(f"  Le port {actual_port} a donc été utilisé automatiquement.")
+        print(f"  Ouvrir dans le navigateur :  {url}")
+        print("  Pour quitter : fermez cette fenêtre (ou Ctrl+C)")
         print("=" * 56)
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print("\nBeendet.")
+            print("\nTerminé.")
 
 
 if __name__ == "__main__":

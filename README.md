@@ -1,67 +1,35 @@
-# ElternTermine · Microsoft 365
+# Rendez-vous parents · Microsoft 365
 
-Lokale App zum Planen von Elterngesprächen und zum Versenden der Bestätigungs-Mails über das eigene Microsoft-365-Konto.
+Application locale pour planifier les entretiens avec les parents et envoyer les e-mails de confirmation via le compte Microsoft 365 de l’utilisateur.
 
-## Neu in dieser Version
+## Version v54 · Interface française
 
-- Im Reiter **E-Mails & Versand** gibt es eine **vorgefertigte E-Mail-Fassung**.
+- L’interface principale est traduite en français.
+- Les textes du calendrier, de la liste des élèves, de l’éditeur d’e-mail, de la signature, de l’aperçu et de l’envoi sont en français.
+- Le modèle d’e-mail reste en français et utilise les variables `{DATE}`, `{TIME}` et `{ENFANT}`.
+- La signature standard de Joël Schartz et le logo UNESCO restent intégrés.
+- La mise à jour automatique depuis GitHub est désactivée dans cette version afin que l’interface française locale ne soit pas remplacée.
 
-- Die Standard-Signatur ist jetzt mit der Adresse von Joël Schartz vorausgefüllt.
-- Der Abstand zwischen Trennlinie und Logo wurde reduziert.
-- Die Logo-Auswahl ist kein Dropdown mehr, sondern robuste Schalter: **UNESCO-Logo**, **Eigenes Logo hochladen**, **Kein Logo**.
-- Die **vorgefertigte E-Mail-Fassung** kann jetzt komplett eingeklappt werden, inklusive Signatur- und Logo-Bereich.
-- Der E-Mail-Text ist sofort direkt bearbeitbar, ohne extra Edit-Text-Knopf.
-- **Text und Signatur sind jetzt im gleichen Editor**: Die Signatur kann direkt im E-Mail-Text bearbeitet und formatiert werden.
-- Oben rechts neben **Vorgefertigte E-Mail-Fassung** bleibt die Checkbox **Signature**, um die Signatur ein- oder auszuschalten.
-- Das separate Signatur-Fenster wurde entfernt.
-- Unter dem Editor gibt es jetzt eine klare Signatur-Leiste: **Logo in Signatur: UNESCO-Logo / Eigenes Logo / Kein Logo**.
-- **Signatur zurücksetzen** stellt die Standard-Signatur wieder her und aktiviert wieder das UNESCO-Logo.
-- Die Outlook-Signatur-Suche wurde entfernt.
-- Die Vorschau aktualisiert sich automatisch; die früheren Buttons „Vorschau aktualisieren“ und „Testmail an mich“ wurden entfernt.
-- Das Layout wurde aufgeräumt: flachere Karten, klarere Aktionsleiste und eine übersichtlichere Versandliste ohne verschachtelte Rahmen.
-- Der E-Mail-Text, die Signatur und das Logo werden weiterhin in der Vorschau und beim Versand übernommen.
-- Falls Port 8765 bereits belegt ist, nimmt die App automatisch einen freien Port.
+## Démarrer sur Mac
 
-## Starten auf dem Mac
+1. Dézipper le dossier.
+2. Ouvrir le dossier **ElternTermineWeb_v54**.
+3. Double-cliquer sur **Starten.command**.
+4. Le navigateur s’ouvre automatiquement.
 
-1. ZIP entpacken.
-2. Den Ordner **ElternTermineWeb** öffnen.
-3. Doppelklick auf **Starten.command**.
-4. Der Browser öffnet sich automatisch.
+Si macOS bloque l’ouverture : clic droit sur **Starten.command**, puis **Ouvrir**, puis confirmer.
 
-Falls macOS das Öffnen blockiert:
+## Démarrer sur Windows
 
-1. Rechtsklick auf **Starten.command**.
-2. **Öffnen** wählen.
-3. Noch einmal bestätigen.
+1. Dézipper le dossier.
+2. Double-cliquer sur **ElternTermine-Start.bat**.
+3. Laisser la fenêtre PowerShell ouverte pendant l’utilisation.
+4. Le navigateur s’ouvre automatiquement.
 
-Falls Python fehlt, im Terminal testen:
+## Utilisation
 
-```bash
-python3 --version
-```
-
-## Ablauf
-
-1. **Schüler** eintragen oder per CSV importieren.
-2. **Kalender** anlegen und Schüler den Terminen zuweisen.
-3. **E-Mails & Versand** öffnen:
-   - mit Microsoft anmelden,
-   - direkt in den E-Mail-Text klicken und ihn wie in Outlook bearbeiten,
-   - die Standard-Signatur direkt im Text bearbeiten,
-   - oben rechts über **Signature** die Signatur ein- oder ausschalten,
-   - unter dem Editor bei **Logo in Signatur** zwischen **UNESCO-Logo**, **Eigenes Logo hochladen** und **Kein Logo** wählen,
-   - mit **Signatur zurücksetzen** die Standard-Signatur wiederherstellen,
-   - die vorgefertigte Fassung bei Bedarf einklappen und einzelne E-Mails über **Bearbeiten** kontrollieren,
-   - dann **Alle senden**.
-
-## Platzhalter im E-Mail-Text
-
-- `{DATE}` = Datum auf Französisch
-- `{TIME}` = Uhrzeit
-- `{NAME}` = dein Name aus dem Microsoft-Konto-Feld
-- `{ENFANT}` = Name des Kindes
-
-## Wichtig
-
-Die App läuft lokal auf deinem Computer. Schülerdaten und Vorlagen werden lokal im Browser gespeichert. Der Versand läuft über Microsoft Graph mit deinem eigenen Microsoft-365-Konto.
+1. Saisir les élèves et les adresses e-mail de contact.
+2. Choisir les jours d’entretien dans le calendrier.
+3. Attribuer les créneaux aux élèves.
+4. Se connecter avec Microsoft dans l’onglet **E-mails & envoi**.
+5. Contrôler les e-mails, modifier si nécessaire, puis envoyer.
