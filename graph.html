@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R27</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R28</span></p>
 </header>
 
 <nav class="tabs">
@@ -485,7 +485,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 71;
+const APP_VERSION = 72;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -548,6 +548,15 @@ function selectedEmailCountText(n){
   n=Number(n)||0;
   if(n===0) return "Aucun e-mail sélectionné";
   return emailCount(n)+" sélectionné"+(n===1?"":"s");
+}
+function sendActionSentence(emailN, reminderN){
+  emailN=Number(emailN)||0; reminderN=Number(reminderN)||0;
+  if(emailN===0) return "Aucun e-mail sélectionné.";
+  let txt=emailCount(emailN)+" "+(emailN===1?"sera envoyé":"seront envoyés")+".";
+  if(reminderN>0){
+    txt += " "+reminderCount(reminderN)+" "+(reminderN===1?"sera programmé":"seront programmés")+" dans Outlook après l’envoi.";
+  }
+  return txt;
 }
 function appointmentCount(n){ return countFr(n,"rendez-vous","rendez-vous"); }
 function trimesterNumber(){ const n=Number(state && state.options ? state.options.trimester : 3); return Math.min(3, Math.max(1, n||3)); }
@@ -2142,12 +2151,8 @@ function mailBannerHtml(){
     const sendable=currentMsgs.filter(m=>!sentSet.has(m.id));
     const pendingSelected=sendable.filter(m=>!excludedSet.has(m.id));
     const plannedCount=(state.options.reminderEnabled!==false) ? plannedReminderMessagesForConfirmations(pendingSelected).length : 0;
-    const reminderSuffix=plannedCount ? ` · ${reminderCount(plannedCount)} ${willBe(plannedCount)} programmé${plannedCount===1?"":"s"} dans Outlook après l’envoi` : "";
     if(sendable.length===0) b+=`<div class="banner ok">Tous les e-mails ont été envoyés. Pour les renvoyer : « Réinitialiser le statut d’envoi ».</div>`;
-    else {
-      const status=`${selectedEmailCountText(pendingSelected.length)} sur ${emailCount(sendable.length)} en attente · ${appointmentCount(assigned)}${reminderSuffix}`;
-      b+=`<div class="banner info">${status}.${sentCount?" "+confirmationCount(sentCount)+" déjà "+sentWord(sentCount,true)+".":""}</div>`;
-    }
+    else b+=`<div class="banner info">${sendActionSentence(pendingSelected.length, plannedCount)}</div>`;
   }
   return b;
 }
@@ -2292,7 +2297,7 @@ if(_selAll){
     refreshSelectionUI();
   };
 }
-document.getElementById("resetSent").onclick=()=>{ if(sentSet.size===0 && reminderSentSet.size===0){ alert("Aucun e-mail n’est marqué comme envoyé ou programmé."); return; } if(!confirm("Réinitialiser le statut d’envoi ? Les confirmations et les rappels seront à nouveau considérés comme en attente. Les rappels déjà programmés dans Outlook ne peuvent pas être supprimés automatiquement.")) return; sentSet.clear(); reminderSentSet.clear(); persistSent(); persistReminderSent(); renderMails(); };
+document.getElementById("resetSent").onclick=()=>{ if(sentSet.size===0 && reminderSentSet.size===0){ alert("Aucun e-mail n’est marqué comme envoyé ou programmé."); return; } if(!confirm("Réinitialiser le statut d’envoi ? Les confirmations et les rappels pourront être renvoyés ou reprogrammés. Les rappels déjà programmés dans Outlook ne peuvent pas être supprimés automatiquement.")) return; sentSet.clear(); reminderSentSet.clear(); persistSent(); persistReminderSent(); renderMails(); };
 
 /* Send all */
 const overlay=document.getElementById("confirmOverlay");
@@ -2308,8 +2313,8 @@ document.getElementById("sendAll").onclick=()=>{
   pendingReminderPlan=plannedReminderMessagesForConfirmations(pendingSend);
   const pendingReminderConflicts=reminderConflictsForConfirmations(pendingSend);
   const students=new Set(pendingSend.map(m=>m.student)).size;
-  document.getElementById("confirmText").textContent=`${confirmationCount(pendingSend.length)} ${pendingSend.length===1?"sera envoyée":"seront envoyées"} maintenant aux contacts de ${studentCount(students)}.`;
-  const detail=[`Envoi via votre compte (${state.account.email}). Les confirmations déjà envoyées seront ignorées. Action irréversible.`];
+  document.getElementById("confirmText").textContent=`${confirmationCount(pendingSend.length)} ${pendingSend.length===1?"sera envoyée":"seront envoyées"} maintenant.`;
+  const detail=[`Envoi via votre compte (${state.account.email}). Action irréversible.`];
   const reminderText=reminderPlanSentence(pendingReminderPlan);
   if(reminderText) detail.push(reminderText);
   if(pendingReminderConflicts.length) detail.push(`${reminderCount(pendingReminderConflicts.length)} ne ${pendingReminderConflicts.length===1?"sera":"seront"} pas programmé${pendingReminderConflicts.length===1?"":"s"}, car le moment du rappel est déjà passé.`);
