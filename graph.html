@@ -152,7 +152,7 @@
 
   /* Outlook-ähnlicher Mail-Editor */
   .mail-template-head{display:flex;align-items:center;gap:12px;margin:0 0 14px}
-   .mail-template-head h2{margin:0}.mail-template-head .signature-toggle{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--ink);font-weight:750;font-size:14px;cursor:pointer;background:var(--surface-soft);border:1px solid var(--line);border-radius:999px;padding:8px 12px;user-select:none;-webkit-tap-highlight-color:transparent}.mail-template-head .signature-toggle:hover{border-color:var(--line-strong);background:#fff}.mail-template-head .signature-toggle input{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;flex:0 0 16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;box-shadow:none;outline:none;display:inline-grid;place-content:center;transition:background .12s ease,border-color .12s ease}.mail-template-head .signature-toggle input:focus,.mail-template-head .signature-toggle input:focus-visible{outline:none;box-shadow:none}.mail-template-head .signature-toggle input:checked{background:var(--accent);border-color:var(--accent)}.mail-template-head .signature-toggle input:checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}
+   .mail-template-head h2{margin:0}
   .compose-shell{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:visible;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
   .compose-subject-row{display:flex;align-items:center;gap:14px;padding:14px 20px 10px;border-bottom:1px solid var(--line);background:#fff;border-radius:18px 18px 0 0}
   .compose-subject-row label{margin:0;flex:0 0 auto;font-size:15px;font-weight:800;color:var(--muted)}
@@ -205,7 +205,7 @@
   .signature-toggle input[type="checkbox"]:focus,.signature-toggle input[type="checkbox"]:focus-visible{outline:none!important;box-shadow:none!important}
   .signature-toggle input[type="checkbox"]{transform:none!important}
 
-  .template-card{position:relative}.mail-template-head{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}.template-toggle-zone{display:flex;align-items:center;gap:10px;min-width:0;flex:1;cursor:pointer;border-radius:12px;padding:2px 4px;margin:-2px -4px}.template-toggle-zone:hover{background:transparent}.template-chevron{width:30px;height:30px;min-width:30px;padding:0;border-radius:8px;background:#fff;color:var(--accent);border:1px solid var(--line);box-shadow:var(--shadow-sm);font-size:18px;display:inline-flex;align-items:center;justify-content:center;line-height:1}.template-chevron:hover,.template-toggle-zone:hover .template-chevron{background:var(--accent-soft);border-color:#d7e3ff;box-shadow:0 6px 16px rgba(20,30,60,.08)}.mail-template-head .template-title{display:flex;flex-direction:column;gap:2px;min-width:0}.mail-template-head .template-title h2{margin:0}.mail-template-head .template-title .hint{margin:0}.template-editor-area{display:block}.template-card.template-collapsed .template-editor-area{display:none}.mail-template-head .signature-toggle{margin-left:0}.template-card.template-collapsed{padding-bottom:18px}.template-card.template-collapsed .mail-template-head{border-bottom:0;margin-bottom:0;padding-bottom:0}
+  .template-card{position:relative}.mail-template-head{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}.template-toggle-zone{display:flex;align-items:center;gap:10px;min-width:0;flex:1;cursor:pointer;border-radius:12px;padding:2px 4px;margin:-2px -4px}.template-toggle-zone:hover{background:transparent}.template-chevron{width:30px;height:30px;min-width:30px;padding:0;border-radius:8px;background:#fff;color:var(--accent);border:1px solid var(--line);box-shadow:var(--shadow-sm);font-size:18px;display:inline-flex;align-items:center;justify-content:center;line-height:1}.template-chevron:hover,.template-toggle-zone:hover .template-chevron{background:var(--accent-soft);border-color:#d7e3ff;box-shadow:0 6px 16px rgba(20,30,60,.08)}.mail-template-head .template-title{display:flex;flex-direction:column;gap:2px;min-width:0}.mail-template-head .template-title h2{margin:0}.mail-template-head .template-title .hint{margin:0}.template-editor-area{display:block}.template-card.template-collapsed .template-editor-area{display:none}.template-card.template-collapsed{padding-bottom:18px}.template-card.template-collapsed .mail-template-head{border-bottom:0;margin-bottom:0;padding-bottom:0}
 
   .preview-card{padding:0;overflow:hidden}
   .preview-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;padding:22px 22px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfcff)}
@@ -257,10 +257,11 @@
   .reminder-toggle{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font-size:13px;font-weight:750;cursor:pointer}
   .reminder-toggle input{width:16px;height:16px;min-width:16px;margin:0}
   .reminder-note,.template-note{margin:2px 0 12px;font-size:12.5px;color:var(--muted)}
-  .template-settings{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(320px,1.2fr);gap:12px;margin:0 0 14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft)}
+  .template-settings{display:grid;grid-template-columns:minmax(220px,.78fr) minmax(360px,1.12fr) minmax(220px,.55fr);gap:14px;margin:0 0 14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft);align-items:stretch}
   .student-lang-default{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft)}.student-lang-default label{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.student-lang-default select{height:40px;width:auto;min-width:170px;padding:7px 10px;border-radius:999px;background:#fff}
-  .setting-field{display:flex;flex-direction:column;gap:6px;min-width:0}.setting-field label,.setting-title{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.setting-field select,.setting-field input[type=time]{height:40px;padding:7px 10px;border-radius:12px;background:#fff}.reminder-setting{gap:8px}.reminder-main{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--ink)}.reminder-main input{width:16px;height:16px;margin:0}.reminder-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}.reminder-controls select{width:auto;min-width:74px}.reminder-controls input[type=time]{width:104px}.template-language-edit{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:750}.template-language-edit select{width:auto;min-width:148px;height:38px;padding:6px 10px;border-radius:999px;background:#fff}.contact-cell{display:grid;grid-template-columns:minmax(0,1fr) 136px;gap:8px;align-items:center}.contact-cell select{height:44px;padding:8px 10px;border-radius:11px;background:#fff;font-size:13px}.student-grid .contact-cell input{min-width:0}.lang-pill{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:850;color:var(--muted);margin-left:4px}
-  @media (max-width:900px){.template-settings{grid-template-columns:1fr}.student-lang-default{align-items:flex-start;flex-direction:column}.contact-cell{grid-template-columns:1fr}.template-language-edit{margin-left:0;width:100%}}
+  .setting-field{display:flex;flex-direction:column;gap:6px;min-width:0}.setting-field label,.setting-title{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.setting-help{font-size:11.5px;line-height:1.35;color:var(--muted)}.setting-field select,.setting-field input[type=time]{height:40px;padding:7px 10px;border-radius:12px;background:#fff}.reminder-setting{gap:8px}.reminder-main{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--ink)}.reminder-main input{width:16px;height:16px;margin:0}.reminder-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}.reminder-controls select{width:auto;min-width:74px}.reminder-controls input[type=time]{width:104px}.signature-setting{border-left:1px solid var(--line);padding-left:14px}.signature-toggle{display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-weight:800;font-size:13px;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;user-select:none;-webkit-tap-highlight-color:transparent;align-self:flex-start}.signature-toggle:hover{border-color:var(--line-strong);background:#fff}.signature-toggle input{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;flex:0 0 16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;box-shadow:none;outline:none;display:inline-grid;place-content:center;transition:background .12s ease,border-color .12s ease}.signature-toggle input:focus,.signature-toggle input:focus-visible{outline:none;box-shadow:none}.signature-toggle input:checked{background:var(--accent);border-color:var(--accent)}.signature-toggle input:checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}.template-language-edit{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:750}.template-language-edit select{width:auto;min-width:148px;height:38px;padding:6px 10px;border-radius:999px;background:#fff}.student-contact-grid .group-head th{background:#f8fafc}.student-contact-grid .sub-head th{font-size:10.5px;padding-top:4px!important;padding-bottom:4px!important;color:var(--muted);letter-spacing:.07em}.student-contact-grid .contact-group{text-align:left}.student-contact-grid .contact2-start{border-left:3px solid #e3ebf8!important}.student-contact-grid td.contact2-start{padding-left:16px!important}.student-contact-grid .lang-col{width:78px;text-align:center}.student-contact-grid .lang-select{width:74px;min-width:74px;height:44px;padding:8px 8px;border-radius:11px;background:#fff;font-size:13px;font-weight:850;letter-spacing:.05em;text-align:center}.student-contact-grid .contact-email input{min-width:0}.lang-pill{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:850;color:var(--muted);margin-left:4px}
+  @media (max-width:1100px){.template-settings{grid-template-columns:1fr 1fr}.signature-setting{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:12px}}
+  @media (max-width:900px){.template-settings{grid-template-columns:1fr}.student-lang-default{align-items:flex-start;flex-direction:column}.template-language-edit{margin-left:0;width:100%}}
   #appToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(16,24,40,.28);z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none}
 
   .sig-modal{position:fixed;inset:0;background:rgba(20,30,60,.48);display:none;align-items:center;justify-content:center;z-index:70;padding:18px}
@@ -277,14 +278,14 @@
     .card{padding:18px;border-radius:16px}.preview-head{flex-direction:column;padding:18px}.mail-actionbar{width:100%}.mail-actionbar #sendAll{width:100%}
     .mailhead{grid-template-columns:auto 1fr;align-items:flex-start}.mail-main{display:grid;grid-template-columns:1fr;row-gap:2px}.mailhead .recipient-line{white-space:normal}.status{grid-column:1/-1;justify-content:flex-start;min-width:0;flex-wrap:wrap}
     .slotrow{align-items:flex-start;flex-direction:column}.slottime{min-width:0}.compose-subject-row{align-items:flex-start;flex-direction:column;gap:2px}.outlook-editor{padding:18px;min-height:260px}
-    .mail-template-head{align-items:flex-start;flex-wrap:wrap}.template-toggle-zone{flex:1 1 100%}.mail-template-head .signature-toggle{margin-left:0}.logo-mode-buttons{width:100%}.logo-mode-btn{flex:1 1 auto}
+    .mail-template-head{align-items:flex-start;flex-wrap:wrap}.template-toggle-zone{flex:1 1 100%}.logo-mode-buttons{width:100%}.logo-mode-btn{flex:1 1 auto}
   }
 </style>
 </head>
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R13</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R14</span></p>
 </header>
 
 <nav class="tabs">
@@ -361,7 +362,6 @@
             <p class="hint">Modèle, signature et logo pour tous les e-mails.</p>
           </div>
         </div>
-        <label class="signature-toggle"><input type="checkbox" id="useSigTop"> Signature</label>
       </div>
       <div id="templateEditorArea" class="template-editor-area">
       <div class="template-settings" aria-label="Paramètres des e-mails">
@@ -377,6 +377,11 @@
           <span class="setting-title">Rappel</span>
           <label class="reminder-main" title="Les rappels sont envoyés automatiquement si l’app est ouverte et connectée."><input type="checkbox" id="reminderEnabled"> Envoyer un rappel automatique</label>
           <div class="reminder-controls"><span>à</span><input type="time" id="reminderTime"><span>,</span><select id="reminderDays"><option value="1">1 jour</option><option value="2">2 jours</option><option value="3">3 jours</option></select><span>avant le rendez-vous</span></div>
+        </div>
+        <div class="setting-field signature-setting">
+          <span class="setting-title">Signature</span>
+          <label class="signature-toggle"><input type="checkbox" id="useSigTop"> Ajouter la signature</label>
+          <span class="setting-help">Active ou masque la signature dans tous les e-mails.</span>
         </div>
       </div>
       <div class="template-tabs" id="templateModeTabs" role="tablist" aria-label="Choisir le modèle d’e-mail">
@@ -482,7 +487,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 57;
+const APP_VERSION = 58;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -513,7 +518,7 @@ function normalizeLang(lang){
   return "fr";
 }
 function langMeta(lang){ lang=normalizeLang(lang); return LANGS.find(l=>l.code===lang)||LANGS[0]; }
-function langOptionsHtml(selected){ selected=normalizeLang(selected); return LANGS.map(l=>`<option value="${l.code}"${l.code===selected?' selected':''}>${l.label}</option>`).join(""); }
+function langOptionsHtml(selected, compact=false){ selected=normalizeLang(selected); return LANGS.map(l=>`<option value="${l.code}"${l.code===selected?' selected':''} title="${l.label}">${compact ? l.short : l.label}</option>`).join(""); }
 function trimesterNumber(){ const n=Number(state && state.options ? state.options.trimester : 3); return Math.min(3, Math.max(1, n||3)); }
 function reminderDaysBefore(){ const n=Number(state && state.options ? state.options.reminderDaysBefore : 1); return Math.min(3, Math.max(1, n||1)); }
 function reminderTimeValue(){ return /^\d{2}:\d{2}$/.test(String(state && state.options ? state.options.reminderTime : "")) ? state.options.reminderTime : "15:00"; }
@@ -1005,13 +1010,15 @@ function contactEmails(stu){ return contactDetails(stu).map(c=>c.email); }
 function renderStudents(){
   const wrap=document.getElementById("studentTable");
   if(state.students.length===0){ wrap.innerHTML='<p class="muted">Aucun élève pour l’instant. Cliquez sur « + Ajouter un élève ».</p>'; return; }
-  let html='<table class="student-grid"><thead><tr><th style="width:28%">Élève</th><th style="width:34%">Contact 1</th><th style="width:34%">Contact 2</th><th style="width:54px"></th></tr></thead><tbody>';
+  let html='<table class="student-grid student-contact-grid"><thead><tr class="group-head"><th rowspan="2" style="width:28%">Élève</th><th colspan="2" class="contact-group">Contact 1</th><th colspan="2" class="contact-group contact2-start">Contact 2</th><th rowspan="2" style="width:54px"></th></tr><tr class="sub-head"><th>E-mail</th><th class="lang-col">Lang.</th><th class="contact2-start">E-mail</th><th class="lang-col">Lang.</th></tr></thead><tbody>';
   state.students.forEach(s=>{
     if(!s.lang1) s.lang1=state.options.defaultLang||"fr";
     if(!s.lang2) s.lang2=state.options.defaultLang||"fr";
     html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Nom"></td>`+
-      `<td><div class="contact-cell"><input class="st-e1" value="${esc(s.email1)}" placeholder="contact1@..."><select class="st-l1" title="Langue de l’e-mail">${langOptionsHtml(s.lang1)}</select></div></td>`+
-      `<td><div class="contact-cell"><input class="st-e2" value="${esc(s.email2)}" placeholder="contact2@..."><select class="st-l2" title="Langue de l’e-mail">${langOptionsHtml(s.lang2)}</select></div></td>`+
+      `<td class="contact-email"><input class="st-e1" value="${esc(s.email1)}" placeholder="contact1@..."></td>`+
+      `<td class="lang-col"><select class="st-l1 lang-select" title="Langue du contact 1">${langOptionsHtml(s.lang1, true)}</select></td>`+
+      `<td class="contact-email contact2-start"><input class="st-e2" value="${esc(s.email2)}" placeholder="contact2@..."></td>`+
+      `<td class="lang-col"><select class="st-l2 lang-select" title="Langue du contact 2">${langOptionsHtml(s.lang2, true)}</select></td>`+
       `<td style="width:40px"><button class="danger sm st-del">✕</button></td></tr>`;
   });
   html+='</tbody></table>'; wrap.innerHTML=html;
