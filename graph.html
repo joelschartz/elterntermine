@@ -142,7 +142,7 @@
   .schedule th{background:#f7f9fd;font-size:12px;white-space:nowrap;color:var(--ink)}
   .schedule td.td-time,.schedule .th-time{white-space:nowrap;font-weight:750;font-variant-numeric:tabular-nums;background:#fbfdff;position:sticky;left:0;z-index:1;width:132px;min-width:132px;max-width:132px}
   .schedule select{min-width:145px;padding:7px 8px;border-radius:9px}
-  .schedule td.assigned{background:var(--accent-soft)}.schedule td.assigned select{border-color:var(--accent);font-weight:700;color:var(--ink);background:#fff}.schedule td.past{background:#f3f5f8;color:#98a2b3}.schedule td.past select{background:#f6f7f9!important;color:#98a2b3!important;border-color:#e4e7ec!important;cursor:not-allowed;font-weight:500!important}.schedule td.past.assigned{background:#eef1f5}.schedule td.td-time.past-time{background:#f3f5f8;color:#98a2b3}
+  .schedule td.assigned{background:var(--accent-soft)}.schedule td.assigned select{border-color:var(--accent);font-weight:700;color:var(--ink);background:#fff}.schedule td.past{background:#fff;color:#98a2b3}.schedule td.past select{background:#fff!important;color:#98a2b3!important;border-color:#e4e7ec!important;cursor:not-allowed;font-weight:500!important;box-shadow:none!important}.schedule td.past.assigned{background:#fff}.schedule td.td-time.past-time{background:#fbfdff;color:#98a2b3}
   .weekblock{margin-bottom:18px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}.weekblock .schedule{border:0;border-radius:0}
   .weekblock .weekhead{font-weight:800;font-size:13px;color:#21335c;background:linear-gradient(180deg,#f5f8ff,#eef4ff);border-bottom:1px solid var(--line);padding:9px 12px}
   .acct{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--ok-soft);border:1px solid #bfe6cf;border-radius:14px}
@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R25</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R26</span></p>
 </header>
 
 <nav class="tabs">
@@ -1088,7 +1088,7 @@ function initCfgInputs(){ $start.value=state.config.start; $end.value=state.conf
 $start.onchange=()=>{ state.config.start=$start.value; saveState(); renderCalendar(); }; $end.onchange=()=>{ state.config.end=$end.value; saveState(); renderCalendar(); }; $dur.onchange=()=>{ state.config.durationMin=Number($dur.value)||20; saveState(); renderCalendar(); };
 document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Voulez-vous vraiment supprimer TOUS les jours sélectionnés et les rendez-vous attribués ?\n\n(Les élèves, le modèle et la signature sont conservés.)")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.sent=[]; try{ sentSet.clear(); }catch(e){} saveState(); renderCalendar(); renderMails(); };
 let calView=(function(){ const t=new Date(); return {y:t.getFullYear(), m:t.getMonth()}; })();
-const MINICAL_CSS='<style>.minical{max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--accent-soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}.cal-day.past{color:#b9c0cc;background:#f4f6f9;cursor:not-allowed}.cal-day.past:hover{background:#f4f6f9}.cal-day.past.sel{background:#e9edf3;color:#98a2b3;font-weight:600}.minical .hint{white-space:nowrap}</style>';
+const MINICAL_CSS='<style>.minical{max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--accent-soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}.cal-day.past{color:#c9ccd2;background:transparent;border-color:transparent;cursor:not-allowed}.cal-day.past:hover{background:transparent}.cal-day.past.sel{background:transparent;color:#c9ccd2;font-weight:400}.minical .hint{white-space:nowrap}</style>';
 function localDateIso(dt){ dt=dt||new Date(); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
 function renderDateList(){
   const host=document.getElementById("miniCal"); if(!host) return;
@@ -2078,21 +2078,24 @@ function mailBannerHtml(){
     if(reminderConflicts.length){
       banners.push(`<div class="banner warn">${reminderConflicts.length===1?"1 rappel ne peut":""+reminderConflicts.length+" rappels ne peuvent"} plus être programmé${reminderConflicts.length===1?"":"s"} : le moment du rappel est déjà passé. Modifiez l’heure ou choisissez 1, 2 ou 3 jours avant.</div>`);
     }
-    if(plannedReminders.length){
-      banners.push(`<div class="banner info">${plannedReminders.length===1?"1 rappel sera programmé":""+plannedReminders.length+" rappels seront programmés"} dans Outlook après l’envoi.</div>`);
-    }
+    // Les rappels prévus sont affichés dans le statut principal pour éviter les messages redondants.
   }
   let b=banners.length ? `<div class="banner-group">${banners.join("")}</div>` : "";
   if(currentMsgs.length>0){
+    const pendingSelected=currentMsgs.filter(m=>!sentSet.has(m.id) && !excludedSet.has(m.id));
+    const plannedCount=(state.options.reminderEnabled!==false) ? plannedReminderMessagesForConfirmations(pendingSelected).length : 0;
+    const reminderSuffix=plannedCount ? ` · ${plannedCount===1?"1 rappel sera programmé":""+plannedCount+" rappels seront programmés"} dans Outlook après l’envoi` : "";
     if(remaining===0) b+=`<div class="banner ok">Tous les e-mails ont été envoyés. Pour les renvoyer : « Réinitialiser le statut d’envoi ».</div>`;
-    else if(currentMsgs.length===1) b+=`<div class="banner info">1 e-mail en attente · ${assigned} rendez-vous.${sentCount?" "+sentCount+" déjà envoyé.":""}</div>`;
-    else b+=`<div class="banner info">${remaining} sur ${emailCount(currentMsgs.length)} en attente · ${assigned} rendez-vous.${sentCount?" "+sentCount+" déjà envoyé"+(sentCount===1?"":"s")+".":""}</div>`;
+    else if(currentMsgs.length===1) b+=`<div class="banner info">1 e-mail en attente · ${assigned} rendez-vous${reminderSuffix}.${sentCount?" "+sentCount+" déjà envoyé.":""}</div>`;
+    else b+=`<div class="banner info">${remaining} sur ${emailCount(currentMsgs.length)} en attente · ${assigned} rendez-vous${reminderSuffix}.${sentCount?" "+sentCount+" déjà envoyé"+(sentCount===1?"":"s")+".":""}</div>`;
   }
   return b;
 }
 function updateMailBanner(){ const mailBanner=document.getElementById("mailBanner"); if(mailBanner) mailBanner.innerHTML=mailBannerHtml(); }
 function renderMails(openId){
   currentMsgs=buildMessages();
+  const sentCount=currentMsgs.filter(m=>sentSet.has(m.id)).length;
+  const remaining=currentMsgs.length-sentCount;
   updateMailBanner();
   const previewHint=document.getElementById("previewHint");
   if(previewHint) previewHint.style.display = currentMsgs.length>0 ? "" : "none";
@@ -2102,7 +2105,7 @@ function renderMails(openId){
     sendBtn.style.display=remaining>0?"inline-block":"none";
     sendBtn.disabled=!account;
     sendBtn.title=!account ? "Veuillez d’abord vous connecter avec Microsoft" : "";
-    sendBtn.textContent=`Tout envoyer (${remaining}) …`;
+    sendBtn.textContent=`Envoyer (${remaining}) …`;
   }
   if(resetBtn) resetBtn.style.display=(sentSet.size>0 || reminderSentSet.size>0)?"inline-block":"none";
 
