@@ -142,7 +142,7 @@
   .schedule th{background:#f7f9fd;font-size:12px;white-space:nowrap;color:var(--ink)}
   .schedule td.td-time,.schedule .th-time{white-space:nowrap;font-weight:750;font-variant-numeric:tabular-nums;background:#fbfdff;position:sticky;left:0;z-index:1;width:132px;min-width:132px;max-width:132px}
   .schedule select{min-width:145px;padding:7px 8px;border-radius:9px}
-  .schedule td.assigned{background:var(--accent-soft)}.schedule td.assigned select{border-color:var(--accent);font-weight:700;color:var(--ink);background:#fff}.schedule td.past{background:#f3f5f8;color:#98a2b3}.schedule td.past select{background:#f6f7f9!important;color:#98a2b3!important;border-color:#e4e7ec!important;cursor:not-allowed;font-weight:500!important}.schedule td.past.assigned{background:#eef1f5}
+  .schedule td.assigned{background:var(--accent-soft)}.schedule td.assigned select{border-color:var(--accent);font-weight:700;color:var(--ink);background:#fff}.schedule td.past{background:#f3f5f8;color:#98a2b3}.schedule td.past select{background:#f6f7f9!important;color:#98a2b3!important;border-color:#e4e7ec!important;cursor:not-allowed;font-weight:500!important}.schedule td.past.assigned{background:#eef1f5}.schedule td.td-time.past-time{background:#f3f5f8;color:#98a2b3}
   .weekblock{margin-bottom:18px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}.weekblock .schedule{border:0;border-radius:0}
   .weekblock .weekhead{font-weight:800;font-size:13px;color:#21335c;background:linear-gradient(180deg,#f5f8ff,#eef4ff);border-bottom:1px solid var(--line);padding:9px 12px}
   .acct{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--ok-soft);border:1px solid #bfe6cf;border-radius:14px}
@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R24</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R25</span></p>
 </header>
 
 <nav class="tabs">
@@ -502,6 +502,16 @@ function displayStudentName(name, limit=STUDENT_NAME_DISPLAY_LIMIT){
 function stripBold(text){ return (text||"").replace(/\*\*(.+?)\*\*/g,"$1"); }
 function htmlFromPlain(s){ return escHtml(s||"").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>"); }
 function bodyHtmlFromPlain(s){ return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.45;color:#000">'+htmlFromPlain(s)+'</div>'; }
+function countFr(n, singular, plural){ n=Number(n)||0; return n+" "+(n===1?singular:(plural||singular+"s")); }
+function emailCount(n){ return countFr(n,"e-mail","e-mails"); }
+function reminderCount(n){ return countFr(n,"rappel","rappels"); }
+function confirmationCount(n){ return countFr(n,"confirmation","confirmations"); }
+function studentCount(n){ return countFr(n,"élève","élèves"); }
+function selectedCount(n){ n=Number(n)||0; return n+" sélectionné"+(n===1?"":"s"); }
+function sentWord(n, feminine=false){ return "envoyé"+(feminine?"e":"")+(Number(n)===1?"":"s"); }
+function programmedWord(n){ return "programmé"+(Number(n)===1?"":"s"); }
+function isAre(n){ return Number(n)===1 ? "est" : "sont"; }
+function willBe(n){ return Number(n)===1 ? "sera" : "seront"; }
 const LANGS=[
   {code:"fr",label:"Français",short:"FR"},
   {code:"de",label:"Deutsch",short:"DE"},
@@ -533,10 +543,11 @@ function formatReminderDueLabel(iso){
 }
 function reminderPlanSentence(reminders){
   if(!reminders || !reminders.length) return "";
-  if(reminders.length===1){
+  const n=reminders.length;
+  if(n===1){
     return "Rappel automatique : 1 e-mail de rappel sera programmé dans Outlook pour "+formatReminderDueLabel(reminders[0].dueAt)+".";
   }
-  return "Rappels automatiques : "+reminders.length+" e-mail(s) de rappel seront programmés dans Outlook ("+reminderScheduleSummary()+").";
+  return "Rappels automatiques : "+emailCount(n)+" de rappel seront programmés dans Outlook ("+reminderScheduleSummary()+").";
 }
 const TRIMESTER_TEXTS={
   fr:["premier trimestre","deuxième trimestre","troisième trimestre"],
@@ -1077,8 +1088,26 @@ function initCfgInputs(){ $start.value=state.config.start; $end.value=state.conf
 $start.onchange=()=>{ state.config.start=$start.value; saveState(); renderCalendar(); }; $end.onchange=()=>{ state.config.end=$end.value; saveState(); renderCalendar(); }; $dur.onchange=()=>{ state.config.durationMin=Number($dur.value)||20; saveState(); renderCalendar(); };
 document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Voulez-vous vraiment supprimer TOUS les jours sélectionnés et les rendez-vous attribués ?\n\n(Les élèves, le modèle et la signature sont conservés.)")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.sent=[]; try{ sentSet.clear(); }catch(e){} saveState(); renderCalendar(); renderMails(); };
 let calView=(function(){ const t=new Date(); return {y:t.getFullYear(), m:t.getMonth()}; })();
-const MINICAL_CSS='<style>.minical{max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}.minical .hint{white-space:nowrap}</style>';
-function renderDateList(){ const host=document.getElementById("miniCal"); if(!host) return; const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate(); const todayStr=new Date().toISOString().slice(0,10); const title=first.toLocaleDateString("fr-FR",{month:"long",year:"numeric"}); const wd=["Lu","Ma","Me","Je","Ve","Sa","Di"]; let cells=""; for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>'; for(let d=1;d<=dim;d++){ const wd=new Date(y,m,d).getDay(); const weekend=(wd===0||wd===6); const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"]; if(weekend) cls.push("wknd"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today"); cells += weekend ? ('<div class="'+cls.join(" ")+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>'); } host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Cliquer sur un jour = sélectionner/désélectionner · '+state.config.dates.length+' sélectionné(s)</div></div>'; host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; }); host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; }); updateCalResetVisibility(); }
+const MINICAL_CSS='<style>.minical{max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--accent-soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}.cal-day.past{color:#b9c0cc;background:#f4f6f9;cursor:not-allowed}.cal-day.past:hover{background:#f4f6f9}.cal-day.past.sel{background:#e9edf3;color:#98a2b3;font-weight:600}.minical .hint{white-space:nowrap}</style>';
+function localDateIso(dt){ dt=dt||new Date(); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
+function renderDateList(){
+  const host=document.getElementById("miniCal"); if(!host) return;
+  const y=calView.y, m=calView.m; const first=new Date(y,m,1); const startWd=(first.getDay()+6)%7; const dim=new Date(y,m+1,0).getDate();
+  const today=new Date(); today.setHours(0,0,0,0); const todayStr=localDateIso(today);
+  const title=first.toLocaleDateString("fr-FR",{month:"long",year:"numeric"}); const wd=["Lu","Ma","Me","Je","Ve","Sa","Di"]; let cells="";
+  for(let i=0;i<startWd;i++) cells+='<div class="cal-day empty"></div>';
+  for(let d=1;d<=dim;d++){
+    const cur=new Date(y,m,d); cur.setHours(0,0,0,0);
+    const weekday=cur.getDay(); const weekend=(weekday===0||weekday===6); const isPast=cur<today;
+    const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); const cls=["cal-day"];
+    if(weekend) cls.push("wknd"); if(isPast) cls.push("past"); if(!weekend && state.config.dates.includes(ds)) cls.push("sel"); if(ds===todayStr) cls.push("today");
+    cells += (weekend || isPast) ? ('<div class="'+cls.join(" ")+'" title="'+(isPast?'Jour passé':'Week-end')+'">'+d+'</div>') : ('<div class="'+cls.join(" ")+'" data-d="'+ds+'">'+d+'</div>');
+  }
+  host.innerHTML=MINICAL_CSS+'<div class="minical"><div class="cal-head"><button class="cal-nav" data-dir="-1">‹</button><span class="cal-title">'+title+'</span><button class="cal-nav" data-dir="1">›</button></div><div class="cal-grid">'+wd.map(w=>'<div class="cal-wd">'+w+'</div>').join("")+cells+'</div><div class="hint" style="margin-top:6px">Cliquer sur un jour = sélectionner/désélectionner · '+selectedCount(state.config.dates.length)+'</div></div>';
+  host.querySelectorAll(".cal-nav").forEach(b=>{ b.onclick=()=>{ calView.m+=(+b.dataset.dir); if(calView.m<0){calView.m=11;calView.y--;} if(calView.m>11){calView.m=0;calView.y++;} renderDateList(); }; });
+  host.querySelectorAll(".cal-day[data-d]").forEach(c=>{ c.onclick=()=>{ const ds=c.dataset.d; if(state.config.dates.includes(ds)){ state.config.dates=state.config.dates.filter(x=>x!==ds); Object.keys(state.assignments).forEach(k=>{ if(k.startsWith(ds+"__")) delete state.assignments[k]; }); } else { state.config.dates.push(ds); state.config.dates.sort(); } saveState(); renderDateList(); renderCalendar(); }; });
+  updateCalResetVisibility();
+}
 function updateCalResetVisibility(){ const row=document.getElementById("resetCalRow"); if(row) row.style.display = (state.config.dates && state.config.dates.length>0) ? "" : "none"; }
 function assignmentStudents(){ return state.students.filter(s=>(s.name||"").trim() || contactEmails(s).length); }
 function assignmentOptionsFor(key){
@@ -1108,6 +1137,7 @@ function renderCalendar(){
     const head='<tr><th class="th-time">Heure</th>'+days.map(d=>{ const lbl=new Date(d+"T00:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}); return '<th>'+lbl+'</th>'; }).join("")+'</tr>';
     const now=new Date();
     const bodyRows=sl.map((slot,i)=>{
+      const rowPastAll=days.every(d=>appointmentDateTime(d, slot.end) <= now);
       const cells=days.map(d=>{
         const key=d+"__"+i, sel=state.assignments[key]||"";
         const isPast=appointmentDateTime(d, slot.end) <= now;
@@ -1115,7 +1145,7 @@ function renderCalendar(){
         const disabled=isPast ? ' disabled title="Rendez-vous passé"' : '';
         return '<td'+(cls.length?' class="'+cls.join(' ')+""+'"':'')+'><select data-key="'+key+'"'+disabled+'>'+assignmentOptionsFor(key)+'</select></td>';
       }).join("");
-      return '<tr><td class="td-time">'+slot.start+'–'+slot.end+'</td>'+cells+'</tr>';
+      return '<tr><td class="td-time'+(rowPastAll?' past-time':'')+'">'+slot.start+'–'+slot.end+'</td>'+cells+'</tr>';
     }).join("");
     return '<div class="weekblock"><div class="weekhead">Semaine du '+monLbl+'</div><div style="overflow-x:auto"><table class="schedule"><thead>'+head+'</thead><tbody>'+bodyRows+'</tbody></table></div></div>';
   }).join("");
@@ -2018,55 +2048,52 @@ function setMailEditedVisual(item, edited){
 }
 function markMailEditorEdited(editor){ const item = editor && editor.closest ? editor.closest(".mailitem") : null; setMailEditedVisual(item, true); }
 
-function renderMails(openId){
-  currentMsgs=buildMessages();
+function mailBannerHtml(){
   const assigned=Object.values(state.assignments).filter(Boolean).length;
   const missing=[];
-  let hasMultiContact=false;
   state.config.dates.forEach(d=>slots().forEach((s,i)=>{
     const sid=state.assignments[d+"__"+i];
     if(!sid) return;
     const stu=state.students.find(x=>x.id===sid);
     if(!stu) return;
-    const n=contactEmails(stu).length;
-    if(n===0) missing.push(stu.name||"(sans nom)");
-    if(n>=2) hasMultiContact=true;
+    if(contactEmails(stu).length===0) missing.push(stu.name||"(sans nom)");
   }));
   const sentCount=currentMsgs.filter(m=>sentSet.has(m.id)).length;
   const remaining=currentMsgs.length-sentCount;
-  const warnBanners=[];
-  if(!account) warnBanners.push('<div class="banner warn">Veuillez vous connecter ci-dessus avec votre compte Microsoft pour envoyer.</div>');
-  if(currentMsgs.length===0) warnBanners.push('<div class="banner warn">Aucun e-mail prêt à être envoyé. Attribuez des élèves dans l’onglet « Calendrier » et saisissez les adresses e-mail.</div>');
+  const banners=[];
+  if(!account) banners.push('<div class="banner warn">Veuillez vous connecter ci-dessus avec votre compte Microsoft pour envoyer.</div>');
+  if(currentMsgs.length===0) banners.push('<div class="banner warn">Aucun e-mail prêt à être envoyé. Attribuez des élèves dans l’onglet « Calendrier » et saisissez les adresses e-mail.</div>');
   if(missing.length){
     const missingHtml=[...new Set(missing)].map(n=>`<span class="truncated-inline" title="${esc(n)}">${esc(displayStudentName(n))}</span>`).join(", ");
-    warnBanners.push(`<div class="banner warn">Sans adresse e-mail (seront ignorés) : ${missingHtml}</div>`);
+    banners.push(`<div class="banner warn">Sans adresse e-mail : ${missingHtml}. Ces rendez-vous seront ignorés.</div>`);
   }
   const pastAppts=pastAssignedAppointmentsCount();
   if(pastAppts){
-    warnBanners.push(`<div class="banner warn">${pastAppts} rendez-vous déjà passé(s) sont grisés dans le calendrier et ignorés pour l’envoi.</div>`);
+    banners.push(`<div class="banner warn">${pastAppts===1?"1 rendez-vous passé est grisé":""+pastAppts+" rendez-vous passés sont grisés"} dans le calendrier et ignoré${pastAppts===1?"":"s"} pour l’envoi.</div>`);
   }
   if(state.options.reminderEnabled!==false){
-    const pendingConfirmations=currentMsgs.filter(m=>!sentSet.has(m.id));
-    const plannedReminders=plannedReminderMessagesForConfirmations(pendingConfirmations);
-    const reminderConflicts=reminderConflictsForConfirmations(pendingConfirmations);
-    const scheduledReminders=buildReminderMessages(false).filter(m=>reminderSentSet.has(m.id)).length;
+    const pendingSelected=currentMsgs.filter(m=>!sentSet.has(m.id) && !excludedSet.has(m.id));
+    const plannedReminders=plannedReminderMessagesForConfirmations(pendingSelected);
+    const reminderConflicts=reminderConflictsForConfirmations(pendingSelected);
     if(reminderConflicts.length){
-      warnBanners.push(`<div class="banner warn">${reminderConflicts.length} rappel(s) ne peuvent plus être programmés : le moment du rappel est déjà passé. Modifiez l’heure ou choisissez 1, 2 ou 3 jours avant.</div>`);
+      banners.push(`<div class="banner warn">${reminderConflicts.length===1?"1 rappel ne peut":""+reminderConflicts.length+" rappels ne peuvent"} plus être programmé${reminderConflicts.length===1?"":"s"} : le moment du rappel est déjà passé. Modifiez l’heure ou choisissez 1, 2 ou 3 jours avant.</div>`);
     }
     if(plannedReminders.length){
-      warnBanners.push(`<div class="banner info">Rappels automatiques : ${plannedReminders.length} rappel(s) seront programmés dans Outlook uniquement après avoir cliqué sur « Tout envoyer ».</div>`);
-    } else if(scheduledReminders>0){
-      warnBanners.push(`<div class="banner ok">Rappels automatiques : ${scheduledReminders} rappel(s) déjà programmé(s) dans Outlook.</div>`);
+      banners.push(`<div class="banner info">${plannedReminders.length===1?"1 rappel sera programmé":""+plannedReminders.length+" rappels seront programmés"} dans Outlook après l’envoi.</div>`);
     }
   }
-  let b=warnBanners.length ? `<div class="banner-group">${warnBanners.join("")}</div>` : "";
+  let b=banners.length ? `<div class="banner-group">${banners.join("")}</div>` : "";
   if(currentMsgs.length>0){
-    if(remaining===0) b+=`<div class="banner ok">Tous les ${currentMsgs.length} e-mail(s) ont été envoyés. Pour les renvoyer : « Réinitialiser le statut d’envoi ».</div>`;
-    else b+=`<div class="banner info">${remaining} sur ${currentMsgs.length} e-mail(s) en attente · ${assigned} rendez-vous.${sentCount?" "+sentCount+" déjà envoyé(s).":""}</div>`;
+    if(remaining===0) b+=`<div class="banner ok">Tous les e-mails ont été envoyés. Pour les renvoyer : « Réinitialiser le statut d’envoi ».</div>`;
+    else if(currentMsgs.length===1) b+=`<div class="banner info">1 e-mail en attente · ${assigned} rendez-vous.${sentCount?" "+sentCount+" déjà envoyé.":""}</div>`;
+    else b+=`<div class="banner info">${remaining} sur ${emailCount(currentMsgs.length)} en attente · ${assigned} rendez-vous.${sentCount?" "+sentCount+" déjà envoyé"+(sentCount===1?"":"s")+".":""}</div>`;
   }
-
-  const mailBanner=document.getElementById("mailBanner");
-  if(mailBanner) mailBanner.innerHTML=b;
+  return b;
+}
+function updateMailBanner(){ const mailBanner=document.getElementById("mailBanner"); if(mailBanner) mailBanner.innerHTML=mailBannerHtml(); }
+function renderMails(openId){
+  currentMsgs=buildMessages();
+  updateMailBanner();
   const previewHint=document.getElementById("previewHint");
   if(previewHint) previewHint.style.display = currentMsgs.length>0 ? "" : "none";
 
@@ -2182,7 +2209,8 @@ function refreshSelectionUI(){
     if(lbl) lbl.textContent = (selected===sendable.length && sendable.length>0) ? "Tout désélectionner" : "Tout sélectionner";
   }
   const cnt=document.getElementById("selectCount");
-  if(cnt) cnt.textContent = sendable.length ? (selected+" sur "+sendable.length+" sélectionné(s)") : "";
+  if(cnt) cnt.textContent = sendable.length ? (selected+" sur "+sendable.length+" "+(selected===1?"sélectionné":"sélectionnés")) : "";
+  updateMailBanner();
   const bar=document.getElementById("mailSelectBar");
   if(bar) bar.style.display = sendable.length>=2 ? "flex" : "none";
   const sendBtn=document.getElementById("sendAll");
@@ -2217,11 +2245,11 @@ document.getElementById("sendAll").onclick=()=>{
   pendingReminderPlan=plannedReminderMessagesForConfirmations(pendingSend);
   const pendingReminderConflicts=reminderConflictsForConfirmations(pendingSend);
   const students=new Set(pendingSend.map(m=>m.student)).size;
-  document.getElementById("confirmText").textContent=`${pendingSend.length} e-mail(s) de confirmation seront envoyés maintenant aux contacts de ${students} élève(s).`;
-  const detail=[`Envoi via votre compte (${state.account.email}). Les e-mails de confirmation déjà envoyés seront ignorés. Action irréversible.`];
+  document.getElementById("confirmText").textContent=`${emailCount(pendingSend.length)} de confirmation ${pendingSend.length===1?"sera envoyé":"seront envoyés"} maintenant aux contacts de ${studentCount(students)}.`;
+  const detail=[`Envoi via votre compte (${state.account.email}). Les confirmations déjà envoyées seront ignorées. Action irréversible.`];
   const reminderText=reminderPlanSentence(pendingReminderPlan);
   if(reminderText) detail.push(reminderText);
-  if(pendingReminderConflicts.length) detail.push(`${pendingReminderConflicts.length} rappel(s) ne seront pas programmés, car le moment du rappel est déjà passé.`);
+  if(pendingReminderConflicts.length) detail.push(`${reminderCount(pendingReminderConflicts.length)} ne ${pendingReminderConflicts.length===1?"sera":"seront"} pas programmé${pendingReminderConflicts.length===1?"":"s"}, car le moment du rappel est déjà passé.`);
   document.getElementById("confirmDetail").textContent=detail.join(" ");
   overlay.style.display="flex";
 };
@@ -2264,8 +2292,10 @@ document.getElementById("confirmGo").onclick=async()=>{
     }
   }catch(e){ alert("Assistant local inaccessible ?\n"+(e&&e.message?e.message:e)); }
   renderMails();
-  const reminderPart=reminderOk ? ` ${reminderOk} rappel(s) programmé(s) dans Outlook (${reminderScheduleSummary()}).` : (reminderFail ? ` ${reminderFail} rappel(s) non programmé(s)${firstReminderErr?(" — "+esc(firstReminderErr)):""}.` : "");
-  document.getElementById("mailBanner").innerHTML=`<div class="banner ${(fail||reminderFail)?'warn':'ok'}">${ok} confirmation(s) envoyée(s)${fail?(", "+fail+" échec(s) — "+esc(firstErr)):""}.${reminderPart}</div>`+document.getElementById("mailBanner").innerHTML;
+  const reminderPart=reminderOk ? ` ${reminderCount(reminderOk)} ${programmedWord(reminderOk)} dans Outlook (${reminderScheduleSummary()}).` : (reminderFail ? ` ${reminderCount(reminderFail)} non programmé${reminderFail===1?"":"s"}${firstReminderErr?(" — "+esc(firstReminderErr)):""}.` : "");
+  const confirmPart=`${confirmationCount(ok)} ${sentWord(ok,true)}`;
+  const failPart=fail ? `, ${countFr(fail,"échec","échecs")} — ${esc(firstErr)}` : "";
+  document.getElementById("mailBanner").innerHTML=`<div class="banner ${(fail||reminderFail)?'warn':'ok'}">${confirmPart}${failPart}.${reminderPart}</div>`+document.getElementById("mailBanner").innerHTML;
   pendingSend=[]; pendingReminderPlan=[]; btn.disabled=false;
 };
 
