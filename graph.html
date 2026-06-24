@@ -205,7 +205,7 @@
   .signature-toggle input[type="checkbox"]:focus,.signature-toggle input[type="checkbox"]:focus-visible{outline:none!important;box-shadow:none!important}
   .signature-toggle input[type="checkbox"]{transform:none!important}
 
-  .template-card{position:relative}.mail-template-head{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}.template-toggle-zone{display:flex;align-items:center;gap:10px;min-width:0;flex:1;cursor:pointer;border-radius:12px;padding:2px 4px;margin:-2px -4px}.template-toggle-zone:hover{background:transparent}.template-chevron{width:30px;height:30px;min-width:30px;padding:0;border-radius:8px;background:transparent;color:var(--accent);border:1px solid transparent;box-shadow:none;font-size:18px;display:inline-flex;align-items:center;justify-content:center;line-height:1}.template-chevron:hover,.template-toggle-zone:hover .template-chevron{background:var(--accent-soft);border-color:#d7e3ff;box-shadow:none}.mail-template-head .template-title{display:flex;flex-direction:column;gap:2px;min-width:0}.mail-template-head .template-title h2{margin:0}.mail-template-head .template-title .hint{margin:0}.template-editor-area{display:block}.template-card.template-collapsed .template-editor-area{display:none}.mail-template-head .signature-toggle{margin-left:0}.template-card.template-collapsed{padding-bottom:18px}.template-card.template-collapsed .mail-template-head{border-bottom:0;margin-bottom:0;padding-bottom:0}
+  .template-card{position:relative}.mail-template-head{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}.template-toggle-zone{display:flex;align-items:center;gap:10px;min-width:0;flex:1;cursor:pointer;border-radius:12px;padding:2px 4px;margin:-2px -4px}.template-toggle-zone:hover{background:transparent}.template-chevron{width:30px;height:30px;min-width:30px;padding:0;border-radius:8px;background:#fff;color:var(--accent);border:1px solid var(--line);box-shadow:var(--shadow-sm);font-size:18px;display:inline-flex;align-items:center;justify-content:center;line-height:1}.template-chevron:hover,.template-toggle-zone:hover .template-chevron{background:var(--accent-soft);border-color:#d7e3ff;box-shadow:0 6px 16px rgba(20,30,60,.08)}.mail-template-head .template-title{display:flex;flex-direction:column;gap:2px;min-width:0}.mail-template-head .template-title h2{margin:0}.mail-template-head .template-title .hint{margin:0}.template-editor-area{display:block}.template-card.template-collapsed .template-editor-area{display:none}.mail-template-head .signature-toggle{margin-left:0}.template-card.template-collapsed{padding-bottom:18px}.template-card.template-collapsed .mail-template-head{border-bottom:0;margin-bottom:0;padding-bottom:0}
 
   .preview-card{padding:0;overflow:hidden}
   .preview-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;padding:22px 22px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfcff)}
@@ -249,6 +249,14 @@
   .template-card.signature-off .template-compose-shell .mail-editor{min-height:0}
   .template-compose-shell .mailbody-head{border-radius:16px 16px 0 0}
   .mail-reset{margin-top:8px}.mail-reset a{font-size:12px;color:var(--err);text-decoration:none;font-weight:700}.mail-reset a:hover{text-decoration:underline}.mail-reset a.save-default{color:var(--accent);margin-left:16px}
+
+  .template-tabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+  .template-tab{background:#fff;color:var(--muted);border:1px solid var(--line);box-shadow:none;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:800}
+  .template-tab:hover{background:var(--accent-soft);border-color:#d7e3ff;box-shadow:none}
+  .template-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 8px 18px rgba(47,95,215,.18)}
+  .reminder-toggle{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font-size:13px;font-weight:750;cursor:pointer}
+  .reminder-toggle input{width:16px;height:16px;min-width:16px;margin:0}
+  .reminder-note{margin:2px 0 12px;font-size:12.5px;color:var(--muted)}
   #appToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(16,24,40,.28);z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none}
 
   .sig-modal{position:fixed;inset:0;background:rgba(20,30,60,.48);display:none;align-items:center;justify-content:center;z-index:70;padding:18px}
@@ -272,7 +280,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R10</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R11</span></p>
 </header>
 
 <nav class="tabs">
@@ -343,6 +351,12 @@
         <label class="signature-toggle"><input type="checkbox" id="useSigTop"> Signature</label>
       </div>
       <div id="templateEditorArea" class="template-editor-area">
+      <div class="template-tabs" id="templateModeTabs" role="tablist" aria-label="Choisir le modèle d’e-mail">
+        <button type="button" class="template-tab active" data-template-mode="confirmation">Confirmation</button>
+        <button type="button" class="template-tab" data-template-mode="reminder">Rappel automatique</button>
+        <label class="reminder-toggle" title="Les rappels sont envoyés automatiquement la veille du rendez-vous à 15h00, si l’app est ouverte et connectée."><input type="checkbox" id="reminderEnabled"> Rappel la veille à 15h00</label>
+      </div>
+      <p class="reminder-note" id="reminderNote" style="display:none">Ce modèle est utilisé pour l’e-mail de rappel envoyé automatiquement la veille du rendez-vous à 15h00.</p>
       <div id="mailTemplatePreview"></div>
       <div class="rich-toolbar" data-for="tplBodyEditor" aria-label="Barre de mise en forme">
           <button class="ot-ic editor-undo" data-cmd="undo" title="Annuler" disabled><svg viewBox="0 0 20 20"><path d="M8 6H4v-4"/><path d="M4 6c2.3-2.6 6.3-3.2 9.1-1.3 3.3 2.2 3.9 6.9 1.2 9.8-2.1 2.2-5.4 2.8-8.1 1.5"/></svg></button>
@@ -384,7 +398,7 @@
         <div id="tplBodyEditor" class="rich-editor mail-editor template-mail-editor" contenteditable="true" spellcheck="true"></div>
       </div>
       <div class="mail-reset" id="resetTplBodyRow" style="display:none"><a href="#" id="resetTplBody">↺ Réinitialiser le texte par défaut</a><a href="#" id="saveTplBody" class="save-default" title="Définir le texte actuel + l’objet comme standard personnel">✓ enregistrer comme standard</a></div>
-      <p class="hint">Les variables <code class="k">{DATE}</code>, <code class="k">{TIME}</code> et <code class="k">{ENFANT}</code> sont automatiquement remplacées à l’envoi par la date (en français), l’heure et le nom de l’élève – laissez-les simplement dans le texte.</p>
+      <p class="hint">Les variables <code class="k">{DATE}</code>, <code class="k">{TIME}</code> et <code class="k">{ENFANT}</code> sont automatiquement remplacées à l’envoi. Pour le rappel, <code class="k">{DATE}</code> et <code class="k">{TIME}</code> correspondent au rendez-vous du lendemain.</p>
       <div id="sigMissing" style="margin-top:12px"></div>
       <div id="inlineSignatureControls" class="inline-sig-controls">
         <div class="signature-options-row">
@@ -440,7 +454,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 54;
+const APP_VERSION = 55;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -468,6 +482,19 @@ function defaultBodyHtml(){
     'Je vous remercie d’avance pour votre présence.'+
   '</div>';
 }
+function defaultReminderSubject(){ return "Rappel — rendez-vous individuel demain"; }
+function defaultReminderBodyText(){ return "Chers parents,\n\n"+
+"Je me permets de vous rappeler notre rendez-vous individuel prévu demain, {DATE}, à {TIME}, concernant votre enfant {ENFANT}.\n"+
+"L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.\n\n"+
+"Je vous remercie d’avance pour votre présence."; }
+function defaultReminderBodyHtml(){
+  return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.45;color:#000">'+
+    'Chers parents,<br><br>'+
+    'Je me permets de vous rappeler notre rendez-vous individuel prévu demain, {DATE}, à {TIME}, concernant votre enfant {ENFANT}.<br>'+
+    'L’entretien durera environ vingt minutes et se déroulera dans ma salle de classe.<br><br>'+
+    'Je vous remercie d’avance pour votre présence.'+
+  '</div>';
+}
 function plainDefaultSignature(){ return "Bien cordialement,\nJoël Schartz\n\nInstituteur école fondamentale de Strassen\nBâtiment Hueflach – Salle HP13\n11, Rue du Cimetière\nL-8018 Strassen\njoel.schartz@education.lu\nTél: 31 02 62 508"; }
 function defaultSignatureTemplate(){ return '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;color:#000">'+
 '<div style="font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.2;color:#000">Bien cordialement,</div>'+ 
@@ -485,8 +512,8 @@ function defaultState(){
     appVersion: APP_VERSION,
     students: [],
     config: { dates: [], start:"14:00", end:"16:00", durationMin:20 },
-    assignments: {}, sent: [], subjectOverrides: {},
-    options: { combine:false, useSig:true, includeLogo:true, logoMode:"unesco", templateCollapsed:false },
+    assignments: {}, sent: [], reminderSent: [], subjectOverrides: {},
+    options: { combine:false, useSig:true, includeLogo:true, logoMode:"unesco", templateCollapsed:false, templateMode:"confirmation", reminderEnabled:true },
     graph: { clientId:"", tenant:"organizations" },
     account: { name:"", email:"" },
     // Vom Nutzer selbst festgelegter Standard (überschreibt den Werks-Standard beim Zurücksetzen).
@@ -498,6 +525,11 @@ function defaultState(){
       body: defaultBodyText(), bodyHtml: defaultBodyHtml(),
       signature: plainDefaultSignature(),
       signatureHtml: defaultSignatureTemplate(), logo: null
+    },
+    reminderTemplate: {
+      v: 1,
+      subject: defaultReminderSubject(),
+      body: defaultReminderBodyText(), bodyHtml: defaultReminderBodyHtml()
     }
   };
 }
@@ -535,6 +567,11 @@ function loadState(){
     }
     delete tpl.sigFields;
     tpl.v = 16;
+    const reminderTpl = Object.assign({}, d.reminderTemplate, s.reminderTemplate||{});
+    if(!reminderTpl.bodyHtml) reminderTpl.bodyHtml = htmlFromPlain(reminderTpl.body || defaultReminderBodyText());
+    reminderTpl.body = textFromHtml(reminderTpl.bodyHtml) || reminderTpl.body || defaultReminderBodyText();
+    reminderTpl.subject = reminderTpl.subject || defaultReminderSubject();
+    reminderTpl.v = 1;
     const options = Object.assign({}, d.options, s.options||{});
     if(!options.logoMode){ options.logoMode = (options.includeLogo===false ? "none" : "unesco"); }
     if(needsSignatureWindowMigration){ options.useSig = true; options.includeLogo = true; options.logoMode = "unesco"; }
@@ -548,11 +585,13 @@ function loadState(){
       overrides: s.overrides||{},
       subjectOverrides: s.subjectOverrides||{},
       sent: Array.isArray(s.sent)? s.sent : [],
+      reminderSent: Array.isArray(s.reminderSent)? s.reminderSent : [],
       options,
       graph: Object.assign(d.graph, s.graph||{}),
       account: Object.assign(d.account, s.account||{}),
       userDefaults: s.userDefaults || null,
-      template: tpl
+      template: tpl,
+      reminderTemplate: reminderTpl
     };
   }catch(e){ return defaultState(); }
 }
@@ -594,8 +633,25 @@ function signatureSeparatorHtml(){
 }
 function logoIsVisible(){ return state.options.useSig!==false && state.options.logoMode!=="none" && state.options.includeLogo!==false; }
 function composeLogoHtml(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl){ return '<div class="signature-logo-separator" data-signature-separator="true" contenteditable="false" aria-hidden="true"></div><div class="inline-logo" data-logo-inline="true" contenteditable="false" title="Logo"><img src="'+lg.dataUrl+'" alt=""></div>'; } return ''; }
-function composeEditorHtml(){
-  let html = sanitizeHtml(state.template.bodyHtml || defaultBodyHtml());
+function currentTemplateMode(){ return (state.options && state.options.templateMode==="reminder") ? "reminder" : "confirmation"; }
+function templateDataForMode(mode){
+  if(mode==="reminder"){
+    state.reminderTemplate = Object.assign({v:1,subject:defaultReminderSubject(),body:defaultReminderBodyText(),bodyHtml:defaultReminderBodyHtml()}, state.reminderTemplate||{});
+    if(!state.reminderTemplate.bodyHtml) state.reminderTemplate.bodyHtml=htmlFromPlain(state.reminderTemplate.body||defaultReminderBodyText());
+    if(!state.reminderTemplate.subject) state.reminderTemplate.subject=defaultReminderSubject();
+    return state.reminderTemplate;
+  }
+  return state.template;
+}
+function templateModeLabel(mode){ return mode==="reminder" ? "rappel" : "confirmation"; }
+function setTemplateBodyForMode(mode, subject, bodyHtml){
+  const tpl=templateDataForMode(mode);
+  tpl.subject=subject; tpl.bodyHtml=bodyHtml; tpl.body=textFromHtml(bodyHtml);
+}
+function composeEditorHtml(mode){
+  mode=mode||currentTemplateMode();
+  const tpl=templateDataForMode(mode);
+  let html = sanitizeHtml(tpl.bodyHtml || (mode==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml()));
   if(state.options.useSig!==false){
     const sig = stripSignatureSeparators(state.template.signatureHtml || defaultSignatureTemplate());
     html += '<div class="editor-signature-spacer" data-signature-spacer="true"><br></div>';
@@ -654,10 +710,14 @@ function removeSignatureTailFromBodyHtml(html){
 }
 function normalizeTextForCompare(s){ return String(s||"").replace(/ /g," ").replace(/\s+/g," ").trim(); }
 function resetBodyFormattingIfStillDefault(){
-  const txt=normalizeTextForCompare(textFromHtml(state.template.bodyHtml||""));
-  if(txt && txt===normalizeTextForCompare(defaultBodyText())){
-    state.template.bodyHtml=defaultBodyHtml();
-    state.template.body=defaultBodyText();
+  const mode=currentTemplateMode();
+  const tpl=templateDataForMode(mode);
+  const defText = mode==="reminder" ? defaultReminderBodyText() : defaultBodyText();
+  const defHtml = mode==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml();
+  const txt=normalizeTextForCompare(textFromHtml(tpl.bodyHtml||""));
+  if(txt && txt===normalizeTextForCompare(defText)){
+    tpl.bodyHtml=defHtml;
+    tpl.body=defText;
   }
 }
 // Liest den aktuellen Text/Signatur-Stand bevorzugt direkt aus dem Editor (Live-DOM),
@@ -666,7 +726,8 @@ function resetBodyFormattingIfStillDefault(){
 function liveTemplateParts(){
   const ed=document.getElementById("tplBodyEditor");
   if(ed){ try{ return splitComposeEditorHtml(ed.innerHTML); }catch(e){} }
-  return { bodyHtml: state.template.bodyHtml||"", signatureHtml: state.template.signatureHtml||"" };
+  const tpl=templateDataForMode(currentTemplateMode());
+  return { bodyHtml: tpl.bodyHtml||"", signatureHtml: state.template.signatureHtml||"" };
 }
 function normHtmlForCompare(s){ return String(s||"").replace(/\s+/g," ").replace(/>\s+</g,"><").trim().toLowerCase(); }
 // Vergleicht zwei HTML-Schnipsel inhaltlich: beide werden vom Browser gleich
@@ -693,21 +754,22 @@ function htmlEqualsNormalized(a,b){
 }
 let mailDefaultPreviewByOvk={};
 // "Wirksamer Standard" = der vom Nutzer gespeicherte Standard, sonst der Werks-Standard.
-function effDefaultBodyHtml(){ return (state.userDefaults && state.userDefaults.bodyHtml) || defaultBodyHtml(); }
-function effDefaultBodyText(){ return (state.userDefaults && state.userDefaults.bodyHtml) ? textFromHtml(state.userDefaults.bodyHtml) : defaultBodyText(); }
-function effDefaultSubject(){ return (state.userDefaults && state.userDefaults.subject!=null) ? state.userDefaults.subject : defaultState().template.subject; }
+function effDefaultBodyHtml(){ const mode=currentTemplateMode(); return mode==="reminder" ? ((state.userDefaults && state.userDefaults.reminderBodyHtml) || defaultReminderBodyHtml()) : ((state.userDefaults && state.userDefaults.bodyHtml) || defaultBodyHtml()); }
+function effDefaultBodyText(){ const html=effDefaultBodyHtml(); return textFromHtml(html) || (currentTemplateMode()==="reminder" ? defaultReminderBodyText() : defaultBodyText()); }
+function effDefaultSubject(){ const mode=currentTemplateMode(); return mode==="reminder" ? ((state.userDefaults && state.userDefaults.reminderSubject!=null) ? state.userDefaults.reminderSubject : defaultReminderSubject()) : ((state.userDefaults && state.userDefaults.subject!=null) ? state.userDefaults.subject : defaultState().template.subject); }
 function effDefaultSignatureHtml(){ return (state.userDefaults && state.userDefaults.signatureHtml) || defaultSignatureTemplate(); }
 function effDefaultSignatureText(){ return (state.userDefaults && state.userDefaults.signatureHtml) ? textFromHtml(state.userDefaults.signatureHtml) : plainDefaultSignature(); }
 function effDefaultLogoMode(){ return (state.userDefaults && state.userDefaults.logoMode) || "unesco"; }
 function effDefaultIncludeLogo(){ return state.userDefaults ? (state.userDefaults.includeLogo!==false) : true; }
-function hasUserBodyDefault(){ return !!(state.userDefaults && state.userDefaults.bodyHtml); }
+function hasUserBodyDefault(){ return currentTemplateMode()==="reminder" ? !!(state.userDefaults && state.userDefaults.reminderBodyHtml) : !!(state.userDefaults && state.userDefaults.bodyHtml); }
 function hasUserSignatureDefault(){ return !!(state.userDefaults && state.userDefaults.signatureHtml); }
 function templateBodyIsDefault(){
   // Als "Standard" gilt nur, wenn Text/Betreff UND Formatierung exakt dem wirksamen
   // Standard (eigener gespeicherter, sonst Werks-Standard) entsprechen.
   const parts=liveTemplateParts();
   const subjEl=document.getElementById("tplSubject");
-  const subj=subjEl ? subjEl.value : (state.template.subject||"");
+  const tpl=templateDataForMode(currentTemplateMode());
+  const subj=subjEl ? subjEl.value : (tpl.subject||"");
   const htmlMatch=htmlEqualsNormalized(parts.bodyHtml, effDefaultBodyHtml());
   return htmlMatch && subj===effDefaultSubject();
 }
@@ -767,9 +829,10 @@ function forceTemplateEditorHtml(html){
   scheduleToolbarStateUpdate(editor);
 }
 function sigMap(base){ return Object.assign({}, base||{}); }
-function buildHtml(map, forPreview){
+function buildHtml(map, forPreview, mode="confirmation"){
   const fullMap = sigMap(map);
-  let inner = sanitizeHtml(fillHtml(state.template.bodyHtml || htmlFromPlain(state.template.body), fullMap)).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+  const tpl=templateDataForMode(mode);
+  let inner = sanitizeHtml(fillHtml(tpl.bodyHtml || htmlFromPlain(tpl.body), fullMap)).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
   if(state.options.useSig!==false){
     let sigHtml = (state.template.signatureHtml||"").trim();
     if(!sigHtml){ sigHtml = htmlFromPlain(state.template.signature||""); }
@@ -1122,7 +1185,8 @@ function commitEditor(editor){
     if(suppressTemplateCommit) return;
     sanitizePastedImages(editor);
     const parts=splitComposeEditorHtml(editor.innerHTML);
-    state.template.bodyHtml=parts.bodyHtml; state.template.body=textFromHtml(parts.bodyHtml);
+    const tpl=templateDataForMode(currentTemplateMode());
+    tpl.bodyHtml=parts.bodyHtml; tpl.body=textFromHtml(parts.bodyHtml);
     if(parts.signatureHtml!==null){ state.template.signatureHtml=parts.signatureHtml; state.template.signature=textFromHtml(parts.signatureHtml); }
     renderTemplatePreview(); renderLogoPreview();
     saveState(); renderMails(); updateTplResetVisibility();
@@ -1254,7 +1318,7 @@ function bindRichToolbars(){
 }
 
 /* Signature/logo/template binding */
-function renderTemplatePreview(){ const map=sigMap({DATE:formatFrenchDate(new Date().toISOString().slice(0,10)),TIME:"14h20",NAME:state.account.name||"",ENFANT:"Tim"}); document.getElementById("mailTemplatePreview").innerHTML=buildHtml(map,true); renderSigMissing(); }
+function renderTemplatePreview(){ const map=sigMap({DATE:formatFrenchDate(new Date().toISOString().slice(0,10)),TIME:"14h20",NAME:state.account.name||"",ENFANT:"Tim"}); document.getElementById("mailTemplatePreview").innerHTML=buildHtml(map,true,currentTemplateMode()); renderSigMissing(); }
 function renderSigMissing(){ const box=document.getElementById("sigMissing"); if(!box) return; const txt=textFromHtml(state.template.signatureHtml||""); const hasTodo=/\[[^\]]*(compléter|Nom|Fonction|salle|E-mail|Téléphone)[^\]]*\]/i.test(txt); if(state.options.useSig!==false && hasTodo){ box.innerHTML='<div class="banner warn">Veuillez remplacer les espaces réservés surlignés en jaune dans la signature avant d’envoyer les e-mails.</div>'; } else box.innerHTML=""; }
 function setLogoFromDataUrl(dataUrl, mime, rerender=true, mode=null){
   const m=mime || ((String(dataUrl).match(/^data:([^;]+)/)||[])[1]) || "image/png";
@@ -1311,14 +1375,49 @@ function updateTemplateSignatureView(body, renderTemplateCollapseState){
 }
 function bindSettings(){
   const su=document.getElementById("tplSubject"), body=document.getElementById("tplBodyEditor");
-  su.value=state.template.subject; body.innerHTML=composeEditorHtml(); resetEditorHistory(body);
-  su.oninput=()=>{ state.template.subject=su.value; saveState(); renderMails(); updateTplResetVisibility(); };
+  su.value=templateDataForMode(currentTemplateMode()).subject; body.innerHTML=composeEditorHtml(currentTemplateMode()); resetEditorHistory(body);
+  su.oninput=()=>{ const tpl=templateDataForMode(currentTemplateMode()); tpl.subject=su.value; saveState(); renderMails(); updateTplResetVisibility(); };
   // Robuste, direkte Reaktion auf jede Änderung im Editor (unabhängig vom Commit-Pfad):
   body.addEventListener("input", updateTplResetVisibility);
   body.addEventListener("keyup", updateTplResetVisibility);
   body.addEventListener("blur", updateTplResetVisibility);
   updateTplResetVisibility();
   wireRichEditor("tplBodyEditor"); bindRichToolbars();
+
+  const templateModeTabs=document.getElementById("templateModeTabs");
+  const reminderEnabled=document.getElementById("reminderEnabled");
+  const reminderNote=document.getElementById("reminderNote");
+  function refreshTemplateModeTabs(){
+    const mode=currentTemplateMode();
+    if(templateModeTabs){
+      templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>btn.classList.toggle("active", btn.dataset.templateMode===mode));
+    }
+    if(reminderEnabled) reminderEnabled.checked = state.options.reminderEnabled!==false;
+    if(reminderNote) reminderNote.style.display = mode==="reminder" ? "" : "none";
+  }
+  function switchTemplateMode(mode){
+    if(mode!=="reminder") mode="confirmation";
+    if(mode===currentTemplateMode()) return;
+    commitEditor(body);
+    state.options.templateMode=mode;
+    saveState();
+    const tpl=templateDataForMode(mode);
+    su.value=tpl.subject||"";
+    forceTemplateEditorHtml(composeEditorHtml(mode));
+    refreshTemplateModeTabs();
+    renderTemplatePreview();
+    updateTplResetVisibility();
+    renderMails();
+  }
+  if(templateModeTabs){
+    templateModeTabs.querySelectorAll(".template-tab").forEach(btn=>{
+      btn.onclick=(e)=>{ e.preventDefault(); e.stopPropagation(); switchTemplateMode(btn.dataset.templateMode); };
+    });
+  }
+  if(reminderEnabled){
+    reminderEnabled.onchange=()=>{ state.options.reminderEnabled=reminderEnabled.checked; saveState(); renderMails(); if(reminderEnabled.checked) checkDueRemindersSoon(); };
+  }
+  refreshTemplateModeTabs();
 
   const templateCard=document.getElementById("templateCard");
   const toggleTemplate=document.getElementById("toggleTemplate");
@@ -1363,9 +1462,10 @@ function bindSettings(){
       document.querySelectorAll(".color-picker.open,.ot-more.open").forEach(n=>n.classList.remove("open"));
       const editor=document.getElementById("tplBodyEditor");
       const parts=splitComposeEditorHtml(editor ? editor.innerHTML : "");
-      const keptBody=cleanBodyHtmlAfterSignatureRemoval(removeSignatureTailFromBodyHtml(parts.bodyHtml || state.template.bodyHtml || defaultBodyHtml()));
-      state.template.bodyHtml=keptBody || defaultBodyHtml();
-      state.template.body=textFromHtml(state.template.bodyHtml);
+      const activeTpl=templateDataForMode(currentTemplateMode());
+      const keptBody=cleanBodyHtmlAfterSignatureRemoval(removeSignatureTailFromBodyHtml(parts.bodyHtml || activeTpl.bodyHtml || (currentTemplateMode()==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml())));
+      activeTpl.bodyHtml=keptBody || (currentTemplateMode()==="reminder" ? defaultReminderBodyHtml() : defaultBodyHtml());
+      activeTpl.body=textFromHtml(activeTpl.bodyHtml);
       resetBodyFormattingIfStillDefault();
       state.template.signatureHtml=effDefaultSignatureHtml();
       state.template.signature=effDefaultSignatureText();
@@ -1399,10 +1499,11 @@ function bindSettings(){
     suppressTemplateCommit=true;
     try{
       document.querySelectorAll(".color-picker.open,.ot-more.open").forEach(n=>n.classList.remove("open"));
-      state.template.subject=effDefaultSubject();
-      state.template.bodyHtml=effDefaultBodyHtml();
-      state.template.body=effDefaultBodyText();
-      const su=document.getElementById("tplSubject"); if(su) su.value=state.template.subject;
+      const activeTpl=templateDataForMode(currentTemplateMode());
+      activeTpl.subject=effDefaultSubject();
+      activeTpl.bodyHtml=effDefaultBodyHtml();
+      activeTpl.body=effDefaultBodyText();
+      const su=document.getElementById("tplSubject"); if(su) su.value=activeTpl.subject;
       saveState();
       forceTemplateEditorHtml(composeEditorHtml());
       renderTemplatePreview();
@@ -1423,8 +1524,10 @@ function bindSettings(){
   }
   function saveTemplateBodyAsDefault(){
     commitEditor(body);
-    const su=document.getElementById("tplSubject"); if(su) state.template.subject=su.value;
-    state.userDefaults=Object.assign({}, state.userDefaults, { subject: state.template.subject, bodyHtml: state.template.bodyHtml });
+    const mode=currentTemplateMode();
+    const activeTpl=templateDataForMode(mode);
+    const su=document.getElementById("tplSubject"); if(su) activeTpl.subject=su.value;
+    state.userDefaults=Object.assign({}, state.userDefaults, mode==="reminder" ? { reminderSubject: activeTpl.subject, reminderBodyHtml: activeTpl.bodyHtml } : { subject: activeTpl.subject, bodyHtml: activeTpl.bodyHtml });
     saveState();
     updateTplResetVisibility();
     showToast("Texte enregistré comme standard ✓");
@@ -1548,11 +1651,46 @@ function buildMessages(){
   return msgs;
 }
 
+function appointmentDateTime(ds, hhmm){ return new Date(ds+"T"+hhmm+":00"); }
+function reminderDueAt(ds){ const d=new Date(ds+"T15:00:00"); d.setDate(d.getDate()-1); return d; }
+function reminderWindowOpen(ds, slot){ const now=new Date(); const due=reminderDueAt(ds); const end=appointmentDateTime(ds, slot.end); return now>=due && now<end; }
+function buildReminderMessages(onlyDue=true){
+  const sl=slots(), msgs=[];
+  const tpl=templateDataForMode("reminder");
+  state.config.dates.forEach(d=>{
+    sl.forEach((s,i)=>{
+      if(onlyDue && !reminderWindowOpen(d,s)) return;
+      const sid=state.assignments[d+"__"+i];
+      if(!sid) return;
+      const stu=state.students.find(x=>x.id===sid);
+      if(!stu) return;
+      const emails=contactEmails(stu);
+      if(!emails.length) return;
+      const map={DATE:formatFrenchDate(d),TIME:formatFrenchTime(s.start),NAME:state.account.name||"",ENFANT:stu.name};
+      const subject=stripBold(fillPlain(tpl.subject||defaultReminderSubject(), map));
+      let html=buildHtml(map,false,"reminder"), previewHtml=buildHtml(map,true,"reminder");
+      if(state.template.logo && state.template.logo.dataUrl){ html=html.split(state.template.logo.dataUrl).join("cid:siglogo"); }
+      const fullStudent=stu.name||"(sans nom)";
+      const add=(suf,label,to)=>{
+        if(to.length){ msgs.push({id:"reminder__"+d+"__"+i+"__"+suf,student:fullStudent,studentDisplay:displayStudentName(fullStudent),parentLabel:label,to,subject,html,previewHtml,dueAt:reminderDueAt(d).toISOString()}); }
+      };
+      if(state.options.combine){
+        const label = emails.length>2 ? (emails.length+" contacts") : (emails.length===2 ? "Deux contacts" : "Contact");
+        add("c", label, emails);
+      } else {
+        emails.forEach((email,idx)=>add(String(idx), "Contact "+(idx+1), [email]));
+      }
+    });
+  });
+  return msgs;
+}
+function pendingDueReminderMessages(){ return buildReminderMessages(true).filter(m=>!reminderSentSet.has(m.id)); }
+
 
 /* Microsoft Graph */
 let account=null, pollTimer=null;
 async function api(path, body){ const res=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):"{}"}); return res.json(); }
-async function checkAccount(){ try{ const res=await fetch("/api/graph/account"); const d=await res.json(); account=d.signedIn?d.account:null; }catch(e){ account=null; } renderAuth(); renderMails(); }
+async function checkAccount(){ try{ const res=await fetch("/api/graph/account"); const d=await res.json(); account=d.signedIn?d.account:null; }catch(e){ account=null; } renderAuth(); renderMails(); checkDueRemindersSoon(); }
 function renderAuth(){
   const box=document.getElementById("authBox"), inBtn=document.getElementById("signIn"), outBtn=document.getElementById("signOut");
   if(account){
@@ -1569,14 +1707,41 @@ function renderAuth(){
   }
   renderTemplatePreview();
 }
-document.getElementById("signIn").onclick=async()=>{ const lb=document.getElementById("loginBox"), inBtn=document.getElementById("signIn"); inBtn.disabled=true; lb.style.display="block"; lb.innerHTML='<div class="banner info">Préparation de la connexion …</div>'; let d; try{ d=await api("/api/graph/login-start"); }catch(e){ lb.innerHTML='<div class="banner err">Assistant local inaccessible. « Starten.command » est-il lancé ?</div>'; inBtn.disabled=false; return; } if(!d.ok){ lb.innerHTML='<div class="banner err">'+esc(d.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } const url=d.verification_uri||"https://login.microsoft.com/device"; lb.innerHTML=`<div class="banner info" style="line-height:1.7"><b>1.</b> Ouvrez <a href="${url}" target="_blank" rel="noopener"><b>${esc(url)}</b></a><br><b>2.</b> Saisissez ce code : <code class="k" style="font-size:17px">${esc(d.user_code)}</code><br><b>3.</b> Connectez-vous avec votre compte et cliquez sur <b>Accepter</b>.<br><span class="muted">La procédure continue automatiquement ici dès que vous avez terminé …</span></div>`; try{ window.open(url,"_blank","noopener"); }catch(e){} if(pollTimer) clearInterval(pollTimer); pollTimer=setInterval(async()=>{ let r; try{ r=await api("/api/graph/login-poll"); }catch(e){ return; } if(!r.ok){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">'+esc(r.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } if(r.status==="ok"){ clearInterval(pollTimer); account=r.account; lb.style.display="none"; lb.innerHTML=""; inBtn.disabled=false; renderAuth(); renderMails(); } else if(r.status==="error"){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">Connexion impossible : '+esc(r.error||"")+'</div>'; inBtn.disabled=false; } },4000); };
+document.getElementById("signIn").onclick=async()=>{ const lb=document.getElementById("loginBox"), inBtn=document.getElementById("signIn"); inBtn.disabled=true; lb.style.display="block"; lb.innerHTML='<div class="banner info">Préparation de la connexion …</div>'; let d; try{ d=await api("/api/graph/login-start"); }catch(e){ lb.innerHTML='<div class="banner err">Assistant local inaccessible. « Starten.command » est-il lancé ?</div>'; inBtn.disabled=false; return; } if(!d.ok){ lb.innerHTML='<div class="banner err">'+esc(d.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } const url=d.verification_uri||"https://login.microsoft.com/device"; lb.innerHTML=`<div class="banner info" style="line-height:1.7"><b>1.</b> Ouvrez <a href="${url}" target="_blank" rel="noopener"><b>${esc(url)}</b></a><br><b>2.</b> Saisissez ce code : <code class="k" style="font-size:17px">${esc(d.user_code)}</code><br><b>3.</b> Connectez-vous avec votre compte et cliquez sur <b>Accepter</b>.<br><span class="muted">La procédure continue automatiquement ici dès que vous avez terminé …</span></div>`; try{ window.open(url,"_blank","noopener"); }catch(e){} if(pollTimer) clearInterval(pollTimer); pollTimer=setInterval(async()=>{ let r; try{ r=await api("/api/graph/login-poll"); }catch(e){ return; } if(!r.ok){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">'+esc(r.error||"Erreur")+'</div>'; inBtn.disabled=false; return; } if(r.status==="ok"){ clearInterval(pollTimer); account=r.account; lb.style.display="none"; lb.innerHTML=""; inBtn.disabled=false; renderAuth(); renderMails(); checkDueRemindersSoon(); } else if(r.status==="error"){ clearInterval(pollTimer); lb.innerHTML='<div class="banner err">Connexion impossible : '+esc(r.error||"")+'</div>'; inBtn.disabled=false; } },4000); };
 document.getElementById("signOut").onclick=async()=>{ try{ await api("/api/graph/logout"); }catch(e){} account=null; renderAuth(); renderMails(); };
 function logoPayload(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl) return {name:lg.name||"logo.png",mime:lg.mime||"image/png",contentBytes:lg.dataUrl.split(",")[1]}; return null; }
 async function graphSend(messages){ return api("/api/graph/send", {messages:messages.map(m=>({id:m.id,subject:m.subject,html:m.html,to:m.to})), logo:logoPayload()}); }
+let reminderSending=false, reminderTimer=null;
+function checkDueRemindersSoon(){ setTimeout(autoSendDueReminders, 1200); }
+async function autoSendDueReminders(){
+  if(reminderSending || state.options.reminderEnabled===false || !account) return;
+  const due=pendingDueReminderMessages();
+  if(!due.length) return;
+  reminderSending=true;
+  try{
+    const r=await graphSend(due);
+    if(r && r.ok){
+      let ok=0, fail=0;
+      const byId={}; (r.results||[]).forEach(x=>byId[x.id]=x);
+      due.forEach(m=>{ const res=byId[m.id]; if(res&&res.ok){ ok++; reminderSentSet.add(m.id); } else fail++; });
+      persistReminderSent();
+      if(ok) showToast(ok+" rappel(s) envoyé(s) automatiquement ✓");
+      if(fail) showToast(fail+" rappel(s) non envoyé(s)");
+      renderMails();
+    }
+  }catch(e){ /* silencieux : la bannière de connexion/envoi reste visible */ }
+  finally{ reminderSending=false; }
+}
+function startReminderScheduler(){
+  if(reminderTimer) clearInterval(reminderTimer);
+  reminderTimer=setInterval(autoSendDueReminders, 60000);
+  checkDueRemindersSoon();
+}
 
 /* Render mails */
-let currentMsgs=[], sentSet=new Set(state.sent||[]), pendingSend=[];
+let currentMsgs=[], sentSet=new Set(state.sent||[]), reminderSentSet=new Set(state.reminderSent||[]), pendingSend=[];
 function persistSent(){ state.sent=[...sentSet]; saveState(); }
+function persistReminderSent(){ state.reminderSent=[...reminderSentSet]; saveState(); }
 // Abgewählte E-Mails (per Häkchen). Leer = alle sélectionné(s) (Standard).
 // Bewusst nur im Speicher (nicht persistiert): bei jedem Neustart sind wieder alle
 // sélectionné(s). Bereits envoyée sind über sentSet ohnehin geschützt.
@@ -1626,6 +1791,16 @@ function renderMails(openId){
   if(missing.length){
     const missingHtml=[...new Set(missing)].map(n=>`<span class="truncated-inline" title="${esc(n)}">${esc(displayStudentName(n))}</span>`).join(", ");
     warnBanners.push(`<div class="banner warn">Sans adresse e-mail (seront ignorés) : ${missingHtml}</div>`);
+  }
+  if(state.options.reminderEnabled!==false){
+    const dueReminders=pendingDueReminderMessages();
+    const allReminders=buildReminderMessages(false);
+    const sentReminders=allReminders.filter(m=>reminderSentSet.has(m.id)).length;
+    if(dueReminders.length){
+      warnBanners.push(`<div class="banner info">Rappels automatiques : ${dueReminders.length} e-mail(s) de rappel à envoyer maintenant. Ils seront envoyés automatiquement si vous êtes connecté à Microsoft.</div>`);
+    } else if(sentReminders>0){
+      warnBanners.push(`<div class="banner ok">Rappels automatiques : ${sentReminders} rappel(s) déjà envoyé(s).</div>`);
+    }
   }
   let b=warnBanners.length ? `<div class="banner-group">${warnBanners.join("")}</div>` : "";
   if(currentMsgs.length>0){
@@ -1780,7 +1955,7 @@ document.getElementById("confirmCancel").onclick=()=>overlay.style.display="none
 document.getElementById("confirmGo").onclick=async()=>{ overlay.style.display="none"; if(!pendingSend.length) return; const btn=document.getElementById("sendAll"); btn.disabled=true; btn.textContent="Envoi…"; let ok=0, fail=0, firstErr=""; try{ const r=await graphSend(pendingSend); if(!r.ok){ alert("Échec de l’envoi : "+(r.error||"")); } else { const byId={}; r.results.forEach(x=>byId[x.id]=x); pendingSend.forEach(m=>{ const res=byId[m.id]; if(res&&res.ok){ ok++; sentSet.add(m.id); } else { fail++; if(!firstErr&&res) firstErr=res.error||""; } }); persistSent(); } }catch(e){ alert("Assistant local inaccessible ?\n"+(e&&e.message?e.message:e)); } renderMails(); document.getElementById("mailBanner").innerHTML=`<div class="banner ${fail?'warn':'ok'}">${ok} envoyé(s)${fail?(", "+fail+" échec(s) — "+esc(firstErr)):""}.</div>`+document.getElementById("mailBanner").innerHTML; pendingSend=[]; btn.disabled=false; };
 
 /* Init */
-renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount();
+renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount(); startReminderScheduler();
 </script>
 </body>
 </html>
