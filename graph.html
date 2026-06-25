@@ -248,7 +248,7 @@
   .template-compose-shell .mail-editor{min-height:0;transition:none;overflow:visible}
   .template-card.signature-off .template-compose-shell .mail-editor{min-height:0}
   .template-compose-shell .mailbody-head{border-radius:16px 16px 0 0}
-  .mail-reset{margin-top:8px}.mail-reset a{font-size:12px;color:var(--muted);text-decoration:none;font-weight:700}.mail-reset a:hover{text-decoration:underline;color:var(--accent)}.mail-reset a.save-default{color:var(--accent);margin-left:16px}
+  .mail-reset{margin-top:8px}.mail-reset a{font-size:12px;color:#b45309;text-decoration:none;font-weight:750;display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:3px 7px;margin-left:-7px}.mail-reset a:hover{text-decoration:none;color:#92400e;background:#fff7ed}.mail-reset a.save-default{color:var(--accent);margin-left:9px;padding-left:7px}.mail-reset a.save-default:hover{color:var(--accent);background:var(--accent-soft)}
 
   .template-tabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
   .template-tab{background:#fff;color:var(--muted);border:1px solid var(--line);box-shadow:none;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:800}
@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R38</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R39</span></p>
 </header>
 
 <nav class="tabs">
@@ -498,7 +498,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 82;
+const APP_VERSION = 83;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -2290,6 +2290,25 @@ function pastAssignedAppointmentsCount(){
   state.config.dates.forEach(d=>sl.forEach((s,i)=>{ if(state.assignments[d+"__"+i] && appointmentDateTime(d,s.end)<=now) n++; }));
   return n;
 }
+function studentsWithoutFutureAppointments(){
+  const activeStudents=(state.students||[]).filter(st=>st && (String(st.name||"").trim() || rawContactEmails(st).length));
+  if(!activeStudents.length) return [];
+  const now=new Date(), assignedFuture=new Set(), sl=slots();
+  (state.config.dates||[]).forEach(d=>sl.forEach((s,i)=>{
+    const sid=state.assignments && state.assignments[d+"__"+i];
+    if(sid && appointmentDateTime(d,s.end)>now) assignedFuture.add(sid);
+  }));
+  if(assignedFuture.size===0) return [];
+  return activeStudents.filter(st=>!assignedFuture.has(st.id));
+}
+function missingAppointmentWarningHtml(){
+  const missing=studentsWithoutFutureAppointments();
+  if(!missing.length) return "";
+  const shown=missing.slice(0,4).map(st=>`<span class="truncated-inline" title="${esc(st.name||'(sans nom)')}">${esc(displayStudentName(st.name||'(sans nom)'))}</span>`).join(", ");
+  const more=missing.length>4 ? `, +${missing.length-4}` : "";
+  if(missing.length===1) return `<div class="banner warn">Attention : 1 élève n’a pas encore de rendez-vous (${shown}). Aucun e-mail ne sera préparé pour cet élève.</div>`;
+  return `<div class="banner warn">Attention : ${missing.length} élèves n’ont pas encore de rendez-vous (${shown}${more}). Aucun e-mail ne sera préparé pour ces élèves.</div>`;
+}
 function reminderConflictsForConfirmations(confirmMsgs){
   if(state.options.reminderEnabled===false || !Array.isArray(confirmMsgs) || !confirmMsgs.length) return [];
   const byId={}; buildReminderMessages(false).forEach(m=>{ byId[m.id]=m; });
@@ -2417,6 +2436,8 @@ function mailBannerHtml(){
   }
   const duplicateWarning=duplicateStudentWarningsHtml();
   if(duplicateWarning) banners.push(duplicateWarning);
+  const missingApptWarning=missingAppointmentWarningHtml();
+  if(missingApptWarning) banners.push(missingApptWarning);
   const pastAppts=pastAssignedAppointmentsCount();
   if(pastAppts){
     banners.push(`<div class="banner warn">${pastAppts===1?"1 rendez-vous passé est grisé":""+pastAppts+" rendez-vous passés sont grisés"} dans le calendrier et ignoré${pastAppts===1?"":"s"} pour l’envoi.</div>`);
