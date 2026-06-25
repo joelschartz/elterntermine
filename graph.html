@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R34</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R36</span></p>
 </header>
 
 <nav class="tabs">
@@ -456,6 +456,7 @@
           
         </div>
         <div class="toolbar mail-actionbar">
+          <button id="newSessionBtn" class="ghost sm" style="display:none">Nouvelle session</button>
           <button id="resetSent" class="ghost sm" style="display:none">Réinitialiser le statut d’envoi</button>
           <button id="sendAll">Tout envoyer …</button>
         </div>
@@ -482,10 +483,22 @@
   </div>
 </div>
 
+<div id="sessionOverlay" style="position:fixed;inset:0;background:rgba(20,30,60,.45);display:none;align-items:center;justify-content:center;z-index:55;padding:20px">
+  <div style="background:#fff;border-radius:14px;max-width:520px;width:100%;padding:22px;box-shadow:0 18px 55px rgba(20,30,60,.22)">
+    <h3 style="font-size:17px;margin:0 0 8px">Session précédente trouvée</h3>
+    <p style="margin:0 0 8px">Des élèves ou rendez-vous sont encore enregistrés dans cette app.</p>
+    <p class="hint" style="margin:0">Vous pouvez continuer là où vous étiez, ou commencer une nouvelle session. Les modèles, la signature et le logo seront conservés.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap">
+      <button class="ghost" id="sessionNew">Nouvelle session</button>
+      <button id="sessionContinue">Continuer</button>
+    </div>
+  </div>
+</div>
+
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 74;
+const APP_VERSION = 80;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -543,6 +556,82 @@ function invalidStudentEmails(){
     });
   });
   return out;
+}
+function normalizedComparableText(v){ return String(v||"").trim().replace(/\s+/g," ").toLowerCase(); }
+function isEmptyStudentEntry(st){
+  return !normalizedComparableText(st&&st.name) && !String((st&&st.email1)||"").trim() && !String((st&&st.email2)||"").trim();
+}
+function removeStudentById(id){
+  const before=(state.students||[]).length;
+  state.students=(state.students||[]).filter(x=>x.id!==id);
+  if(state.students.length!==before){
+    Object.keys(state.assignments||{}).forEach(k=>{ if(state.assignments[k]===id) delete state.assignments[k]; });
+    Object.keys(state.overrides||{}).forEach(k=>{ if(String(k).includes(id)) delete state.overrides[k]; });
+    Object.keys(state.subjectOverrides||{}).forEach(k=>{ if(String(k).includes(id)) delete state.subjectOverrides[k]; });
+    saveState();
+    return true;
+  }
+  return false;
+}
+function pruneEmptyStudents(opts={}){
+  const ids=(state.students||[]).filter(isEmptyStudentEntry).map(st=>st.id);
+  if(!ids.length) return 0;
+  ids.forEach(removeStudentById);
+  if(opts.render){ renderStudents(); renderMails(); const cal=document.getElementById("panel-calendar"); if(cal&&cal.classList.contains("active")) renderCalendar(); }
+  return ids.length;
+}
+function maybePruneEmptyStudentAfterBlur(id){
+  setTimeout(()=>{
+    const active=document.activeElement;
+    const activeRow=active&&active.closest ? active.closest('tr[data-id]') : null;
+    if(activeRow && activeRow.dataset.id===id) return;
+    const st=(state.students||[]).find(x=>x.id===id);
+    if(st && isEmptyStudentEntry(st)){
+      removeStudentById(id);
+      renderStudents();
+      renderMails();
+      const cal=document.getElementById("panel-calendar"); if(cal&&cal.classList.contains("active")) renderCalendar();
+    }
+  },0);
+}
+function duplicateStudentEmailGroups(){
+  const map=new Map();
+  (state.students||[]).forEach(st=>{
+    [1,2].forEach(i=>{
+      const raw=String(st["email"+i]||"").trim();
+      if(!raw || !isValidEmailFormat(raw)) return;
+      const key=raw.toLowerCase();
+      if(!map.has(key)) map.set(key, []);
+      map.get(key).push({student:st.name||"(sans nom)", contact:i, email:raw});
+    });
+  });
+  return [...map.values()].filter(g=>g.length>1);
+}
+function duplicateStudentNameGroups(){
+  const map=new Map();
+  (state.students||[]).forEach(st=>{
+    const key=normalizedComparableText(st&&st.name);
+    if(!key) return;
+    if(!map.has(key)) map.set(key, []);
+    map.get(key).push(st.name);
+  });
+  return [...map.entries()].filter(([,g])=>g.length>1).map(([key,g])=>({key,names:g}));
+}
+function duplicateStudentWarningsHtml(){
+  const parts=[];
+  const emailGroups=duplicateStudentEmailGroups();
+  if(emailGroups.length){
+    const labels=emailGroups.slice(0,3).map(g=>`<span class="truncated-inline" title="${esc(g.map(x=>displayStudentName(x.student)+" · contact "+x.contact).join(", "))}">${esc(g[0].email)}</span>`).join(", ");
+    const more=emailGroups.length>3 ? `, +${emailGroups.length-3}` : "";
+    parts.push(`Adresse e-mail en double : ${labels}${more}.`);
+  }
+  const nameGroups=duplicateStudentNameGroups();
+  if(nameGroups.length){
+    const labels=nameGroups.slice(0,3).map(g=>`<span class="truncated-inline">${esc(displayStudentName(g.names[0]))}</span>`).join(", ");
+    const more=nameGroups.length>3 ? `, +${nameGroups.length-3}` : "";
+    parts.push(`Nom d’élève en double : ${labels}${more}.`);
+  }
+  return parts.length ? `<div class="banner warn">Doublon possible : ${parts.join(" ")}</div>` : "";
 }
 function selectedEmailCountText(n){
   n=Number(n)||0;
@@ -820,6 +909,55 @@ function loadState(){
   }catch(e){ return defaultState(); }
 }
 function saveState(){ state.appVersion = APP_VERSION; try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+
+function sessionHasWorkData(){
+  const hasStudents=(state.students||[]).some(st=>!isEmptyStudentEntry(st));
+  const hasDates=!!(state.config && Array.isArray(state.config.dates) && state.config.dates.length);
+  const hasAssignments=!!(state.assignments && Object.keys(state.assignments).length);
+  const hasMailEdits=!!((state.overrides && Object.keys(state.overrides).length) || (state.subjectOverrides && Object.keys(state.subjectOverrides).length));
+  const hasStatus=!!((state.sent&&state.sent.length) || (state.reminderSent&&state.reminderSent.length));
+  return hasStudents || hasDates || hasAssignments || hasMailEdits || hasStatus;
+}
+function clearWorkSession(){
+  state.students=[];
+  state.config=Object.assign({}, state.config||{}, {dates:[]});
+  state.assignments={};
+  state.overrides={};
+  state.subjectOverrides={};
+  state.sent=[];
+  state.reminderSent=[];
+  try{ sentSet.clear(); reminderSentSet.clear(); excludedSet.clear(); }catch(e){}
+  studentEmailValidationAll=false;
+  studentDuplicateValidationActive=false;
+  try{ touchedStudentEmailFields.clear(); }catch(e){}
+  saveState();
+}
+function refreshAllViews(){
+  renderStudents(); initCfgInputs(); renderDateList(); renderCalendar(); renderAuth(); renderMails();
+}
+function showStartupSessionChoice(){
+  const ov=document.getElementById("sessionOverlay");
+  if(!ov || !sessionHasWorkData()) return;
+  ov.style.display="flex";
+  const cont=document.getElementById("sessionContinue");
+  const neu=document.getElementById("sessionNew");
+  if(cont) cont.onclick=()=>{ ov.style.display="none"; };
+  if(neu) neu.onclick=()=>{
+    clearWorkSession();
+    ov.style.display="none";
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+    const stTab=document.querySelector('.tab[data-tab="students"]');
+    const stPanel=document.getElementById("panel-students");
+    if(stTab) stTab.classList.add("active");
+    if(stPanel) stPanel.classList.add("active");
+    refreshAllViews();
+  };
+}
+function updateNewSessionButton(){
+  const btn=document.getElementById("newSessionBtn");
+  if(btn) btn.style.display=sessionHasWorkData()?"inline-block":"none";
+}
 
 function timeToMin(t){ const [h,m]=t.split(":").map(Number); return h*60+m; }
 function minToTime(x){ return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0"); }
@@ -1103,6 +1241,7 @@ function buildHtml(map, forPreview, mode="confirmation", lang="fr"){
 
 /* Tabs */
 let studentEmailValidationAll=false;
+let studentDuplicateValidationActive=false;
 const touchedStudentEmailFields = new Set();
 function studentEmailFieldKey(id,contact){ return String(id||"")+"::"+String(contact||""); }
 document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{
@@ -1111,6 +1250,8 @@ document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{
   const toTab=t.dataset.tab;
   if(fromTab==="students" && toTab!=="students"){
     studentEmailValidationAll=true;
+    studentDuplicateValidationActive=true;
+    pruneEmptyStudents({render:true});
     validateStudentEmailsUI({force:true});
   }
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
@@ -1143,14 +1284,16 @@ function renderStudents(){
   html+='</tbody></table><div id="studentEmailWarnings" class="student-email-warning"></div>'; wrap.innerHTML=html;
   wrap.querySelectorAll("tr[data-id]").forEach(tr=>{
     const id=tr.dataset.id; const st=state.students.find(x=>x.id===id);
-    tr.querySelector(".st-name").oninput=e=>{ st.name=e.target.value; saveState(); };
+    const nameInp=tr.querySelector(".st-name");
+    nameInp.oninput=e=>{ st.name=e.target.value; saveState(); const box=document.getElementById("studentEmailWarnings"); if(box && !studentEmailValidationAll && !studentDuplicateValidationActive) box.innerHTML=""; };
+    nameInp.onblur=()=>{ studentDuplicateValidationActive=true; maybePruneEmptyStudentAfterBlur(id); validateStudentEmailsUI(); renderMails(); };
     ["email1","email2"].forEach((key,idx)=>{
       const inp=tr.querySelector(".st-e"+(idx+1));
       const langSel=tr.querySelector(".st-l"+(idx+1));
       if(inp){
         inp.onfocus=()=>{ inp.classList.remove("email-invalid"); inp.title=""; const box=document.getElementById("studentEmailWarnings"); if(box) box.innerHTML=""; };
         inp.oninput=e=>{ st[key]=e.target.value; saveState(); inp.classList.remove("email-invalid"); inp.title=""; renderMails(); };
-        inp.onblur=()=>{ touchedStudentEmailFields.add(studentEmailFieldKey(id, idx+1)); validateStudentEmailsUI(); renderMails(); };
+        inp.onblur=()=>{ touchedStudentEmailFields.add(studentEmailFieldKey(id, idx+1)); studentDuplicateValidationActive=true; maybePruneEmptyStudentAfterBlur(id); validateStudentEmailsUI(); renderMails(); };
       }
       if(langSel) langSel.onchange=e=>{ st["lang"+(idx+1)]=normalizeLang(e.target.value); saveState(); renderMails(); };
     });
@@ -1179,12 +1322,17 @@ function validateStudentEmailsUI(opts={}){
   });
   const box=document.getElementById("studentEmailWarnings");
   if(box){
-    if(!visibleInvalid.length){ box.innerHTML=""; }
-    else {
+    const warnings=[];
+    if(visibleInvalid.length){
       const examples=visibleInvalid.slice(0,3).map(x=>`${esc(displayStudentName(x.student))} · contact ${x.contact}`).join(", ");
       const more=visibleInvalid.length>3 ? `, +${visibleInvalid.length-3}` : "";
-      box.innerHTML=`<div class="banner warn">Format d’e-mail invalide : ${examples}${more}. Ces adresses seront ignorées à l’envoi.</div>`;
+      warnings.push(`<div class="banner warn">Format d’e-mail invalide : ${examples}${more}. Ces adresses seront ignorées à l’envoi.</div>`);
     }
+    if(force || studentDuplicateValidationActive){
+      const dup=duplicateStudentWarningsHtml();
+      if(dup) warnings.push(dup);
+    }
+    box.innerHTML=warnings.join("");
   }
 }
 document.getElementById("addStudent").onclick=()=>{ const dl=normalizeLang(state.options.defaultLang||"fr"); state.students.push({id:uid(),name:"",email1:"",email2:"",lang1:dl,lang2:dl}); saveState(); renderStudents(); };
@@ -2239,6 +2387,8 @@ function mailBannerHtml(){
     const more=invalidEmails.length>3 ? `, +${invalidEmails.length-3}` : "";
     banners.push(`<div class="banner warn">Format d’e-mail invalide : ${shown}${more}. Ces adresses sont ignorées.</div>`);
   }
+  const duplicateWarning=duplicateStudentWarningsHtml();
+  if(duplicateWarning) banners.push(duplicateWarning);
   const pastAppts=pastAssignedAppointmentsCount();
   if(pastAppts){
     banners.push(`<div class="banner warn">${pastAppts===1?"1 rendez-vous passé est grisé":""+pastAppts+" rendez-vous passés sont grisés"} dans le calendrier et ignoré${pastAppts===1?"":"s"} pour l’envoi.</div>`);
@@ -2279,6 +2429,7 @@ function renderMails(openId){
     sendBtn.textContent=`Envoyer (${remaining}) …`;
   }
   if(resetBtn) resetBtn.style.display=(sentSet.size>0 || reminderSentSet.size>0)?"inline-block":"none";
+  updateNewSessionButton();
 
   const list=document.getElementById("mailList");
   if(!list) return;
@@ -2404,6 +2555,16 @@ if(_selAll){
   };
 }
 document.getElementById("resetSent").onclick=()=>{ if(sentSet.size===0 && reminderSentSet.size===0){ alert("Aucun e-mail n’est marqué comme envoyé ou programmé."); return; } if(!confirm("Réinitialiser le statut d’envoi ? Les confirmations et les rappels pourront être renvoyés ou reprogrammés. Les rappels déjà programmés dans Outlook ne peuvent pas être supprimés automatiquement.")) return; sentSet.clear(); reminderSentSet.clear(); persistSent(); persistReminderSent(); renderMails(); };
+const _newSessionBtn=document.getElementById("newSessionBtn");
+if(_newSessionBtn){
+  _newSessionBtn.onclick=()=>{
+    if(!sessionHasWorkData()){ updateNewSessionButton(); return; }
+    if(!confirm("Commencer une nouvelle session ? Les élèves, les rendez-vous, les modifications d’e-mails et les statuts d’envoi seront supprimés. Les modèles, la signature et le logo seront conservés.")) return;
+    clearWorkSession();
+    refreshAllViews();
+    window.scrollTo(0,0);
+  };
+}
 
 /* Send all */
 const overlay=document.getElementById("confirmOverlay");
@@ -2471,7 +2632,7 @@ document.getElementById("confirmGo").onclick=async()=>{
 };
 
 /* Init */
-renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount();
+renderStudents(); initCfgInputs(); renderDateList(); bindSettings(); renderAuth(); renderMails(); checkAccount(); showStartupSessionChoice();
 </script>
 </body>
 </html>
