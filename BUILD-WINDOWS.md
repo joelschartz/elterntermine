@@ -5,7 +5,7 @@ Objectif : créer un seul fichier **ElternTermine.exe** à transmettre aux coll�
 ## Étapes
 
 1. Installer Python sur le PC Windows si nécessaire.
-2. Copier le dossier **ElternTermineWeb_v54** sur le PC Windows.
+2. Copier le dossier **ElternTermineWeb_v81** sur le PC Windows.
 3. Double-cliquer sur **build_windows.bat**.
 4. Le fichier généré se trouve dans **dist\ElternTermine.exe**.
 

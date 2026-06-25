@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R36</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R37</span></p>
 </header>
 
 <nav class="tabs">
@@ -498,7 +498,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 80;
+const APP_VERSION = 81;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -2326,6 +2326,24 @@ document.getElementById("signIn").onclick=async()=>{ const lb=document.getElemen
 document.getElementById("signOut").onclick=async()=>{ try{ await api("/api/graph/logout"); }catch(e){} account=null; renderAuth(); renderMails(); };
 function logoPayload(){ const lg=state.template.logo; if(logoIsVisible() && lg&&lg.dataUrl) return {name:lg.name||"logo.png",mime:lg.mime||"image/png",contentBytes:lg.dataUrl.split(",")[1]}; return null; }
 async function graphSend(messages){ return api("/api/graph/send", {messages:messages.map(m=>({id:m.id,subject:m.subject,html:m.html,to:m.to,deferUntil:m.deferUntil||m.dueAt||null})), logo:logoPayload()}); }
+let graphCapabilityCache=null;
+async function graphCapabilities(){
+  if(graphCapabilityCache) return graphCapabilityCache;
+  try{
+    const res=await fetch("/api/graph/capabilities", {method:"GET", cache:"no-store"});
+    const d=await res.json();
+    graphCapabilityCache=d||{ok:false,deferredSend:false};
+  }catch(e){
+    graphCapabilityCache={ok:false,deferredSend:false,error:(e&&e.message)||""};
+  }
+  return graphCapabilityCache;
+}
+function showBackendDeferredSendWarning(){
+  const msg="L’envoi différé des rappels n’est pas disponible dans l’assistant local. Remplacez tout le dossier de l’application Windows, pas seulement graph.html. Aucun e-mail n’a été envoyé.";
+  const mb=document.getElementById("mailBanner");
+  if(mb) mb.innerHTML='<div class="banner err">'+esc(msg)+'</div>'+mb.innerHTML;
+  alert(msg);
+}
 let reminderSending=false, reminderTimer=null;
 function checkDueRemindersSoon(){ /* Rappels : uniquement programmés lors de l’envoi manuel. */ }
 async function autoSendDueReminders(){ return; }
@@ -2568,7 +2586,7 @@ if(_newSessionBtn){
 
 /* Send all */
 const overlay=document.getElementById("confirmOverlay");
-document.getElementById("sendAll").onclick=()=>{
+document.getElementById("sendAll").onclick=async()=>{
   if(!account){ alert("Veuillez d’abord vous connecter avec Microsoft."); return; }
   currentMsgs=buildMessages();
   if(currentMsgs.length===0){ alert("Aucun e-mail à envoyer."); return; }
@@ -2578,6 +2596,10 @@ document.getElementById("sendAll").onclick=()=>{
     return;
   }
   pendingReminderPlan=plannedReminderMessagesForConfirmations(pendingSend);
+  if(pendingReminderPlan.length){
+    const caps=await graphCapabilities();
+    if(!caps || caps.deferredSend!==true){ showBackendDeferredSendWarning(); pendingReminderPlan=[]; return; }
+  }
   const pendingReminderConflicts=reminderConflictsForConfirmations(pendingSend);
   document.getElementById("confirmText").textContent=actionSummary(pendingSend.length, pendingReminderPlan.length, "confirmations");
   const detail=[`Compte : ${state.account.email}. Action irréversible.`];

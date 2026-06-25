@@ -26,6 +26,7 @@ import urllib.parse
 import urllib.error
 import errno
 from email.message import EmailMessage
+from datetime import datetime, timezone, timedelta
 
 PORT = 8765
 
@@ -351,6 +352,25 @@ def make_ssl_context():
         return ssl.create_default_context()
 
 
+def normalize_defer_until(value):
+    """UTC-Zeitstempel fuer Graph/PidTagDeferredSendTime oder Exception.
+    Sicherheitsregel: Ist der Zeitpunkt ungueltig oder bereits vorbei, wird NICHT sofort gesendet.
+    """
+    raw = (value or "").strip() if isinstance(value, str) else ""
+    if not raw:
+        return ""
+    try:
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.astimezone(timezone.utc)
+    except Exception:
+        raise ValueError("Moment de rappel invalide: " + raw)
+    if dt <= datetime.now(timezone.utc) + timedelta(seconds=30):
+        raise ValueError("Le moment du rappel est déjà passé.")
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
@@ -367,6 +387,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
         if self.path == "/api/outlook-signatures":
             return self.handle_signatures()
+        if self.path == "/api/graph/capabilities":
+            return self._json(200, {"ok": True, "deferredSend": True, "platform": "python", "appVersion": 81})
         if self.path == "/api/graph/account":
             return self.handle_graph_account()
         if self.path == "/api/find-logo":
@@ -467,6 +489,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 },
                 "saveToSentItems": True,
             }
+            try:
+                defer_until = normalize_defer_until(m.get("deferUntil"))
+            except Exception as e:
+                results.append({"id": m.get("id"), "ok": False, "error": str(e)})
+                continue
+            if defer_until:
+                payload["message"]["singleValueExtendedProperties"] = [{
+                    "id": "SystemTime 0x3FEF",
+                    "value": defer_until,
+                }]
             if logo and logo.get("contentBytes") and "cid:siglogo" in m.get("html", ""):
                 payload["message"]["attachments"] = [{
                     "@odata.type": "#microsoft.graph.fileAttachment",

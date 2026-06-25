@@ -88,7 +88,7 @@ function Decode-Jwt($token) {
 
 function GraphSendMail($token, $payload) {
     try {
-        $json = ($payload | ConvertTo-Json -Depth 12)
+        $json = ($payload | ConvertTo-Json -Depth 20)
         Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/v1.0/me/sendMail" `
             -Headers @{ Authorization = "Bearer $token" } `
             -ContentType "application/json; charset=utf-8" `
@@ -101,6 +101,23 @@ function GraphSendMail($token, $payload) {
             if ($resp) { $sr = New-Object IO.StreamReader($resp.GetResponseStream()); $msg = $sr.ReadToEnd() }
         } catch {}
         return @{ ok = $false; error = $msg }
+    }
+}
+
+function Normalize-DeferUntil($value) {
+    # Gibt einen UTC-Zeitstempel im Graph-SystemTime-Format zurück oder $null.
+    # Wichtig: Bei ungültigem/vergangenem Zeitpunkt wird NICHT sofort gesendet.
+    if ($null -eq $value) { return $null }
+    $raw = ([string]$value).Trim()
+    if (-not $raw) { return $null }
+    try {
+        $dto = [DateTimeOffset]::Parse($raw, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::RoundtripKind)
+        if ($dto.ToUniversalTime() -le [DateTimeOffset]::UtcNow.AddSeconds(30)) {
+            throw "Le moment du rappel est déjà passé."
+        }
+        return $dto.UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ", [Globalization.CultureInfo]::InvariantCulture)
+    } catch {
+        throw ("Moment de rappel invalide: " + $raw)
     }
 }
 
@@ -304,6 +321,10 @@ function Handle-Request($stream, $req) {
     try {
 
     # ---- API ----
+    if ($path -eq "/api/graph/capabilities") {
+        Send-Json $stream @{ ok = $true; deferredSend = $true; platform = "windows-powershell"; appVersion = 81 }
+        return
+    }
     if ($path -eq "/api/graph/account") {
         $t = Load-Tokens
         if ($t -and $t.account -and (Get-AccessToken)) { Send-Json $stream @{ ok = $true; signedIn = $true; account = $t.account } }
@@ -367,6 +388,20 @@ function Handle-Request($stream, $req) {
                 body         = @{ contentType = "HTML"; content = $m.html }
                 toRecipients = @($m.to | ForEach-Object { @{ emailAddress = @{ address = $_ } } })
             }
+            $deferUntil = $null
+            try {
+                if ($m.PSObject.Properties.Name -contains "deferUntil" -and $m.deferUntil) {
+                    $deferUntil = Normalize-DeferUntil $m.deferUntil
+                    $msg["singleValueExtendedProperties"] = @(@{
+                        id    = "SystemTime 0x3FEF"
+                        value = $deferUntil
+                    })
+                    Log ("Deferred send requested for message " + $m.id + " -> " + $deferUntil)
+                }
+            } catch {
+                $results += @{ id = $m.id; ok = $false; error = $_.Exception.Message }
+                continue
+            }
             if ($data.logo -and $data.logo.contentBytes -and ($m.html -match 'cid:siglogo')) {
                 $msg["attachments"] = @(@{
                     "@odata.type" = "#microsoft.graph.fileAttachment"
@@ -378,7 +413,7 @@ function Handle-Request($stream, $req) {
                 })
             }
             $r = GraphSendMail $token @{ message = $msg; saveToSentItems = $true }
-            if ($r.ok) { $results += @{ id = $m.id; ok = $true } }
+            if ($r.ok) { $results += @{ id = $m.id; ok = $true; deferredUntil = $deferUntil } }
             else { $results += @{ id = $m.id; ok = $false; error = $r.error } }
         }
         Send-Json $stream @{ ok = $true; results = $results }
@@ -453,7 +488,7 @@ try {
 $url = "http://127.0.0.1:$Port/graph.html"
 try { Set-Content -Path $LogFile -Value ("=== Start " + (Get-Date) + " ===") -Encoding UTF8 } catch {}
 Write-Host "============================================================"
-Write-Host "  Rendez-vous parents est lancé.   [Version : v54 - FR]"
+Write-Host "  Rendez-vous parents est lancé.   [Version : v81 - FR]"
 Write-Host "  Dans le navigateur :  $url"
 Write-Host "  Laissez cette fenêtre ouverte. La fermer = quitter."
 Write-Host "============================================================"
