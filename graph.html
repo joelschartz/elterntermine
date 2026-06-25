@@ -248,7 +248,7 @@
   .template-compose-shell .mail-editor{min-height:0;transition:none;overflow:visible}
   .template-card.signature-off .template-compose-shell .mail-editor{min-height:0}
   .template-compose-shell .mailbody-head{border-radius:16px 16px 0 0}
-  .mail-reset{margin-top:8px}.mail-reset a{font-size:12px;color:var(--err);text-decoration:none;font-weight:700}.mail-reset a:hover{text-decoration:underline}.mail-reset a.save-default{color:var(--accent);margin-left:16px}
+  .mail-reset{margin-top:8px}.mail-reset a{font-size:12px;color:var(--muted);text-decoration:none;font-weight:700}.mail-reset a:hover{text-decoration:underline;color:var(--accent)}.mail-reset a.save-default{color:var(--accent);margin-left:16px}
 
   .template-tabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
   .template-tab{background:#fff;color:var(--muted);border:1px solid var(--line);box-shadow:none;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:800}
@@ -285,7 +285,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R37</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R38</span></p>
 </header>
 
 <nav class="tabs">
@@ -498,7 +498,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 81;
+const APP_VERSION = 82;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -783,7 +783,7 @@ function defaultState(){
   return {
     appVersion: APP_VERSION,
     students: [],
-    config: { dates: [], start:"14:00", end:"16:00", durationMin:20 },
+    config: { dates: [], start:"14:00", end:"18:00", durationMin:20 },
     assignments: {}, sent: [], reminderSent: [], subjectOverrides: {},
     options: { combine:false, useSig:true, includeLogo:true, logoMode:"unesco", templateCollapsed:false, templateMode:"confirmation", templateLang:"fr", defaultLang:"fr", trimester:3, reminderEnabled:true, reminderDaysBefore:1, reminderTime:"15:00" },
     graph: { clientId:"", tenant:"organizations" },
@@ -889,10 +889,14 @@ function loadState(){
     if(needsSignatureWindowMigration){ options.useSig = true; options.includeLogo = true; options.logoMode = "unesco"; }
     // v13: Signatur-Logo als feste Auswahl: UNESCO / Eigenes Logo / Aucun logo.
     if((s.appVersion||0) < 13 && options.logoMode !== "custom"){ options.includeLogo = true; options.logoMode = "unesco"; }
+    const config = Object.assign({}, d.config, s.config||{});
+    if((s.appVersion||0) < 82 && config.start==="14:00" && config.end==="16:00" && Number(config.durationMin||20)===20){
+      config.end="18:00";
+    }
     return {
       appVersion: APP_VERSION,
       students: (Array.isArray(s.students)? s.students : []).map(st=>Object.assign({}, st, {lang1: normalizeLang(st.lang1||options.defaultLang||"fr"), lang2: normalizeLang(st.lang2||options.defaultLang||"fr")})),
-      config: Object.assign(d.config, s.config||{}),
+      config: config,
       assignments: s.assignments||{},
       overrides: s.overrides||{},
       subjectOverrides: s.subjectOverrides||{},
@@ -918,9 +922,14 @@ function sessionHasWorkData(){
   const hasStatus=!!((state.sent&&state.sent.length) || (state.reminderSent&&state.reminderSent.length));
   return hasStudents || hasDates || hasAssignments || hasMailEdits || hasStatus;
 }
+function setCalendarViewToToday(){
+  const t=new Date();
+  if(typeof calView!=="undefined" && calView){ calView.y=t.getFullYear(); calView.m=t.getMonth(); }
+}
 function clearWorkSession(){
   state.students=[];
-  state.config=Object.assign({}, state.config||{}, {dates:[]});
+  state.config=Object.assign({}, state.config||{}, {dates:[], start:"14:00", end:"18:00", durationMin:20});
+  setCalendarViewToToday();
   state.assignments={};
   state.overrides={};
   state.subjectOverrides={};
@@ -956,7 +965,8 @@ function showStartupSessionChoice(){
 }
 function updateNewSessionButton(){
   const btn=document.getElementById("newSessionBtn");
-  if(btn) btn.style.display=sessionHasWorkData()?"inline-block":"none";
+  const hasSentStatus = !!((sentSet && sentSet.size) || (reminderSentSet && reminderSentSet.size));
+  if(btn) btn.style.display = hasSentStatus ? "inline-block" : "none";
 }
 
 function timeToMin(t){ const [h,m]=t.split(":").map(Number); return h*60+m; }
@@ -1362,7 +1372,7 @@ document.getElementById("csvFile").onchange=e=>{
 const $start=document.getElementById("cfgStart"), $end=document.getElementById("cfgEnd"), $dur=document.getElementById("cfgDur");
 function initCfgInputs(){ $start.value=state.config.start; $end.value=state.config.end; $dur.value=state.config.durationMin; }
 $start.onchange=()=>{ state.config.start=$start.value; saveState(); renderCalendar(); }; $end.onchange=()=>{ state.config.end=$end.value; saveState(); renderCalendar(); }; $dur.onchange=()=>{ state.config.durationMin=Number($dur.value)||20; saveState(); renderCalendar(); };
-document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Voulez-vous vraiment supprimer TOUS les jours sélectionnés et les rendez-vous attribués ?\n\n(Les élèves, le modèle et la signature sont conservés.)")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.sent=[]; try{ sentSet.clear(); }catch(e){} saveState(); renderCalendar(); renderMails(); };
+document.getElementById("resetCal").onclick=(e)=>{ if(e) e.preventDefault(); if(!confirm("Voulez-vous vraiment supprimer tous les jours sélectionnés et les rendez-vous attribués ?\n\nLes élèves, le modèle et la signature sont conservés.")) return; state.config.dates=[]; state.assignments={}; state.overrides={}; state.subjectOverrides={}; state.sent=[]; state.reminderSent=[]; setCalendarViewToToday(); try{ sentSet.clear(); reminderSentSet.clear(); excludedSet.clear(); }catch(e){} saveState(); renderDateList(); renderCalendar(); renderMails(); };
 let calView=(function(){ const t=new Date(); return {y:t.getFullYear(), m:t.getMonth()}; })();
 const MINICAL_CSS='<style>.minical{max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-title{font-weight:650;font-size:16px}.cal-nav{background:#fff;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 13px;font-size:18px;font-weight:700;cursor:pointer}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-wd{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:3px 0}.cal-day{text-align:center;padding:11px 0;border-radius:9px;cursor:pointer;font-size:15px;border:1px solid transparent;user-select:none}.cal-day:hover{background:var(--accent-soft)}.cal-day.sel{background:var(--accent);color:#fff;font-weight:700}.cal-day.sel:hover{background:var(--accent-d)}.cal-day.today{border-color:var(--accent)}.cal-day.empty{visibility:hidden;cursor:default}.cal-day.wknd{color:#c9ccd2;cursor:default}.cal-day.wknd:hover{background:transparent}.cal-day.past{color:#c9ccd2;background:transparent;border-color:transparent;cursor:not-allowed}.cal-day.past:hover{background:transparent}.cal-day.past.sel{background:transparent;color:#c9ccd2;font-weight:400}.minical .hint{white-space:nowrap}</style>';
 function localDateIso(dt){ dt=dt||new Date(); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
@@ -2425,7 +2435,7 @@ function mailBannerHtml(){
     const sendable=currentMsgs.filter(m=>!sentSet.has(m.id));
     const pendingSelected=sendable.filter(m=>!excludedSet.has(m.id));
     const plannedCount=(state.options.reminderEnabled!==false) ? plannedReminderMessagesForConfirmations(pendingSelected).length : 0;
-    if(sendable.length===0) b+=`<div class="banner ok">Tous les e-mails ont été envoyés. Pour les renvoyer : « Réinitialiser le statut d’envoi ».</div>`;
+    if(sendable.length===0) b+=`<div class="banner ok">Tous les e-mails ont été envoyés. Vous pouvez commencer une nouvelle session.</div>`;
     else b+=`<div class="banner info">${sendActionSentence(pendingSelected.length, plannedCount)}</div>`;
   }
   return b;
