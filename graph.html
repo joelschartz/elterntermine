@@ -131,6 +131,8 @@
   .banner.err{background:var(--err-soft);color:#8a1d14;border-color:#ffc9c1}
   .banner.ok{background:var(--ok-soft);color:#0f5e38;border-color:#bde8ce}
   .banner.info{background:var(--accent-soft);color:#253e7c;border-color:#d7e3ff}
+  .banner.compact{padding:10px 13px;margin:10px 0 12px;font-size:13.5px}
+  .empty-state{margin:12px 0 0}
   code.k{background:var(--accent-soft);padding:2px 7px;border-radius:7px;font-size:12px;word-break:break-all;color:#27437f}
   .check{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:650;margin:12px 0 0;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}.check input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;flex:0 0 16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;box-shadow:none!important;outline:none!important;display:inline-grid;place-content:center;transition:background .12s ease,border-color .12s ease}.check input[type="checkbox"]:hover{border-color:var(--accent)}.check input[type="checkbox"]:focus,.check input[type="checkbox"]:focus-visible{outline:none!important;box-shadow:none!important}.check input[type="checkbox"]:checked{background:var(--accent);border-color:var(--accent)}.check input[type="checkbox"]:checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}.check select{width:auto}
   .daycard{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:var(--surface-soft)}.daycard h4{margin:0 0 8px;font-size:14px}
@@ -259,7 +261,7 @@
   .reminder-note,.template-note{margin:2px 0 12px;font-size:12.5px;color:var(--muted)}
   .template-settings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft);align-items:stretch}
   .student-lang-default{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft)}.student-lang-default label{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.student-lang-default select{height:40px;width:auto;min-width:170px;padding:7px 10px;border-radius:999px;background:#fff}
-  .setting-field{display:flex;flex-direction:column;gap:6px;min-width:0}.setting-field label,.setting-title{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.setting-help{font-size:11.5px;line-height:1.35;color:var(--muted)}.setting-field select,.setting-field input[type=time]{height:40px;padding:7px 10px;border-radius:12px;background:#fff}.reminder-setting{gap:8px;align-items:flex-start;min-width:0}.reminder-setting .setting-title{align-self:flex-start}.reminder-main,.signature-toggle{display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-weight:800;font-size:13px;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;user-select:none;-webkit-tap-highlight-color:transparent;box-shadow:var(--shadow-sm);white-space:nowrap}.reminder-main:hover,.signature-toggle:hover{border-color:var(--line-strong);background:#fff;box-shadow:0 6px 16px rgba(20,30,60,.06)}.reminder-main input,.signature-toggle input{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;flex:0 0 16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;box-shadow:none;outline:none;display:inline-grid;place-content:center;transition:background .12s ease,border-color .12s ease}.reminder-main input:focus,.reminder-main input:focus-visible,.signature-toggle input:focus,.signature-toggle input:focus-visible{outline:none;box-shadow:none}.reminder-main input:checked,.signature-toggle input:checked{background:var(--accent);border-color:var(--accent)}.reminder-main input:checked:after,.signature-toggle input:checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}.reminder-controls{display:flex;gap:8px;align-items:center;justify-content:flex-start;flex-wrap:nowrap;color:var(--muted);font-size:13px;text-align:left;white-space:nowrap}.reminder-controls select{width:auto;min-width:82px}.reminder-controls input[type=time]{width:104px}.reminder-setting{justify-self:start;margin-left:58px}.signature-setting{padding-left:0;align-items:flex-start;justify-self:end}.signature-setting .signature-toggle{align-self:flex-start}.template-language-edit{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:750}.template-language-edit select{width:auto;min-width:148px;height:38px;padding:6px 10px;border-radius:999px;background:#fff}.student-contact-grid .group-head th{background:#f8fafc}.student-contact-grid .contact-group{text-align:left}.student-contact-grid .contact2-start{border-left:0!important}.student-contact-grid th.contact2-start,.student-contact-grid td.contact2-start{padding-left:10px!important}.student-contact-grid .contact-cell{min-width:0}.student-contact-grid .contact-inline{display:flex;align-items:center;gap:8px;min-width:0}.student-contact-grid .contact-inline input{flex:1 1 auto;min-width:0}.student-contact-grid .lang-select{flex:0 0 58px;width:58px;min-width:58px;height:36px;padding:5px 6px;border-radius:10px;background:#fff;font-size:12.5px;font-weight:400;letter-spacing:.01em;text-align:center;color:var(--ink)}.student-contact-grid .lang-select option{font-weight:400}.student-contact-grid .actions-cell{width:62px!important;padding-left:10px!important;padding-right:10px!important;text-align:center}.student-contact-grid .actions-cell .st-del{width:42px;min-width:42px;padding-left:0;padding-right:0}.csv-hint{margin-top:2px;text-align:right}.email-invalid{border-color:#ffb4aa!important;background:#fff8f7!important}.email-invalid:focus{border-color:#ef6f61!important;box-shadow:0 0 0 4px rgba(239,111,97,.12)!important}.student-email-warning{margin-top:10px;text-align:left}.lang-pill{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--muted);margin-left:4px}
+  .setting-field{display:flex;flex-direction:column;gap:6px;min-width:0}.setting-field label,.setting-title{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.03em}.setting-help{font-size:11.5px;line-height:1.35;color:var(--muted)}.setting-field select,.setting-field input[type=time]{height:40px;padding:7px 10px;border-radius:12px;background:#fff}.reminder-setting{gap:8px;align-items:flex-start;min-width:0}.reminder-setting .setting-title{align-self:flex-start}.reminder-main,.signature-toggle{display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-weight:800;font-size:13px;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;user-select:none;-webkit-tap-highlight-color:transparent;box-shadow:var(--shadow-sm);white-space:nowrap}.reminder-main:hover,.signature-toggle:hover{border-color:var(--line-strong);background:#fff;box-shadow:0 6px 16px rgba(20,30,60,.06)}.reminder-main input,.signature-toggle input{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;flex:0 0 16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:4px;background:#fff;box-shadow:none;outline:none;display:inline-grid;place-content:center;transition:background .12s ease,border-color .12s ease}.reminder-main input:focus,.reminder-main input:focus-visible,.signature-toggle input:focus,.signature-toggle input:focus-visible{outline:none;box-shadow:none}.reminder-main input:checked,.signature-toggle input:checked{background:var(--accent);border-color:var(--accent)}.reminder-main input:checked:after,.signature-toggle input:checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-1px}.reminder-controls{display:flex;gap:8px;align-items:center;justify-content:flex-start;flex-wrap:nowrap;color:var(--muted);font-size:13px;text-align:left;white-space:nowrap}.reminder-controls select{width:auto;min-width:82px}.reminder-controls input[type=time]{width:104px}.reminder-setting{justify-self:start;margin-left:58px}.signature-setting{padding-left:0;align-items:flex-start;justify-self:end}.signature-setting .signature-toggle{align-self:flex-start}.template-language-edit{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:750}.template-language-edit select{width:auto;min-width:148px;height:38px;padding:6px 10px;border-radius:999px;background:#fff}.student-contact-grid .group-head th{background:#f8fafc}.student-contact-grid .contact-group{text-align:left}.student-contact-grid .contact2-start{border-left:0!important}.student-contact-grid th.contact2-start,.student-contact-grid td.contact2-start{padding-left:10px!important}.student-contact-grid .contact-cell{min-width:0}.student-contact-grid .contact-inline{display:flex;align-items:center;gap:8px;min-width:0}.student-contact-grid .contact-inline input{flex:1 1 auto;min-width:0}.student-contact-grid .lang-select{flex:0 0 58px;width:58px;min-width:58px;height:36px;padding:5px 6px;border-radius:10px;background:#fff;font-size:12.5px;font-weight:400;letter-spacing:.01em;text-align:center;color:var(--ink)}.student-contact-grid .lang-select option{font-weight:400}.student-contact-grid .student-name-inline{display:flex;align-items:center;gap:8px;min-width:0}.student-contact-grid .student-name-inline input{flex:1 1 auto;min-width:0}.student-index{width:22px;min-width:22px;height:22px;border-radius:999px;background:var(--accent-soft);color:#27437f;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}.student-contact-grid .actions-cell{width:62px!important;padding-left:10px!important;padding-right:10px!important;text-align:center}.student-contact-grid .actions-cell .st-del{width:42px;min-width:42px;padding-left:0;padding-right:0}.csv-hint{margin-top:2px;text-align:right}.email-invalid{border-color:#ffb4aa!important;background:#fff8f7!important}.email-invalid:focus{border-color:#ef6f61!important;box-shadow:0 0 0 4px rgba(239,111,97,.12)!important}.student-email-warning{margin-top:10px;text-align:left}.lang-pill{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--muted);margin-left:4px}
   @media (max-width:1100px){.template-settings{grid-template-columns:1fr 1fr}.reminder-setting{margin-left:0}.signature-setting{grid-column:1/-1;padding-left:0;padding-top:12px}}
   @media (max-width:900px){.template-settings{grid-template-columns:1fr}.reminder-setting{margin-left:0}.student-lang-default{align-items:flex-start;flex-direction:column}.template-language-edit{margin-left:0;width:100%}}
   #appToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(16,24,40,.28);z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none}
@@ -285,7 +287,7 @@
 <body>
 <header>
   <h1>Rendez-vous parents · Microsoft 365</h1>
-  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R39</span></p>
+  <p>Planifier les entretiens et envoyer les e-mails de confirmation depuis votre compte Microsoft (Mac &amp; Windows) <span style="opacity:.55;font-size:12px">· Build R43</span></p>
 </header>
 
 <nav class="tabs">
@@ -315,7 +317,7 @@
         <button class="ghost sm" id="importCsvBtn">Importer un CSV</button>
         <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none">
       </div>
-      <p class="hint csv-hint">CSV (en-tête facultatif) : <code class="k">Nom,E-mail_contact1,langue1,E-mail_contact2,langue2</code> — 1 élève par ligne.</p>
+      <p class="hint csv-hint">CSV (en-tête facultatif) : <code class="k">Prénom et nom de l’élève,contact1@...,langue1,contact2@...,langue2</code> — 1 élève par ligne. Langues : FR, DE, EN, LU.</p>
     </div>
   </section>
 
@@ -336,7 +338,7 @@
     </div>
     <div class="card">
       <h2>Attribuer les rendez-vous</h2>
-      <p class="hint" id="assignSummary"></p>
+      <div class="banner compact info" id="assignSummary"></div>
       <div id="calendarGrid"></div>
     </div>
   </section>
@@ -430,7 +432,7 @@
         <div id="tplBodyEditor" class="rich-editor mail-editor template-mail-editor" contenteditable="true" spellcheck="true"></div>
       </div>
       <div class="mail-reset" id="resetTplBodyRow" style="display:none"><a href="#" id="resetTplBody">↺ Réinitialiser le texte par défaut</a><a href="#" id="saveTplBody" class="save-default" title="Définir le texte actuel + l’objet comme standard personnel">✓ enregistrer comme standard</a></div>
-      <p class="hint">Les variables <code class="k">{DATE}</code>, <code class="k">{TIME}</code>, <code class="k">{ENFANT}</code>, <code class="k">{TRIMESTRE}</code> et <code class="k">{RAPPEL_DELAI}</code> sont automatiquement remplacées à l’envoi.</p>
+      <p class="hint">Les variables <code class="k">{DATE}</code>, <code class="k">{TIME}</code>, <code class="k">{ENFANT}</code> (prénom), <code class="k">{TRIMESTRE}</code> et <code class="k">{RAPPEL_DELAI}</code> sont automatiquement remplacées à l’envoi.</p>
       <div id="sigMissing" style="margin-top:12px"></div>
       <div id="inlineSignatureControls" class="inline-sig-controls">
         <div class="signature-options-row">
@@ -498,7 +500,7 @@
 <script>
 "use strict";
 const LS_KEY = "elterntermine_graph_v1";
-const APP_VERSION = 83;
+const APP_VERSION = 84;
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -511,6 +513,15 @@ function displayStudentName(name, limit=STUDENT_NAME_DISPLAY_LIMIT){
   const lastSpace = cut.lastIndexOf(" ");
   const base = lastSpace >= Math.floor(limit * 0.55) ? cut.slice(0, lastSpace) : cut;
   return base.replace(/[\s,.;:–—-]+$/g, "") + "…";
+}
+function studentFullName(stu){
+  return String(typeof stu === "string" ? stu : ((stu && stu.name) || "")).trim();
+}
+function studentFirstName(stu){
+  const raw = studentFullName(stu).replace(/\s+/g," ").trim();
+  if(!raw) return "";
+  const parts = raw.split(" ");
+  return parts[0] || raw;
 }
 function stripBold(text){ return (text||"").replace(/\*\*(.+?)\*\*/g,"$1"); }
 function htmlFromPlain(s){ return escHtml(s||"").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>"); }
@@ -739,9 +750,10 @@ function formatTimeByLang(hhmm, lang){
 function formatFrenchDate(iso){ return formatDateByLang(iso,"fr"); }
 function formatFrenchTime(hhmm){ return formatTimeByLang(hhmm,"fr"); }
 function messageMap(ds, hhmm, stu, lang){
-  const name = typeof stu==="string" ? stu : ((stu && stu.name) || "");
+  const fullName = studentFullName(stu);
+  const firstName = studentFirstName(stu) || fullName;
   lang=normalizeLang(lang);
-  return {DATE:formatDateByLang(ds,lang),TIME:formatTimeByLang(hhmm,lang),NAME:state.account.name||"",ENFANT:name,TRIMESTRE:trimesterText(lang),TRIMESTER:trimesterText(lang),TRIMESTRE_NUM:String(trimesterNumber()),RAPPEL_DELAI:reminderLeadText(lang),RAPPEL_JOURS:String(reminderDaysBefore())};
+  return {DATE:formatDateByLang(ds,lang),TIME:formatTimeByLang(hhmm,lang),NAME:state.account.name||"",ENFANT:firstName,ENFANT_COMPLET:fullName,TRIMESTRE:trimesterText(lang),TRIMESTER:trimesterText(lang),TRIMESTRE_NUM:String(trimesterNumber()),RAPPEL_DELAI:reminderLeadText(lang),RAPPEL_JOURS:String(reminderDaysBefore())};
 }
 const TEMPLATE_DEFAULTS={
   fr:{
@@ -1281,12 +1293,12 @@ function rawContactEmails(stu){ return contactEmailKeys().map(k=>String((stu&&st
 function contactEmails(stu){ return contactDetails(stu).map(c=>c.email); }
 function renderStudents(){
   const wrap=document.getElementById("studentTable");
-  if(state.students.length===0){ wrap.innerHTML='<p class="muted">Aucun élève pour l’instant. Cliquez sur « + Ajouter un élève ».</p>'; return; }
-  let html='<table class="student-grid student-contact-grid"><thead><tr class="group-head"><th style="width:27%">Élève</th><th class="contact-group" style="width:35.5%">Contact 1</th><th class="contact-group contact2-start" style="width:35.5%">Contact 2</th><th style="width:62px"></th></tr></thead><tbody>';
-  state.students.forEach(s=>{
+  if(state.students.length===0){ wrap.innerHTML='<div class="banner warn empty-state">Aucun élève pour l’instant. Cliquez sur « + Ajouter un élève ».</div>'; return; }
+  let html='<table class="student-grid student-contact-grid"><thead><tr class="group-head"><th style="width:31%">Élève</th><th class="contact-group" style="width:32.5%">Contact 1</th><th class="contact-group contact2-start" style="width:32.5%">Contact 2</th><th style="width:62px"></th></tr></thead><tbody>';
+  state.students.forEach((s,idx)=>{
     if(!s.lang1) s.lang1=state.options.defaultLang||"fr";
     if(!s.lang2) s.lang2=state.options.defaultLang||"fr";
-    html += `<tr data-id="${s.id}"><td><input class="st-name" value="${esc(s.name)}" placeholder="Nom"></td>`+
+    html += `<tr data-id="${s.id}"><td><div class="student-name-inline"><span class="student-index">${idx+1}</span><input class="st-name" value="${esc(s.name)}" placeholder="Prénom et nom de l’élève"></div></td>`+
       `<td class="contact-cell"><div class="contact-inline"><input class="st-e1" value="${esc(s.email1)}" placeholder="contact1@..."><select class="st-l1 lang-select" title="Langue du contact 1">${langOptionsHtml(s.lang1, true)}</select></div></td>`+
       `<td class="contact-cell contact2-start"><div class="contact-inline"><input class="st-e2" value="${esc(s.email2)}" placeholder="contact2@..."><select class="st-l2 lang-select" title="Langue du contact 2">${langOptionsHtml(s.lang2, true)}</select></div></td>`+
       `<td class="actions-cell"><button class="danger sm st-del">✕</button></td></tr>`;
@@ -1353,7 +1365,7 @@ document.getElementById("csvFile").onchange=e=>{
   r.onload=()=>{
     String(r.result).split(/\r?\n/).filter(l=>l.trim()).forEach((line,i)=>{
       const c=line.split(/[,;\t]/).map(x=>x.trim());
-      if(i===0 && /^(name|nom|schüler|eleve|élève)$/i.test(c[0]||"")) return;
+      if(i===0 && /^(name|nom|prénom[ _-]et[ _-]nom[ _-]de[ _-]l[’']?élève|prenom[ _-]et[ _-]nom[ _-]de[ _-]l[’']?eleve|nom[_ -]de[_ -]l[’']?élève|nom[_ -]de[_ -]l[’']?eleve|schüler|eleve|élève)$/i.test(c[0]||"")) return;
       if(!c[0]) return;
       const dl=normalizeLang(state.options.defaultLang||"fr");
       const looksLikeLang2=c.length>=5 || ["fr","de","en","lb","lu","deutsch","english","lëtzebuergesch","letzebuergesch"].includes(String(c[2]||"").trim().toLowerCase());
@@ -1411,8 +1423,19 @@ function renderCalendar(){
   initCfgInputs();
   renderDateList();
   const grid=document.getElementById("calendarGrid"), sl=slots();
-  if(state.config.dates.length===0){ grid.innerHTML='<p class="muted">Sélectionnez au moins un jour dans le calendrier ci-dessus.</p>'; updateAssignSummary(); return; }
-  if(sl.length===0){ grid.innerHTML='<p class="muted">Plage horaire non valable (vérifiez début/fin/durée).</p>'; updateAssignSummary(); return; }
+  if(state.config.dates.length===0){
+    const students=assignmentStudents();
+    const el=document.getElementById("assignSummary");
+    if(el){
+      let msg="Sélectionnez au moins un jour dans le calendrier ci-dessus.";
+      if(students.length===0) msg += " Aucun élève à attribuer pour l’instant.";
+      el.className="banner compact warn";
+      el.textContent=msg;
+    }
+    grid.innerHTML="";
+    return;
+  }
+  if(sl.length===0){ grid.innerHTML='<div class="banner warn compact">Plage horaire non valable : vérifiez le début, la fin et la durée.</div>'; updateAssignSummary(); return; }
   const weekKeyOf=ds=>{ const d=new Date(ds+"T00:00:00"); const wd=(d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
   const groups={};
   state.config.dates.slice().sort().forEach(ds=>{ const wk=weekKeyOf(ds); (groups[wk]=groups[wk]||[]).push(ds); });
@@ -1447,6 +1470,8 @@ function renderCalendar(){
   updateAssignSummary();
 }
 function updateAssignSummary(){
+  const el=document.getElementById("assignSummary");
+  if(!el) return;
   const used=Object.values(state.assignments).filter(Boolean), counts={};
   used.forEach(id=>counts[id]=(counts[id]||0)+1);
   const students=assignmentStudents();
@@ -1454,10 +1479,24 @@ function updateAssignSummary(){
   const uniqueAssigned=[...new Set(used)].filter(id=>studentIds.has(id));
   const remaining=Math.max(0, students.length-uniqueAssigned.length);
   const dupes=Object.keys(counts).filter(id=>counts[id]>1).map(id=>(state.students.find(s=>s.id===id)||{}).name).filter(Boolean);
-  let txt=used.length+" rendez-vous "+(used.length===1?"attribué":"attribués")+" · "+remaining+" élève"+(remaining===1?"":"s")+" encore à attribuer.";
-  if(remaining===0 && students.length>0) txt=used.length+" rendez-vous "+(used.length===1?"attribué":"attribués")+" · Tous les élèves sont attribués.";
-  if(dupes.length) txt += " ⚠︎ Planifié plusieurs fois : "+dupes.map(n=>displayStudentName(n)).join(", ");
-  document.getElementById("assignSummary").textContent=txt;
+  let txt="";
+  let cls="banner compact info";
+  if(students.length===0){
+    txt="Aucun élève à attribuer pour l’instant.";
+    cls="banner compact warn";
+  } else if(remaining>0){
+    txt=used.length+" rendez-vous "+(used.length===1?"attribué":"attribués")+" · "+remaining+" élève"+(remaining===1?"":"s")+" encore à attribuer.";
+    cls="banner compact warn";
+  } else {
+    txt=used.length+" rendez-vous "+(used.length===1?"attribué":"attribués")+" · Tous les élèves sont attribués.";
+    cls="banner compact info";
+  }
+  if(dupes.length){
+    txt += " Planifié plusieurs fois : "+dupes.map(n=>displayStudentName(n)).join(", ")+".";
+    cls="banner compact warn";
+  }
+  el.className=cls;
+  el.textContent=txt;
 }
 
 /* Rich editor */
